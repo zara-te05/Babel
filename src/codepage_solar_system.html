@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>CodeCanvas - Tu Ruta de Aprendizaje</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ffffff",
+            "primary-fixed": "#b4f0c9",
+            "primary-container": "#b4f0c9",
+            "on-primary": "#003921",
+            "on-primary-container": "#386f50",
+            "secondary": "#ffb2bb",
+            "secondary-container": "#73323d",
+            "on-secondary": "#571c27",
+            "on-secondary-container": "#f59da8",
+            "tertiary": "#ffffff",
+            "tertiary-container": "#c0e8ff",
+            "on-tertiary": "#003547",
+            "on-tertiary-container": "#006d8e",
+            "surface": "#12131d",
+            "surface-dim": "#12131d",
+            "surface-bright": "#383844",
+            "surface-container-lowest": "#0c0d18",
+            "surface-container-low": "#1a1b26",
+            "surface-container": "#1e1f2a",
+            "surface-container-high": "#282935",
+            "surface-container-highest": "#333440",
+            "surface-variant": "#333440",
+            "on-surface": "#e2e1f1",
+            "on-surface-variant": "#c0c9c0",
+            "background": "#12131d",
+            "on-background": "#e2e1f1",
+            "outline": "#8a938b",
+            "outline-variant": "#404942",
+            "error": "#ffb4ab",
+            "error-container": "#93000a",
+            "on-error": "#690005",
+            "on-error-container": "#ffdad6",
+            "inverse-surface": "#e2e1f1",
+            "inverse-on-surface": "#2f303b",
+            "inverse-primary": "#31694b"
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #12131d;
+      font-family: 'Quicksand', sans-serif;
+      color: #e2e1f1;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(50px) scale(0.97);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-70px);
+      transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal-left.active { opacity: 1; transform: translateX(0); }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(70px);
+      transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal-right.active { opacity: 1; transform: translateX(0); }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.85);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal-scale.active { opacity: 1; transform: scale(1); }
+
+    .reveal-rotate {
+      opacity: 0;
+      transform: rotate(-8deg) scale(0.92);
+      transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal-rotate.active { opacity: 1; transform: rotate(0) scale(1); }
+
+    /* ===== SISTEMA SOLAR ===== */
+    .solar-wrap {
+      position: relative;
+      width: 360px;
+      height: 360px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1023px) {
+      .solar-wrap { width: 300px; height: 300px; }
+    }
+
+    @media (max-width: 767px) {
+      .solar-wrap { width: 260px; height: 260px; }
+    }
+
+    .stars {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+    }
+
+    .core {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #b4f0c9, #2d6e48);
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 5;
+      animation: coreGlow 3s ease-in-out infinite;
+    }
+
+    .core-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      color: #003921;
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: 0.08em;
+    }
+
+    @keyframes coreGlow {
+      0%, 100% { box-shadow: 0 0 24px rgba(180, 240, 201, 0.2); }
+      50% { box-shadow: 0 0 48px rgba(180, 240, 201, 0.4); }
+    }
+
+    /* Planetas con animación de órbita CSS pura */
+    .planet {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 0, 0, 0.9);
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      overflow: hidden;
+      animation: orbit-anim var(--dur) linear infinite;
+      transition: filter 0.2s;
+    }
+
+    .planet.rev { animation-direction: reverse; }
+    .planet:hover { filter: brightness(1.2); }
+    .planet svg { width: 28px; height: 28px; display: block; }
+
+    .planet-label {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      color: #8a938b;
+      white-space: nowrap;
+      pointer-events: none;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    @keyframes orbit-anim {
+      from {
+        transform: translate(-50%, -50%)
+          rotate(var(--start))
+          translateX(var(--r))
+          rotate(calc(-1 * var(--start)));
+      }
+      to {
+        transform: translate(-50%, -50%)
+          rotate(calc(var(--start) + 360deg))
+          translateX(var(--r))
+          rotate(calc(-1 * (var(--start) + 360deg)));
+      }
+    }
+
+    /* ===== NEO-BRUTAL CARDS ===== */
+    .neo-brutal-card {
+      background: #1e1f2a;
+      border: 2px solid #000;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+    }
+
+    .neo-brutal-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .neo-brutal-card:hover::before { left: 100%; }
+    .neo-brutal-card:hover {
+      box-shadow: 7px 7px 0 #000;
+      transform: translate(-2px, -2px);
+    }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0 #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: auto;
+    }
+
+    .card-modules {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .card-btn {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      border: 1.5px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .card-btn:hover {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 #000;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      background: #b4f0c9;
+      color: #003921;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      padding: 0.75rem 2rem;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.15s;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    .btn-primary:hover {
+      box-shadow: 2px 2px 0 #000;
+      transform: translate(2px, 2px);
+    }
+
+    /* ===== PROGRESS SECTION ===== */
+    .progress-section {
+      background: #1e1f2a;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    /* ===== HERO LAYOUT ===== */
+    .hero-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 767px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+    }
+
+    .hero-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 1023px) { .hero-title { font-size: 2rem; } }
+    @media (max-width: 767px) { .hero-title { font-size: 1.7rem; } }
+
+    .hero-title span { color: #99d4ae; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(180, 240, 201, 0.12);
+      border: 1.5px solid rgba(180, 240, 201, 0.3);
+      color: #99d4ae;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: #8a938b;
+      line-height: 1.65;
+      max-width: 400px;
+    }
+
+    /* ===== CARDS GRID ===== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 767px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 1rem;
+      height: 100%;
+    }
+
+    .mobile-nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: #8a938b;
+      font-size: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .mobile-nav a.active { color: #99d4ae; }
+    .mobile-nav a:hover { color: #c0c9c0; }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-size: 22px;
+    }
+
+    /* ===== CONTENT WRAPPER ===== */
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    @media (min-width: 768px) { .content-wrapper { padding: 0 3rem; } }
+    @media (min-width: 1024px) { .content-wrapper { padding: 0 4rem; } }
+  </style>
+</head>
+
+<body>
+
+  <!-- TopNavBar -->
+  <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-5 md:px-10 h-16"
+    style="background:#12131d;border-bottom:2px solid #000;box-shadow:0 4px 0 #000;">
+    <span style="font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.02em;">Centipede</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button style="background:transparent;border:1.5px solid rgba(255,255,255,0.15);color:#c0c9c0;padding:7px 16px;border-radius:8px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;cursor:pointer;"
+        onmouseover="this.style.borderColor='rgba(255,255,255,0.4)';this.style.color='#fff'"
+        onmouseout="this.style.borderColor='rgba(255,255,255,0.15)';this.style.color='#c0c9c0'">Log In</button>
+      <button class="btn-primary" style="padding:8px 18px;font-size:14px;">Sign Up</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-24 min-h-screen relative">
+    <div class="content-wrapper">
+
+      <!-- Decorative BG -->
+      <div style="position:absolute;top:10%;right:-5%;width:320px;height:320px;background:rgba(180,240,201,0.04);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:-1;"></div>
+      <div style="position:absolute;bottom:10%;left:5%;width:280px;height:280px;background:rgba(123,209,250,0.04);border-radius:50%;filter:blur(60px);pointer-events:none;z-index:-1;"></div>
+
+      <!-- Hero Section -->
+      <section class="hero-section reveal">
+        <div class="reveal-left">
+          <div class="badge">🚀 Comienza tu viaje</div>
+          <h1 class="hero-title">Tu <span>Ruta de</span><br>Aprendizaje</h1>
+          <p class="hero-desc">Selecciona el tema que deseas explorar este semestre. Cada camino desbloquea nuevos desafíos y habilidades únicas.</p>
+        </div>
+
+        <!-- Sistema Solar -->
+        <div class="solar-wrap reveal-rotate">
+
+          <!-- Estrellas animadas -->
+          <svg class="stars" viewBox="0 0 360 360" fill="none">
+            <circle cx="40" cy="30" r="1.2" fill="white" opacity="0.4"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.1s" repeatCount="indefinite"/></circle>
+            <circle cx="300" cy="50" r="1" fill="white" opacity="0.3"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="1.6s" repeatCount="indefinite"/></circle>
+            <circle cx="20" cy="180" r="1.5" fill="white" opacity="0.25"><animate attributeName="opacity" values="0.15;0.7;0.15" dur="2.5s" repeatCount="indefinite"/></circle>
+            <circle cx="340" cy="200" r="1" fill="white" opacity="0.3"><animate attributeName="opacity" values="0.1;0.9;0.1" dur="1.9s" repeatCount="indefinite"/></circle>
+            <circle cx="60" cy="320" r="1.2" fill="white" opacity="0.35"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.3s" repeatCount="indefinite"/></circle>
+            <circle cx="290" cy="310" r="0.9" fill="white" opacity="0.25"><animate attributeName="opacity" values="0.1;0.7;0.1" dur="1.7s" repeatCount="indefinite"/></circle>
+            <circle cx="160" cy="20" r="1.1" fill="white" opacity="0.3"><animate attributeName="opacity" values="0.15;0.85;0.15" dur="2.8s" repeatCount="indefinite"/></circle>
+            <circle cx="200" cy="340" r="1.3" fill="white" opacity="0.2"><animate attributeName="opacity" values="0.1;0.6;0.1" dur="1.4s" repeatCount="indefinite"/></circle>
+          </svg>
+
+          <!-- Órbitas -->
+          <div class="orbit-ring" style="width:160px;height:160px;"></div>
+          <div class="orbit-ring" style="width:248px;height:248px;border-color:rgba(255,178,187,0.07);"></div>
+          <div class="orbit-ring" style="width:344px;height:344px;border-color:rgba(192,232,255,0.06);"></div>
+
+          <!-- Núcleo -->
+          <div class="core"><div class="core-text">CODE<br>CORE</div></div>
+
+          <!-- ===== PLANETAS ===== -->
+
+          <!-- JavaScript — órbita 1, inicio 0°, 13s -->
+          <div class="planet" style="background:#f7df1e;--r:80px;--start:0deg;--dur:13s;" title="JavaScript">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" fill="#f7df1e"/>
+              <path d="M19.5 24.3c.5.8 1.1 1.4 2.3 1.4 1 0 1.6-.5 1.6-1.1 0-.8-.6-1.1-1.7-1.6l-.6-.2c-1.7-.7-2.8-1.6-2.8-3.5 0-1.7 1.3-3 3.4-3 1.5 0 2.5.5 3.3 1.8l-1.8 1.2c-.4-.7-.8-1-1.5-1-.7 0-1.1.4-1.1 1 0 .7.4 1 1.4 1.4l.6.3c2 .8 3.1 1.7 3.1 3.7 0 2.1-1.6 3.2-3.8 3.2-2.1 0-3.5-1-4.2-2.4l1.8-1.2zm-9.2.2c.3.6.6 1.1 1.3 1.1.7 0 1.1-.3 1.1-1.3v-7.1h2.2v7.2c0 2.2-1.3 3.2-3.1 3.2-1.7 0-2.7-.9-3.2-1.9l1.7-1.2z" fill="#323330"/>
+            </svg>
+            <span class="planet-label">JS</span>
+          </div>
+
+          <!-- Python — órbita 1, inicio 180°, 16s reverso -->
+          <div class="planet rev" style="background:#1e415e;--r:80px;--start:180deg;--dur:16s;" title="Python">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15.9 3C11.4 3 11.7 5 11.7 5v2h4.3v.7H9.5S7 7.4 7 12.1c0 4.7 2.6 4.5 2.6 4.5h1.6v-2.2s-.1-2.6 2.6-2.6h4.4s2.5.1 2.5-2.4V5.5S21.1 3 15.9 3zm-2.4 1.4c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9z" fill="#4b8bbe"/>
+              <path d="M16.1 29c4.5 0 4.2-2 4.2-2v-2h-4.3v-.7h6.5s2.5.3 2.5-4.4c0-4.7-2.6-4.5-2.6-4.5h-1.6v2.2s.1 2.6-2.6 2.6h-4.4s-2.5-.1-2.5 2.4V27s-.4 2 4.8 2zm2.4-1.4c-.5 0-.9-.4-.9-.9s.4-.9.9-.9.9.4.9.9-.4.9-.9.9z" fill="#ffd43b"/>
+            </svg>
+            <span class="planet-label">Python</span>
+          </div>
+
+          <!-- Java — órbita 2, inicio 90°, 19s -->
+          <div class="planet" style="background:#e76f00;--r:124px;--start:90deg;--dur:19s;" title="Java">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22.6s-1.4.8 1 1.1c2.9.3 4.4.3 7.6-.3 0 0 .8.5 2 1-7.2 3.1-16.3-.2-10.6-1.8zm-.9-3.8s-1.6 1.2.8 1.4c3.1.3 5.5.3 9.7-.5 0 0 .6.6 1.5.9-8.6 2.5-18.2.2-12-1.8z" fill="white"/>
+              <path d="M18.4 12.6c1.7 2-1.5 4.7-1.5 4.7s3.6-1.8 2-4.3C17.3 10.6 16 9.6 23.1 6c0 0-12.6 3.1-4.7 6.6z" fill="#f89820"/>
+              <path d="M20.1 25.4s1 .8-1.1 1.5c-4.1 1.2-17.1 1.6-20.7 0-1.3-.6 1.1-1.4 1.9-1.5.8-.2 1.3-.2 1.3-.2-.8-.6-5.2 1.1-2.2 1.6C8.3 28.4 24 27.1 20.1 25.4zm-7.7-6.1s-3.8 1.1-.7 1.5c1.4.2 4.3.2 6.9-.1 2.2-.2 4.3-.7 4.3-.7s-.8.4-1.3.8c-5.4 1.4-15.8.7-12.8-.7 2.5-1.2 3.6-1 3.6-.8z" fill="white"/>
+              <path d="M21.7 21.7c5.5-2.9 3-5.7 1.2-5.3-.5.1-.7.2-.7.2s.2-.3.5-.4c3.9-1.4 6.9 4.1-1.2 6.3 0 0 .1-.1.2-.8z" fill="#f89820"/>
+              <path d="M14.3 3S17.7 6.4 11 9.9C5.6 12.7 9.3 14.3 11 16c-2.8-2.5-4.8-4.7-3.5-6.8C9.3 6.4 15.9 5 14.3 3z" fill="#f89820"/>
+              <path d="M14.8 29.6c5.3.3 13.5-.3 13.7-3.8 0 0-.4 1-4.4 1.7-4.5.9-10 .8-13.3.2 0 0 .7.6 4 1.9z" fill="white"/>
+            </svg>
+            <span class="planet-label">Java</span>
+          </div>
+
+          <!-- PHP — órbita 2, inicio 270°, 17s reverso -->
+          <div class="planet rev" style="background:#4f5b93;--r:124px;--start:270deg;--dur:17s;" title="PHP">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="16" cy="16" rx="14" ry="9" fill="#8892bf"/>
+              <path d="M7.4 18.9l1-4.8h2.4c.7 0 1.2.1 1.5.4.3.3.4.7.3 1.3-.1.5-.4 1-.8 1.3-.4.3-.9.5-1.5.5H9.2l-.3 1.3H7.4zm1.8-2.3l.3-1.4h.9c.4 0 .7.1.8.2.1.1.2.3.1.6-.1.3-.2.5-.4.6-.2.1-.5.2-.9.2h-.8zM13.6 18.9l1-4.8h1.5l-.3 1.3h1.1c.7 0 1.2.2 1.4.5.2.3.2.8 0 1.4-.2.7-.5 1.2-.9 1.5-.4.3-1 .5-1.7.5h-2.1zm1.8-1H16c.4 0 .7-.1.9-.2.2-.1.3-.4.4-.7.1-.3.1-.5 0-.6-.1-.1-.3-.2-.7-.2h-.9l-.3 1.7zM18.7 18.9l1-4.8h1.5l-.3 1.3h1.1c.7 0 1.2.2 1.4.5.2.3.2.8 0 1.4-.2.7-.5 1.2-.9 1.5-.4.3-1 .5-1.7.5h-2.1zm1.8-1h.5c.4 0 .7-.1.9-.2.2-.1.3-.4.4-.7.1-.3.1-.5 0-.6-.1-.1-.3-.2-.7-.2h-.9l-.2 1.7z" fill="white"/>
+            </svg>
+            <span class="planet-label">PHP</span>
+          </div>
+
+          <!-- C# — órbita 3, inicio 30°, 22s -->
+          <div class="planet" style="background:#9b4f96;--r:172px;--start:30deg;--dur:22s;" title="C#">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 3L3 10.5v11L16 29l13-7.5v-11L16 3z" fill="#9b4f96"/>
+              <path d="M10 19.5a6.5 6.5 0 010-7 6.5 6.5 0 015.5-3 6.5 6.5 0 014.5 1.8l-2 2a3.5 3.5 0 00-2.5-1 3.5 3.5 0 100 6.4 3.5 3.5 0 002.5-1l2 2A6.5 6.5 0 0115.5 22.5 6.5 6.5 0 0110 19.5z" fill="white"/>
+              <path d="M21 14h-1.5v-1.5h-1V14H17v1h1.5v1.5h1V15H21v-1zM24 14h-1.5v-1.5h-1V14h-1.5v1H21v1.5h1V15H24v-1z" fill="white"/>
+            </svg>
+            <span class="planet-label">C#</span>
+          </div>
+
+          <!-- Rust — órbita 3, inicio 120°, 25s reverso -->
+          <div class="planet rev" style="background:#1a1a1a;--r:172px;--start:120deg;--dur:25s;" title="Rust">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 2l1.3 2.6 2.9-.3-1 2.7 2.5 1.4-2.1 2 1.7 2.5-2.9.3-.1 3-2.3-1.8-2.3 1.8-.1-3-2.9-.3 1.7-2.5-2.1-2 2.5-1.4-1-2.7 2.9.3z" fill="#d33b21"/>
+              <circle cx="16" cy="16" r="7" fill="none" stroke="#d33b21" stroke-width="1.5"/>
+              <circle cx="16" cy="16" r="3.5" fill="#d33b21"/>
+              <path d="M9 14h2M21 14h2M12 9.5l1 1.8M19 9.5l-1 1.8M12 22.5l1-1.8M19 22.5l-1-1.8M9 18h2M21 18h2" stroke="#d33b21" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <span class="planet-label">Rust</span>
+          </div>
+
+          <!-- Go — órbita 3, inicio 210°, 20s -->
+          <div class="planet" style="background:#00acd7;--r:172px;--start:210deg;--dur:20s;" title="Go">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12.5h22v7H5z" fill="white"/>
+              <text x="16" y="18.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" font-weight="900" fill="#00acd7">Go</text>
+              <circle cx="6.5" cy="13.5" r=".8" fill="#00acd7"/>
+              <circle cx="25.5" cy="13.5" r=".8" fill="#00acd7"/>
+            </svg>
+            <span class="planet-label">Go</span>
+          </div>
+
+          <!-- Ruby — órbita 3, inicio 300°, 27s reverso -->
+          <div class="planet rev" style="background:#9b111e;--r:172px;--start:300deg;--dur:27s;" title="Ruby">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="16,4 26,9 26,23 16,28 6,23 6,9" fill="#cc342d"/>
+              <polygon points="16,4 26,9 21,8 16,8 11,8 6,9" fill="#e8c4b8"/>
+              <polygon points="6,9 11,8 11,22 6,23" fill="#ad2a1a"/>
+              <polygon points="26,9 21,8 21,22 26,23" fill="#ad2a1a"/>
+              <polygon points="11,8 16,8 21,8 21,22 16,26 11,22" fill="#cc342d"/>
+              <polygon points="16,8 21,8 19,14 16,16 13,14 11,8" fill="rgba(255,255,255,0.25)"/>
+              <polygon points="16,26 11,22 13,14 16,16 19,14 21,22" fill="#7d1a0e"/>
+            </svg>
+            <span class="planet-label">Ruby</span>
+          </div>
+
+        </div><!-- /solar-wrap -->
+      </section>
+
+      <!-- Topic Cards -->
+      <section class="card-grid">
+
+        <!-- Card 1 - Fundamentos -->
+        <div class="neo-brutal-card p-6 reveal" style="transition-delay:0.1s;">
+          <div class="card-icon" style="background:#99d4ae;">🗺️</div>
+          <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:0.5rem;line-height:1.3;">
+            Fundamentos de la Programación
+          </h3>
+          <p style="font-size:13px;color:#8a938b;line-height:1.6;flex:1;margin-bottom:1rem;">
+            El arte de dar instrucciones paso a paso. Aprende los pilares que sostienen todo el universo del software.
+          </p>
+          <div class="card-footer">
+            <span class="card-modules" style="color:#ffb2bb;">12 Módulos</span>
+            <div class="card-btn" style="background:#99d4ae;">→</div>
+          </div>
+        </div>
+
+        <!-- Card 2 - POO -->
+        <div class="neo-brutal-card p-6 reveal" style="transition-delay:0.2s;">
+          <div class="card-icon" style="background:#ffb2bb;">📦</div>
+          <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:0.5rem;line-height:1.3;">
+            Programación Orientada a Objetos
+          </h3>
+          <p style="font-size:13px;color:#8a938b;line-height:1.6;flex:1;margin-bottom:1rem;">
+            Modelando el mundo real a través de objetos y clases. Domina la abstracción y la modularidad.
+          </p>
+          <div class="card-footer">
+            <span class="card-modules" style="color:#99d4ae;">8 Módulos</span>
+            <div class="card-btn" style="background:#ffb2bb;">→</div>
+          </div>
+        </div>
+
+        <!-- Card 3 - Estructuras -->
+        <div class="neo-brutal-card p-6 reveal" style="transition-delay:0.3s;">
+          <div class="card-icon" style="background:#7bd1fa;">🕸️</div>
+          <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:0.5rem;line-height:1.3;">
+            Estructura de Datos
+          </h3>
+          <p style="font-size:13px;color:#8a938b;line-height:1.6;flex:1;margin-bottom:1rem;">
+            Organizando la información para resolver problemas complejos. La base de la eficiencia algorítmica.
+          </p>
+          <div class="card-footer">
+            <span class="card-modules" style="color:#7bd1fa;">15 Módulos</span>
+            <div class="card-btn" style="background:#7bd1fa;">→</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Progress Widget -->
+      <section class="progress-section reveal-scale" style="transition-delay:0.4s;">
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+          <svg width="72" height="72" viewBox="0 0 64 64" style="flex-shrink:0;">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#333440" stroke-width="6"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#b4f0c9" stroke-width="6"
+              stroke-dasharray="163.4" stroke-dashoffset="107.8"
+              stroke-linecap="round" transform="rotate(-90 32 32)"/>
+            <text x="32" y="37" text-anchor="middle" fill="white" font-size="12" font-weight="700"
+              font-family="JetBrains Mono, monospace">34%</text>
+          </svg>
+          <div style="flex:1;min-width:180px;">
+            <p style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;">Progreso de tu Enciclopedia</p>
+            <p style="font-size:13px;color:#8a938b;">Has completado 12 de 35 lecciones este mes.</p>
+          </div>
+          <button class="btn-primary">Continuar Investigación</button>
+        </div>
+      </section>
+
+    </div><!-- /content-wrapper -->
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="md:hidden fixed bottom-0 left-0 w-full h-16 z-50"
+    style="background:#1a1b26;border-top:2px solid #000;">
+    <div class="mobile-nav">
+      <a href="#" class="active">
+        <span class="material-symbols-outlined">menu_book</span>
+        <span>Lessons</span>
+      </a>
+      <a href="#">
+        <span class="material-symbols-outlined">settings</span>
+        <span>Settings</span>
+      </a>
+      <a href="#">
+        <span class="material-symbols-outlined">help</span>
+        <span>Help</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    // ===== SCROLL REVEAL =====
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-rotate')
+      .forEach(el => observer.observe(el));
+
+    // ===== PARALLAX FONDO =====
+    document.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      document.querySelectorAll('.absolute.rounded-full').forEach((el, i) => {
+        el.style.transform = `translateY(${scrollY * (0.04 + i * 0.02)}px)`;
+      });
+    });
+
+    // ===== CLICK EN PLANETAS =====
+    document.querySelectorAll('.planet').forEach(planet => {
+      planet.addEventListener('click', function () {
+        const label = this.querySelector('.planet-label');
+        if (label) {
+          const name = label.textContent.trim();
+          alert(`🚀 Explorando ${name}\n\nEste lenguaje te espera en futuras lecciones.\n💡 Prueba diferentes lenguajes para descubrir sus fortalezas.`);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

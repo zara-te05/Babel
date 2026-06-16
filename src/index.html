@@ -1,0 +1,492 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .page {
+    background: #12131d;
+    color: #e2e1f1;
+    font-family: 'Quicksand', sans-serif;
+    min-height: 600px;
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(60px);
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: #c0c9c0;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+
+  .btn-solid {
+    background: #b4f0c9;
+    border: 2px solid #000;
+    color: #003921;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+    transition: all 0.15s;
+  }
+  .btn-solid:hover { transform: translate(1px,1px); box-shadow: 2px 2px 0 #000; }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(180,240,201,0.12);
+    border: 1.5px solid rgba(180,240,201,0.3);
+    color: #99d4ae;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title span { color: #99d4ae; }
+
+  .hero-desc {
+    font-size: 15px;
+    color: #8a938b;
+    line-height: 1.65;
+    max-width: 380px;
+  }
+
+  .solar-wrap {
+    position: relative;
+    width: 360px;
+    height: 360px;
+    margin: 0 auto;
+  }
+
+  .orbit-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.07);
+    pointer-events: none;
+  }
+
+  .core {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #b4f0c9, #2d6e48);
+    border: 2px solid #000;
+    box-shadow: 0 0 32px rgba(180,240,201,0.2), 0 0 0 1px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 5;
+    animation: coreGlow 3s ease-in-out infinite;
+  }
+
+  .core-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #003921;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+  }
+
+  @keyframes coreGlow {
+    0%,100% { box-shadow: 0 0 24px rgba(180,240,201,0.2); }
+    50% { box-shadow: 0 0 48px rgba(180,240,201,0.4); }
+  }
+
+  .planet {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s;
+    overflow: hidden;
+  }
+
+  .planet:hover { filter: brightness(1.15); }
+
+  .planet svg { width: 26px; height: 26px; }
+
+  .planet-label {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: #8a938b;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .stars {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: #1e1f2a;
+    border: 2px solid #000;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 4px 4px 0 #000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #000; }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: #8a938b;
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .card-modules {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .card-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid #000;
+    box-shadow: 2px 2px 0 #000;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-size: 14px;
+  }
+  .card-btn:hover { transform: translate(1px,1px); box-shadow: 1px 1px 0 #000; }
+
+  .progress-bar-section {
+    background: #1e1f2a;
+    border: 2px solid #000;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 4px 4px 0 #000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .prog-circle { flex-shrink: 0; }
+
+  .prog-info { flex: 1; }
+  .prog-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .prog-sub { font-size: 13px; color: #8a938b; }
+
+  .btn-continue {
+    background: #b4f0c9;
+    border: 2px solid #000;
+    color: #003921;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #000;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.1s;
+  }
+  .btn-continue:hover { transform: translate(1px,1px); box-shadow: 2px 2px 0 #000; }
+
+  @keyframes orbit-anim {
+    from { transform: translate(-50%,-50%) rotate(var(--start)) translateX(var(--r)) rotate(calc(-1 * var(--start))); }
+    to { transform: translate(-50%,-50%) rotate(calc(var(--start) + 360deg)) translateX(var(--r)) rotate(calc(-1 * (var(--start) + 360deg))); }
+  }
+
+  .planet { animation: orbit-anim var(--dur) linear infinite; }
+  .planet.rev { animation-direction: reverse; }
+
+  .nav-bot {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #1a1b26;
+    border-top: 2px solid #000;
+    padding: 10px 0;
+    margin: 20px -24px -24px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    color: #8a938b;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 4px 16px;
+  }
+  .nav-item.active { color: #99d4ae; }
+  .nav-item:hover { color: #c0c9c0; }
+  .nav-item .icon { font-size: 20px; }
+</style>
+
+<div class="page">
+  <div class="bg-blob" style="width:400px;height:400px;background:rgba(180,240,201,0.04);top:-100px;right:-100px;"></div>
+  <div class="bg-blob" style="width:300px;height:300px;background:rgba(123,209,250,0.04);bottom:0;left:100px;"></div>
+
+  <div class="header">
+    <span class="logo">Centipede</span>
+    <div class="nav-links">
+      <button class="btn-ghost">Log In</button>
+      <button class="btn-solid">Sign Up</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <div class="badge">🚀 Comienza tu viaje</div>
+      <div class="hero-title">Tu <span>Ruta de</span><br>Aprendizaje</div>
+      <p class="hero-desc">Selecciona el tema que deseas explorar este semestre. Cada camino desbloquea nuevos desafíos y habilidades únicas.</p>
+    </div>
+
+    <div class="solar-wrap" id="solar">
+      <svg class="stars" viewBox="0 0 360 360" fill="none">
+        <circle cx="40" cy="30" r="1.2" fill="white" opacity="0.4"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.1s" repeatCount="indefinite"/></circle>
+        <circle cx="300" cy="50" r="1" fill="white" opacity="0.3"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="1.6s" repeatCount="indefinite"/></circle>
+        <circle cx="20" cy="180" r="1.5" fill="white" opacity="0.25"><animate attributeName="opacity" values="0.15;0.7;0.15" dur="2.5s" repeatCount="indefinite"/></circle>
+        <circle cx="340" cy="200" r="1" fill="white" opacity="0.3"><animate attributeName="opacity" values="0.1;0.9;0.1" dur="1.9s" repeatCount="indefinite"/></circle>
+        <circle cx="60" cy="320" r="1.2" fill="white" opacity="0.35"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.3s" repeatCount="indefinite"/></circle>
+        <circle cx="290" cy="310" r="0.9" fill="white" opacity="0.25"><animate attributeName="opacity" values="0.1;0.7;0.1" dur="1.7s" repeatCount="indefinite"/></circle>
+        <circle cx="160" cy="20" r="1.1" fill="white" opacity="0.3"><animate attributeName="opacity" values="0.15;0.85;0.15" dur="2.8s" repeatCount="indefinite"/></circle>
+        <circle cx="200" cy="340" r="1.3" fill="white" opacity="0.2"><animate attributeName="opacity" values="0.1;0.6;0.1" dur="1.4s" repeatCount="indefinite"/></circle>
+      </svg>
+
+      <div class="orbit-ring" style="width:160px;height:160px;"></div>
+      <div class="orbit-ring" style="width:240px;height:240px;border-color:rgba(255,178,187,0.07);"></div>
+      <div class="orbit-ring" style="width:340px;height:340px;border-color:rgba(192,232,255,0.06);"></div>
+
+      <div class="core"><div class="core-text">CODE<br>CORE</div></div>
+
+      <!-- JS orbit-1 r=80px start=0° dur=13s -->
+      <div class="planet" style="background:#f7df1e;--r:80px;--start:0deg;--dur:13s;" title="JavaScript">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0V0z" fill="#f7df1e"/><path d="M6.08 17.6l1.74-1.05c.34.6.65 1.1 1.39 1.1.71 0 1.16-.28 1.16-1.35V10.3h2.14v6.04c0 2.23-1.31 3.24-3.22 3.24-1.72 0-2.72-.9-3.21-1.98zm7.4-.27l1.74-1.05c.46.75 1.06 1.3 2.11 1.3 .89 0 1.46-.44 1.46-1.06 0-.73-.58-1-1.56-1.42l-.54-.23c-1.54-.66-2.57-1.48-2.57-3.22 0-1.6 1.22-2.82 3.13-2.82 1.36 0 2.33.47 3.03 1.7l-1.66 1.07c-.36-.65-.75-.9-1.36-.9-.62 0-1.01.39-1.01.9 0 .63.39.88 1.3 1.27l.54.23c1.82.78 2.85 1.57 2.85 3.35 0 1.92-1.51 2.97-3.53 2.97-1.98 0-3.26-.94-3.88-2.17z"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">JS</span>
+      </div>
+
+      <!-- Python orbit-1 r=80px start=180° rev dur=16s -->
+      <div class="planet rev" style="background:#3776ab;--r:80px;--start:180deg;--dur:16s;" title="Python">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.9 2C9.2 2 9.4 3.1 9.4 3.1l0 1.1h2.6v.3H6.8S5 4.3 5 7.1c0 2.8 1.6 2.7 1.6 2.7h.9V8.6s-.1-1.6 1.6-1.6h2.8S13.5 7 13.5 5.7V3.3S13.7 2 11.9 2zm-1.5 1c.3 0 .5.2.5.5s-.2.5-.5.5-.5-.2-.5-.5.2-.5.5-.5z" fill="#ffd43b"/><path d="M12.1 22c2.7 0 2.5-1.1 2.5-1.1v-1.1h-2.6v-.3h5.2s1.8.2 1.8-2.6c0-2.8-1.6-2.7-1.6-2.7h-.9v1.2s.1 1.6-1.6 1.6h-2.8s-1.6.1-1.6 1.3v2.4s-.2 1.3 1.6 1.3zm1.5-1c-.3 0-.5-.2-.5-.5s.2-.5.5-.5.5.2.5.5-.2.5-.5.5z" fill="#3776ab"/><path d="M9.4 4.2v1.5c0 1.6 1.4 2.9 2.9 2.9h2.4c1.4 0 2.5 1.2 2.5 2.5v4.7c0 1.3-1.1 2.3-2.5 2.3h-4.8c-1.6 0-2.9-1.3-2.9-2.9V7.1c0-1.6 1.3-2.9 2.9-2.9h-.5zm5.3 10c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5z" fill="#ffd43b" opacity="0"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">Python</span>
+      </div>
+
+      <!-- Java orbit-2 r=120px start=90° dur=19s -->
+      <div class="planet" style="background:#007396;--r:120px;--start:90deg;--dur:19s;" title="Java">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.85 17.1s-.86.5.61.67c1.79.2 2.7.18 4.67-.2 0 0 .52.32 1.24.6-4.4 1.89-9.97-.11-6.52-1.07zm-.54-2.35s-.96.71.51.86c1.9.2 3.4.21 5.99-.29 0 0 .36.37.93.57-5.3 1.55-11.21.12-7.43-1.14z" fill="#f89820"/><path d="M13.17 10.36c1.08 1.24-.28 2.36-.28 2.36s2.74-1.41 1.48-3.18c-1.17-1.65-2.07-2.47 2.8-5.3 0 0-7.65 1.91-3.99 6.12z" fill="#f89820"/><path d="M18.37 18.81s.63.52-.7.93c-2.52.76-10.51 1-12.73.03-.8-.35.7-.83.7-.83s-.8.57 1.15.66c3.27.14 8.26-.13 9.94-.56 1.32-.35 1.64-1.23 1.64-1.23z" fill="#f89820"/><path d="M9.38 13.03s-3.7.88-1.31 1.2c1.01.13 3.02.1 4.89-.05 1.53-.12 3.07-.38 3.07-.38s-.54.23-.93.5c-3.74.98-10.97.52-8.89-.49 1.75-.84 3.17-.78 3.17-.78zm6.64 3.7c3.8-1.98 2.05-3.88 0.82-3.62-.3.06-.44.12-.44.12s.11-.18.33-.26c2.44-.86 4.32 2.53-.79 3.87 0 0 .06-.05.08-.11z" fill="#f89820"/><path d="M14.52 2s2.12 2.12-2.01 5.38C9.23 9.89 11.35 11.34 12.51 13 10.78 11.09 9.5 9.38 10.8 7.59 12.69 5.04 15.86 4.28 14.52 2z" fill="#f89820"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">Java</span>
+      </div>
+
+      <!-- PHP orbit-2 r=120px start=270° rev dur=17s -->
+      <div class="planet rev" style="background:#777bb4;--r:120px;--start:270deg;--dur:17s;" title="PHP">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="12" rx="10" ry="6" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/><path d="M7.01 12.05l.6-2.87h1.44c.69 0 1.1.28 1.07.88-.04.8-.7 1.35-1.5 1.38H7.62l-.14.61H7.01zm.75-1.15h.71c.37 0 .67-.24.7-.57.02-.24-.15-.37-.43-.37h-.73l-.25 1zm4 1.15l.6-2.87h1.48c.57 0 .91.26.88.72-.05.72-.66 1.24-1.37 1.22h-.68l-.16.93h-.75zm.77-1.36h.62c.32 0 .57-.2.6-.48.02-.2-.11-.31-.36-.31h-.65l-.21.79zm2.45 1.36l.6-2.87h.74l-.2.98h.18l.96-.98h.9l-1.13 1.08.68 1.79h-.84l-.49-1.3h-.2l-.28 1.3h-.72z" fill="white"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">PHP</span>
+      </div>
+
+      <!-- C# orbit-3 r=170px start=30° dur=22s -->
+      <div class="planet" style="background:#512bd4;--r:170px;--start:30deg;--dur:22s;" title="C#">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 2.27l7.5 4.33v8.66l-7.5 4.33-7.5-4.33V6.6z" fill="#9b4f96" opacity="0"/><path d="M12 3l8.66 5v10L12 23l-8.66-5V8z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/><path d="M7.88 15.52a5 5 0 01-1.82-4.84 5.07 5.07 0 013.47-3.88c1.6-.49 3.32-.23 4.7.7l-1.12 1.94a2.63 2.63 0 00-3.87 2.56A2.63 2.63 0 0012 14.57l1.13 1.94a5 5 0 01-5.24-.99z" fill="white"/><path d="M15 11h-1v-1h-1v1h-1v1h1v1h1v-1h1v-1zm2 0h-1v-1h-1v1h-1v1h1v1h1v-1h1v-1z" fill="rgba(255,255,255,0.8)"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">C#</span>
+      </div>
+
+      <!-- Rust orbit-3 r=170px start=120° rev dur=25s -->
+      <div class="planet rev" style="background:#ce4a00;--r:170px;--start:120deg;--dur:25s;" title="Rust">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.03 5.23l.97-1.9.97 1.9-1.94 0zm7.45 7.83h1.62l-.82 1.42-.8-1.42zm-16.1 0h1.62l-.81 1.42-.81-1.42z" fill="white" opacity="0.7"/><path d="M12 6.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 1.5a4 4 0 110 8 4 4 0 010-8z" fill="white" opacity="0.9"/><path d="M10.5 10h3v.8h-1v2.4h-1v-2.4h-1V10z" fill="white"/><circle cx="12" cy="12" r="1.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">Rust</span>
+      </div>
+
+      <!-- Go orbit-3 r=170px start=210° dur=20s -->
+      <div class="planet" style="background:#00acd7;--r:170px;--start:210deg;--dur:20s;" title="Go">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.74 10.1c-.06 0-.08-.03-.05-.08l.27-.35c.03-.05.1-.08.16-.08h5.6c.06 0 .08.04.05.09l-.22.34c-.03.05-.1.09-.16.09L3.74 10.1zm-1.06 1.26c-.06 0-.08-.03-.05-.08l.27-.35c.03-.05.1-.08.16-.08H9.2c.06 0 .09.04.07.09l-.1.33c-.02.06-.08.1-.14.1L2.68 11.36zm1.71 1.26c-.06 0-.08-.04-.05-.09l.18-.33c.03-.05.09-.09.15-.09h2.46c.06 0 .09.04.09.1l-.03.32c0 .06-.06.1-.12.1L4.39 12.62zm10.23-3.05c-.94.24-1.59.42-2.51.66-.23.06-.24.07-.43-.15-.22-.25-.38-.41-.69-.56-.93-.46-1.83-.33-2.67.2-.99.63-1.5 1.56-1.49 2.73.01 1.16.81 2.12 1.96 2.27 1 .13 1.83-.22 2.48-.98.13-.16.25-.33.4-.53H9.54c-.32 0-.4-.2-.29-.46.2-.48.57-1.29.78-1.7.05-.1.16-.26.39-.26h4.51c-.02.27-.02.54-.06.81-.11.86-.39 1.65-.88 2.36-.82 1.17-1.92 1.91-3.36 2.12-1.2.18-2.31-.08-3.27-.83-1.02-.79-1.54-1.85-1.57-3.13-.04-1.46.47-2.73 1.45-3.78C8.37 7.7 9.54 7.04 10.94 6.88c1.12-.13 2.18.08 3.11.77.6.44 1.03 1.03 1.32 1.73.07.12.02.18-.15.19z" fill="white"/><path d="M18.06 14.06c-1.11-.26-1.87-.9-2.16-2.05-.06-.25-.09-.51-.13-.77l-.01-.08h.88c.11 0 .19.04.22.14.04.14.09.28.16.41.3.59.78.87 1.45.81.49-.04.88-.28 1.11-.72.26-.5.25-1.02-.04-1.5-.25-.42-.63-.64-1.11-.69-.06 0-.12-.01-.18-.01h-.35l.21-.69h.24c.37 0 .72-.09 1-.33.32-.27.47-.61.42-.99-.06-.5-.44-.87-.95-.92-.47-.05-.88.12-1.15.51-.15.21-.21.46-.25.72l-.02.1H16.7l.02-.12c.08-.63.31-1.19.78-1.62.5-.45 1.1-.65 1.77-.6 1.23.09 2.07.92 2.13 2.14.04.7-.22 1.29-.75 1.73-.12.1-.25.18-.39.26.22.07.42.16.6.29.65.45.97 1.07.94 1.85-.04 1.17-.82 2.16-1.96 2.46-.26.07-.52.1-.78.1-.27 0-.54-.04-.79-.12l-.21-.1z" fill="white"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">Go</span>
+      </div>
+
+      <!-- Ruby orbit-3 r=170px start=300° rev dur=27s -->
+      <div class="planet rev" style="background:#cc342d;--r:170px;--start:300deg;--dur:27s;" title="Ruby">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.2 14.2l-6.1 5.8-10.2-1 10.7-9.3 5.6 4.5z" fill="rgba(255,255,255,0.3)"/><path d="M14.1 20l5.7-5.5.5-8.5-9.5 7.6L14.1 20z" fill="rgba(255,255,255,0.5)"/><path d="M20.3 6.1L14 5l-3.5.6 6 8.9 4.2-7.4-.4-1z" fill="rgba(255,255,255,0.7)"/><path d="M14 5l-3.5.6-5.9 4.1L20.3 6l-6.3-1z" fill="white"/><path d="M4.6 9.7l.3 7.7 5.6-3.8L4.6 9.7z" fill="rgba(255,255,255,0.4)"/></svg>
+        <span class="planet-label" style="bottom:-18px;left:50%;transform:translateX(-50%)">Ruby</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-icon" style="background:#99d4ae;">
+        <span style="font-size:22px;">🗺️</span>
+      </div>
+      <div class="card-title">Fundamentos de la Programación</div>
+      <div class="card-desc">El arte de dar instrucciones paso a paso. Aprende los pilares que sostienen todo el universo del software.</div>
+      <div class="card-footer">
+        <span class="card-modules" style="color:#ffb2bb;">12 Módulos</span>
+        <div class="card-btn" style="background:#99d4ae;">→</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#ffb2bb;">
+        <span style="font-size:22px;">📦</span>
+      </div>
+      <div class="card-title">Programación Orientada a Objetos</div>
+      <div class="card-desc">Modelando el mundo real a través de objetos y clases. Domina la abstracción y la modularidad.</div>
+      <div class="card-footer">
+        <span class="card-modules" style="color:#99d4ae;">8 Módulos</span>
+        <div class="card-btn" style="background:#ffb2bb;">→</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#7bd1fa;">
+        <span style="font-size:22px;">🕸️</span>
+      </div>
+      <div class="card-title">Estructura de Datos</div>
+      <div class="card-desc">Organizando la información para resolver problemas complejos. La base de la eficiencia algorítmica.</div>
+      <div class="card-footer">
+        <span class="card-modules" style="color:#7bd1fa;">15 Módulos</span>
+        <div class="card-btn" style="background:#7bd1fa;">→</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar-section">
+    <div class="prog-circle">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#333440" stroke-width="6"/>
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#b4f0c9" stroke-width="6"
+          stroke-dasharray="163.4" stroke-dashoffset="107.8"
+          stroke-linecap="round" transform="rotate(-90 32 32)"/>
+        <text x="32" y="37" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="JetBrains Mono">34%</text>
+      </svg>
+    </div>
+    <div class="prog-info">
+      <div class="prog-title">Progreso de tu Enciclopedia</div>
+      <div class="prog-sub">Has completado 12 de 35 lecciones este mes.</div>
+    </div>
+    <button class="btn-continue">Continuar Investigación</button>
+  </div>
+
+  <div class="nav-bot">
+    <div class="nav-item active">
+      <span class="icon">📚</span>
+      <span>Lessons</span>
+    </div>
+    <div class="nav-item">
+      <span class="icon">⚙️</span>
+      <span>Settings</span>
+    </div>
+    <div class="nav-item">
+      <span class="icon">❓</span>
+      <span>Help</span>
+    </div>
+  </div>
+</div>
