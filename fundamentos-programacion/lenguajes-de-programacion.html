@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Babel Encyclopedia - 02_EL_LENGUAJE_DE_LA_MAQUINA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            -webkit-font-smoothing: antialiased;
+            font-family: 'Hanken Grotesk', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Utilidades */
+        .text-glow {
+            text-shadow: 0 0 30px rgba(184, 195, 255, 0.15);
+        }
+
+        .ghost-border {
+            border: 1px solid rgba(142, 144, 162, 0.1);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, rgba(184, 195, 255, 0.3) 0%, rgba(184, 195, 255, 0) 100%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #11131c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2e5bff;
+            border-radius: 4px;
+        }
+
+        .language-item {
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+        .language-item:hover {
+            background-color: rgba(184, 195, 255, 0.05);
+            padding-left: 0.5rem;
+        }
+
+        .method-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .method-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover .arrow-circle {
+            background-color: #b8c3ff;
+            color: #11131c;
+            border-color: #b8c3ff;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 640px) {
+            .text-display-lg {
+                font-size: 2.5rem !important;
+                /* 40px */
+            }
+            .text-headline-md {
+                font-size: 1.5rem !important;
+                /* 24px */
+            }
+            .text-body-lg {
+                font-size: 1rem !important;
+                /* 16px */
+            }
+            .text-body-md {
+                font-size: 0.9rem !important;
+            }
+            .px-margin-desktop {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            .container-padding {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .text-display-lg {
+                font-size: 3.5rem !important;
+                /* 56px */
+            }
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary": "#5b1a00",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-secondary-fixed": "#171c20",
+                        "surface-bright": "#373943",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed": "#dde1ff",
+                        "on-background": "#e2e1ef",
+                        "surface-container": "#1d1f29",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "secondary": "#c3c7cd",
+                        "outline": "#8e90a2",
+                        "on-tertiary-container": "#ffece6",
+                        "surface-container-low": "#191b24",
+                        "on-secondary": "#2c3136",
+                        "on-surface": "#e2e1ef",
+                        "outline-variant": "#434656",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#11131c",
+                        "on-primary": "#002388",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "on-secondary-container": "#b4b9bf",
+                        "tertiary": "#ffb59b",
+                        "surface-tint": "#b8c3ff",
+                        "secondary-container": "#454a4f",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-on-surface": "#2e303a",
+                        "surface-container-lowest": "#0c0e17",
+                        "surface-variant": "#33343e",
+                        "surface-container-highest": "#33343e",
+                        "on-primary-fixed": "#001356",
+                        "surface-container-high": "#282933",
+                        "on-primary-container": "#efefff",
+                        "tertiary-container": "#c24100",
+                        "on-primary-fixed-variant": "#0035be",
+                        "secondary-fixed": "#dfe3e9",
+                        "inverse-primary": "#124af0",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "surface": "#11131c",
+                        "primary-container": "#2e5bff",
+                        "primary": "#b8c3ff",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e2e1ef",
+                        "on-surface-variant": "#c4c5d9",
+                        "error-container": "#93000a",
+                        "background": "#11131c"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "margin-desktop": "64px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "label-sm": ["Space Mono", "monospace"],
+                        "label-caps": ["Space Mono", "monospace"],
+                        "headline-md": ["Bodoni Moda", "serif"],
+                        "display-lg": ["Bodoni Moda", "serif"],
+                        "body-lg": ["Hanken Grotesk", "sans-serif"],
+                        "body-md": ["Hanken Grotesk", "sans-serif"]
+                    },
+                    fontSize: {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "label-caps": ["10px", { "lineHeight": "1.2", "letterSpacing": "0.2em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="selection:bg-primary selection:text-on-primary">
+    <!-- Top Navigation Bar (responsive) -->
+    <nav
+        class="fixed top-0 left-0 w-full z-50 bg-surface/95 backdrop-blur-md px-4 md:px-8 lg:px-12 py-3 flex justify-between items-center border-b-2 border-primary">
+        <span class="font-headline-md text-headline-md font-black text-primary uppercase tracking-tighter text-xl md:text-2xl">BABEL</span>
+        <span class="font-label-caps text-label-caps text-on-secondary-container tracking-widest text-[10px] md:text-xs hidden sm:block">02 · EL LENGUAJE DE LA MAQUINA</span>
+        <span class="font-label-caps text-label-caps text-on-secondary-container tracking-widest text-[10px] sm:hidden">02</span>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="w-full pt-20 md:pt-24 min-h-screen">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-12 md:py-16">
+            <!-- Header Section -->
+            <header class="mb-16 md:mb-24 text-center md:text-left">
+                <div class="font-label-caps text-label-caps text-primary mb-4 tracking-[0.3em] text-xs md:text-[10px]">ENZYKLOPÄDIE_BABEL</div>
+                <h1 class="font-display-lg text-display-lg text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 md:mb-8 leading-none italic text-glow break-words">
+                    2. EL LENGUAJE DE LA MAQUINA</h1>
+                <div class="section-divider mb-8 md:mb-12"></div>
+                <p
+                    class="font-body-lg text-body-lg max-w-[800px] text-on-surface-variant leading-relaxed mx-auto md:mx-0 text-base sm:text-lg">
+                    Un lenguaje de programación no es solo una herramienta técnica; es el <span
+                        class="text-primary font-bold">traductor universal</span> entre la idea de su programador y el
+                    procesador.
+                    Permite convertir ideas complejas en instrucciones precisas que la máquina puede ejecutar.
+                </p>
+            </header>
+
+            <!-- Types Comparison -->
+            <section class="mb-24 md:mb-32">
+                <div class="flex items-center gap-4 mb-8 md:mb-12">
+                    <span
+                        class="font-label-sm text-label-sm bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] md:text-xs">SECCIÓN
+                        01</span>
+                    <h2 class="font-headline-md text-headline-md italic uppercase text-2xl md:text-3xl">Categorías de Lenguaje</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-px bg-outline-variant ghost-border rounded-lg overflow-hidden">
+                    <!-- Low Level -->
+                    <div class="bg-surface-container-low p-6 sm:p-8 lg:p-12">
+                        <div class="font-label-caps text-label-caps text-primary mb-4 md:mb-6 text-xs">NIVEL_INFERIOR [LOW_LEVEL]</div>
+                        <h3 class="font-headline-md text-headline-md mb-3 text-xl md:text-2xl">Interacción con el Hardware</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant mb-6 md:mb-8 text-sm sm:text-base">Diseñados para hablar
+                            directamente con los componentes físicos. Ofrecen control total y velocidad máxima, pero
+                            requieren un conocimiento profundo de la arquitectura.</p>
+                        <div class="space-y-2">
+                            <div class="language-item flex justify-between items-center py-2 md:py-3 border-b border-outline-variant/30">
+                                <span class="font-label-sm text-label-sm text-xs sm:text-sm">ENSAMBLADOR (ASM)</span>
+                                <span
+                                    class="material-symbols-outlined text-primary text-sm">precision_manufacturing</span>
+                            </div>
+                            <div class="language-item flex justify-between items-center py-2 md:py-3 border-b border-outline-variant/30">
+                                <span class="font-label-sm text-label-sm text-xs sm:text-sm">C / C++</span>
+                                <span
+                                    class="material-symbols-outlined text-primary text-sm">settings_input_component</span>
+                            </div>
+                            <div class="language-item flex justify-between items-center py-2 md:py-3 border-b border-outline-variant/30">
+                                <span class="font-label-sm text-label-sm text-xs sm:text-sm">RUST</span>
+                                <span
+                                    class="material-symbols-outlined text-primary text-sm">settings_input_component</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- High Level -->
+                    <div class="bg-surface-container-low p-6 sm:p-8 lg:p-12">
+                        <div class="font-label-caps text-label-caps text-tertiary mb-4 md:mb-6 text-xs">NIVEL_SUPERIOR [HIGH_LEVEL]</div>
+                        <h3 class="font-headline-md text-headline-md mb-3 text-xl md:text-2xl">Abstracción y Legibilidad</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant mb-6 md:mb-8 text-sm sm:text-base">Utilizan una sintaxis similar
+                            al inglés, facilitando la escritura y mantenimiento del software. Priorizan la productividad
+                            del desarrollador sobre el control de bajo nivel.</p>
+                        <div class="space-y-2">
+                            <div class="language-item flex justify-between items-center py-2 md:py-3 border-b border-outline-variant/30">
+                                <span class="font-label-sm text-label-sm text-xs sm:text-sm">C# / JAVA</span>
+                                <span class="material-symbols-outlined text-tertiary text-sm">psychology</span>
+                            </div>
+                            <div class="language-item flex justify-between items-center py-2 md:py-3 border-b border-outline-variant/30">
+                                <span class="font-label-sm text-label-sm text-xs sm:text-sm">PYTHON / KOTLIN</span>
+                                <span class="material-symbols-outlined text-tertiary text-sm">language</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Execution Flow -->
+            <section class="mb-24 md:mb-32">
+                <div class="flex items-center gap-4 mb-8 md:mb-12">
+                    <span
+                        class="font-label-sm text-label-sm bg-primary-container text-on-primary-container px-2 py-1 rounded text-[10px] md:text-xs">SECCIÓN
+                        02</span>
+                    <h2 class="font-headline-md text-headline-md italic uppercase text-2xl md:text-3xl">Métodos de Procesamiento</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                    <div class="method-card bg-surface-container-high p-6 sm:p-8 lg:p-10 ghost-border rounded-lg">
+                        <span class="material-symbols-outlined text-primary mb-4 text-3xl md:text-4xl">inventory_2</span>
+                        <h4 class="font-label-caps text-label-caps mb-3 text-xs">COMPILADOS</h4>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm sm:text-base">El código completo se transforma en
+                            un archivo ejecutable antes de usarse. Es como traducir un libro entero antes de entregarlo
+                            al lector.</p>
+                    </div>
+                    <div class="method-card bg-surface-container-high p-6 sm:p-8 lg:p-10 ghost-border rounded-lg">
+                        <span class="material-symbols-outlined text-tertiary mb-4 text-3xl md:text-4xl">interpreter_mode</span>
+                        <h4 class="font-label-caps text-label-caps mb-3 text-xs">INTERPRETADOS</h4>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm sm:text-base">El código se traduce y ejecuta
+                            sobre la marcha, línea por línea. Funciona como un intérprete que traduce una conversación
+                            en tiempo real.</p>
+                    </div>
+                    <div class="method-card bg-primary p-6 sm:p-8 lg:p-10 rounded-lg text-on-primary flex flex-col justify-center">
+                        <div class="font-label-caps text-label-caps mb-2 opacity-80 text-xs">RESUMEN_TÉCNICO</div>
+                        <div class="font-label-sm text-label-sm italic leading-tight text-sm sm:text-base">"La eficiencia de un sistema
+                            depende del equilibrio entre la facilidad de desarrollo y la velocidad de ejecución final."
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer Navigation -->
+            <footer class="pt-12 md:pt-24 border-t border-outline-variant flex flex-col md:flex-row justify-between items-end gap-8 md:gap-12">
+                <a class="nav-link group flex items-center gap-4 hover:no-underline ml-auto" href="/src/1. FUNDAMENTOS DE PROGRAMACION/3.Interpretado_vs_compilado.html">
+                    <div class="text-right">
+                        <div
+                            class="font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors text-xs">
+                            PRÓXIMA FASE
+                        </div>
+                        <div class="font-headline-md text-headline-md italic text-lg md:text-2xl">LENGUAJES DE PROGRAMACION</div>
+                    </div>
+                    <div
+                        class="arrow-circle w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all duration-300">
+                        <span class="material-symbols-outlined text-xl md:text-3xl">arrow_forward</span>
+                    </div>
+                </a>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer
+        class="w-full px-4 md:px-8 lg:px-12 py-4 md:py-6 bg-surface-container text-on-surface border-t-2 border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-8">
+        <div class="font-headline-md text-headline-md text-primary text-xl md:text-2xl">BABEL</div>
+        <div class="font-label-caps text-label-caps opacity-50 text-[10px] tracking-widest">
+            ©2026 BABEL · MIT_LICENSE
+        </div>
+    </footer>
+
+    <!-- Micro-interactions Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section, header');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+            sections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                observer.observe(section);
+            });
+
+            // Mostrar header inmediatamente
+            const header = document.querySelector('header');
+            if (header) {
+                setTimeout(() => {
+                    header.style.opacity = '1';
+                    header.style.transform = 'translateY(0)';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+
+</html>

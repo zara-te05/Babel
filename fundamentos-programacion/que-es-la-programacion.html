@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Babel | El Laberinto de Comandos</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface": "#e2e1ef",
+                        "surface-dim": "#11131c",
+                        "on-secondary-container": "#b4b9bf",
+                        "surface-bright": "#373943",
+                        "surface-container-lowest": "#0c0e17",
+                        "inverse-primary": "#124af0",
+                        "surface": "#11131c",
+                        "surface-tint": "#b8c3ff",
+                        "on-tertiary-container": "#ffece6",
+                        "surface-container-highest": "#33343e",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-tertiary": "#5b1a00",
+                        "primary": "#b8c3ff",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-on-surface": "#2e303a",
+                        "on-surface-variant": "#c4c5d9",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "on-primary-container": "#efefff",
+                        "primary-fixed": "#dde1ff",
+                        "tertiary": "#ffb59b",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#191b24",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "inverse-surface": "#e2e1ef",
+                        "background": "#11131c",
+                        "on-primary": "#002388",
+                        "on-background": "#e2e1ef",
+                        "surface-variant": "#33343e",
+                        "surface-container": "#1d1f29",
+                        "on-primary-fixed-variant": "#0035be",
+                        "secondary-fixed": "#dfe3e9",
+                        "on-secondary-fixed": "#171c20",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "outline": "#8e90a2",
+                        "on-secondary": "#2c3136",
+                        "outline-variant": "#434656",
+                        "surface-container-high": "#282933",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "secondary": "#c3c7cd",
+                        "tertiary-container": "#c24100",
+                        "on-error": "#690005",
+                        "on-primary-fixed": "#001356",
+                        "primary-container": "#2e5bff",
+                        "secondary-container": "#454a4f"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Space Mono"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "display-lg": ["Bodoni Moda"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Bodoni Moda"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", { lineHeight: "1.7", fontWeight: "400" }],
+                        "label-sm": ["12px", { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "display-lg-mobile": ["40px", { lineHeight: "1.2", fontWeight: "700" }],
+                        "display-lg": ["64px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            -webkit-font-smoothing: antialiased;
+        }
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: #b8c3ff;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+        .grid-cell {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            aspect-ratio: 1;
+        }
+        .player-unit {
+            background-color: #b8c3ff;
+            box-shadow: 0 0 15px rgba(184, 195, 255, 0.5);
+            border-radius: 2px;
+        }
+        .labyrinth-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        #game-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+        }
+        @media (min-width: 1024px) {
+            #game-grid {
+                min-height: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-body-md selection:bg-primary selection:text-on-primary min-h-screen flex flex-col">
+    <main class="flex-1 py-12 px-margin-desktop max-w-container-max mx-auto w-full">
+        <!-- Header -->
+        <header class="mb-16">
+            <div class="flex items-baseline gap-4 mb-8">
+                <span class="font-headline-md text-primary text-2xl uppercase tracking-tighter">Babel</span>
+                <div class="h-px flex-1 bg-outline-variant/30"></div>
+                <span class="font-label-sm text-on-secondary-container">FUNDAMENTOS DE PROGRAMACION</span>
+            </div>
+            <div class="max-w-3xl">
+                <h1 class="font-display-lg text-5xl md:text-64px mb-8 text-on-surface leading-tight">
+                    Lección 1: <br />
+                    <span class="italic font-normal">El Laberinto</span>
+                </h1>
+                <p class="font-body-lg text-xl text-on-surface-variant leading-relaxed max-w-2xl">
+                    La programación es <span class="text-on-surface font-semibold">la arquitectura de la lógica</span>. Moldeamos nuestro pensamiento en secuencias rígidas para construir sistemas digitales.
+                </p>
+            </div>
+        </header>
+
+        <!-- Workspace -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+            <!-- Mapa -->
+            <div class="lg:col-span-7 flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="font-label-sm uppercase tracking-widest text-primary/70">Visualización de Memoria</span>
+                    <span class="font-label-sm text-on-secondary-container" id="position-display">POS: X00 Y04</span>
+                    <span class="font-label-sm text-tertiary uppercase tracking-widest">OBJETIVO: ALCANZAR NODO DE SALIDA [X07 Y07]</span>
+                </div>
+                <div class="flex-1 aspect-square lg:aspect-auto min-h-[400px] border border-white/20 relative labyrinth-grid flex items-center justify-center overflow-hidden">
+                    <div id="game-grid"></div>
+                    <div class="absolute inset-0 pointer-events-none border-[12px] border-surface-dim/50 mix-blend-multiply"></div>
+                </div>
+            </div>
+
+            <!-- Terminal -->
+            <div class="lg:col-span-5 flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="font-label-sm uppercase tracking-widest text-primary/70">Consola de Comandos</span>
+                    <span class="font-label-sm text-on-secondary-container">STATUS: ACTIVO</span>
+                </div>
+                <div class="flex-1 bg-surface-container-lowest border border-outline-variant/40 flex flex-col">
+                    <div class="flex-1 p-6 font-label-sm text-body-md overflow-y-auto space-y-3 max-h-[400px]" id="terminal-screen">
+                        <div class="text-on-secondary-container/40">BABEL SYSTEM CORE v4.0.1</div>
+                        <div class="text-on-surface-variant">Sincronización establecida. Ingrese comandos de navegación.</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-primary">&gt;</span>
+                            <span class="text-on-surface" id="command-text"></span>
+                            <span class="terminal-cursor"></span>
+                        </div>
+                    </div>
+                    <div class="p-6 border-t border-outline-variant/20 bg-surface-container">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="border border-white/10 py-4 font-label-sm text-on-surface hover:bg-white/5 transition-all text-xs tracking-widest" onclick="runCommand('AVANZAR')">AVANZAR</button>
+                            <button class="border border-white/10 py-4 font-label-sm text-on-surface hover:bg-white/5 transition-all text-xs tracking-widest" onclick="runCommand('ROTAR')">ROTAR</button>
+                            <button class="col-span-2 bg-primary py-4 font-label-sm font-bold text-on-primary hover:opacity-90 transition-all text-xs tracking-widest ring-2 ring-primary/20 ring-offset-2 ring-offset-surface" onclick="runCommand('EJECUTAR LÓGICA')">EJECUTAR LÓGICA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-outline-variant/20">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex items-center gap-6">
+                    <div class="w-64 h-px bg-outline-variant/30 relative">
+                        <div class="absolute left-0 top-0 h-px bg-primary w-[12.5%]"></div>
+                    </div>
+                </div>
+                <div class="flex gap-12">
+                    <button class="font-label-sm text-on-secondary-container hover:text-on-surface transition-colors" onclick="resetGame()">REINICIAR</button>
+                    <button class="font-label-sm text-primary hover:tracking-widest transition-all uppercase font-bold" onclick="runCommand('EJECUTAR LÓGICA')">SIGUIENTE NODO</button>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <p class="font-label-sm text-[10px] text-on-secondary-container/30 uppercase tracking-[0.3em]">© 2026 BABEL ARCHITECTURE. NO IMAGES. PURE LOGIC.</p>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // ========== CONFIGURACIÓN DEL LABERINTO ==========
+        // Cambio clave: MAP[4][1] = 1 (antes era 0) para conectar la casilla inicial (0,4)
+        const MAP = [
+            [1, 1, 1, 0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1, 0],
+            [0, 0, 1, 0, 1, 0, 1, 0],
+            [0, 0, 1, 1, 1, 0, 1, 0],
+            [0, 1, 0, 0, 1, 0, 1, 0],   // <-- ahora MAP[4][1] = 1
+            [0, 1, 1, 1, 1, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1]
+        ];
+        const ROWS = 8;
+        const COLS = 8;
+        const GOAL_X = 7;
+        const GOAL_Y = 7;
+
+        let player = { x: 0, y: 4 };
+        let direction = 'east';
+        let gameWon = false;
+        let isExecuting = false;
+
+        // ========== FUNCIONES AUXILIARES ==========
+        function getDirectionDelta(dir) {
+            switch (dir) {
+                case 'north': return { dx: 0, dy: -1 };
+                case 'south': return { dx: 0, dy: 1 };
+                case 'east':  return { dx: 1, dy: 0 };
+                case 'west':  return { dx: -1, dy: 0 };
+                default: return { dx: 0, dy: 0 };
+            }
+        }
+
+        function canMove(x, y) {
+            return x >= 0 && x < COLS && y >= 0 && y < ROWS && MAP[y][x] === 1;
+        }
+
+        function isGoal(x, y) {
+            return x === GOAL_X && y === GOAL_Y;
+        }
+
+        // ========== RENDERIZADO ==========
+        function render() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell relative';
+                    if (MAP[row][col] === 1) {
+                        cell.classList.add('bg-white/10');
+                    }
+
+                    if (player.x === col && player.y === row) {
+                        const playerDiv = document.createElement('div');
+                        playerDiv.className = 'absolute inset-2 player-unit rounded-sm';
+                        cell.appendChild(playerDiv);
+                    }
+
+                    if (isGoal(col, row)) {
+                        cell.classList.add('border-2', 'border-tertiary/50', 'animate-pulse');
+                        const goalDiv = document.createElement('div');
+                        goalDiv.className = 'absolute inset-2 bg-tertiary/20';
+                        cell.appendChild(goalDiv);
+                    }
+
+                    grid.appendChild(cell);
+                }
+            }
+
+            document.getElementById('position-display').textContent =
+                `POS: X${String(player.x).padStart(2, '0')} Y${String(player.y).padStart(2, '0')}`;
+
+            if (gameWon && !document.querySelector('.victory-message')) {
+                appendTerminal('¡HAS ALCANZADO LA SALIDA! LABERINTO COMPLETADO.', true);
+                const msg = document.createElement('div');
+                msg.className = 'victory-message text-primary font-bold text-center py-2';
+                msg.textContent = 'VICTORIA';
+                document.getElementById('terminal-screen').appendChild(msg);
+            }
+        }
+
+        // ========== TERMINAL ==========
+        function appendTerminal(text, isSuccess = true) {
+            const screen = document.getElementById('terminal-screen');
+            const div = document.createElement('div');
+            div.className = isSuccess ? 'text-on-surface' : 'text-error';
+            div.textContent = text;
+            screen.appendChild(div);
+            screen.scrollTop = screen.scrollHeight;
+        }
+
+        function resetPrompt() {
+            const screen = document.getElementById('terminal-screen');
+            const cmdText = document.getElementById('command-text');
+            const last = screen.lastElementChild;
+            if (last && last.classList.contains('prompt-line')) {
+                last.remove();
+            }
+            const newLine = document.createElement('div');
+            newLine.className = 'flex items-center gap-2 mt-1 prompt-line';
+            newLine.innerHTML = `<span class="text-primary">&gt;</span> <span class="text-on-surface"></span>`;
+            screen.appendChild(newLine);
+            cmdText.innerText = '';
+            screen.scrollTop = screen.scrollHeight;
+        }
+
+        // ========== COMANDOS ==========
+        function runCommand(cmd) {
+            if (isExecuting) {
+                appendTerminal('Ejecutando lógica, espera...', false);
+                return;
+            }
+            if (gameWon) {
+                appendTerminal('Ya has ganado. Presiona REINICIAR para jugar de nuevo.', false);
+                return;
+            }
+
+            const cmdText = document.getElementById('command-text');
+            cmdText.innerText = cmd;
+
+            const screen = document.getElementById('terminal-screen');
+            const promptLine = screen.querySelector('.prompt-line:last-child');
+            if (promptLine) {
+                const span = promptLine.querySelector('.text-on-surface');
+                if (span) span.textContent = cmd;
+            }
+
+            setTimeout(() => {
+                let response = '';
+                let success = true;
+
+                if (cmd === 'AVANZAR') {
+                    const delta = getDirectionDelta(direction);
+                    const newX = player.x + delta.dx;
+                    const newY = player.y + delta.dy;
+                    if (canMove(newX, newY)) {
+                        player.x = newX;
+                        player.y = newY;
+                        response = `Movido a (${player.x}, ${player.y})`;
+                        if (isGoal(player.x, player.y)) {
+                            gameWon = true;
+                            response += ' ¡Has llegado a la salida!';
+                        }
+                        render();
+                    } else {
+                        response = 'Movimiento bloqueado. Hay una pared.';
+                        success = false;
+                    }
+                } else if (cmd === 'ROTAR') {
+                    const dirs = ['north', 'east', 'south', 'west'];
+                    let idx = dirs.indexOf(direction);
+                    idx = (idx + 1) % 4;
+                    direction = dirs[idx];
+                    response = `Orientación cambiada a ${direction.toUpperCase()}`;
+                    render();
+                } else if (cmd === 'EJECUTAR LÓGICA') {
+                    findAndExecutePath();
+                    return;
+                }
+
+                if (response) {
+                    appendTerminal(response, success);
+                }
+                resetPrompt();
+            }, 300);
+        }
+
+        // ========== BÚSQUEDA DE CAMINO Y EJECUCIÓN ==========
+        function findAndExecutePath() {
+            if (isExecuting) return;
+            if (gameWon) {
+                appendTerminal('Ya has ganado.', false);
+                resetPrompt();
+                return;
+            }
+
+            const queue = [{ x: player.x, y: player.y, path: [] }];
+            const visited = new Set();
+            visited.add(`${player.x},${player.y}`);
+
+            while (queue.length > 0) {
+                const current = queue.shift();
+                if (isGoal(current.x, current.y)) {
+                    executePath(current.path);
+                    return;
+                }
+                const dirs = ['north', 'east', 'south', 'west'];
+                for (const d of dirs) {
+                    const delta = getDirectionDelta(d);
+                    const nx = current.x + delta.dx;
+                    const ny = current.y + delta.dy;
+                    const key = `${nx},${ny}`;
+                    if (canMove(nx, ny) && !visited.has(key)) {
+                        visited.add(key);
+                        queue.push({ x: nx, y: ny, path: [...current.path, d] });
+                    }
+                }
+            }
+
+            appendTerminal('❌ No se encontró un camino a la salida.', false);
+            resetPrompt();
+        }
+
+        function executePath(path) {
+            if (path.length === 0) {
+                appendTerminal('Ya estás en la salida.', false);
+                resetPrompt();
+                return;
+            }
+
+            isExecuting = true;
+            let index = 0;
+
+            const interval = setInterval(() => {
+                if (index >= path.length || gameWon) {
+                    clearInterval(interval);
+                    isExecuting = false;
+                    if (!gameWon) {
+                        appendTerminal('Camino completado. ¡Has llegado a la salida!', true);
+                        gameWon = true;
+                        render();
+                    }
+                    resetPrompt();
+                    return;
+                }
+
+                const dirStep = path[index];
+                const dirs = ['north', 'east', 'south', 'west'];
+                let currentIdx = dirs.indexOf(direction);
+                let targetIdx = dirs.indexOf(dirStep);
+                let diff = (targetIdx - currentIdx + 4) % 4;
+
+                if (diff > 0) {
+                    direction = dirs[(currentIdx + 1) % 4];
+                    appendTerminal(`Rotado a ${direction.toUpperCase()}`, true);
+                    render();
+                }
+
+                if (direction === dirStep) {
+                    const delta = getDirectionDelta(direction);
+                    const newX = player.x + delta.dx;
+                    const newY = player.y + delta.dy;
+                    if (canMove(newX, newY)) {
+                        player.x = newX;
+                        player.y = newY;
+                        appendTerminal(`Avanzado ${direction.toUpperCase()} a (${player.x}, ${player.y})`, true);
+                        render();
+                        if (isGoal(player.x, player.y)) {
+                            gameWon = true;
+                            clearInterval(interval);
+                            isExecuting = false;
+                            appendTerminal('¡VICTORIA! Has llegado a la salida.', true);
+                            render();
+                            resetPrompt();
+                            return;
+                        }
+                    } else {
+                        clearInterval(interval);
+                        isExecuting = false;
+                        appendTerminal('Error en la ruta. Movimiento bloqueado.', false);
+                        resetPrompt();
+                        return;
+                    }
+                    index++;
+                } else {
+                    // Forzar dirección si no coincide (para avanzar)
+                    direction = dirStep;
+                    appendTerminal(`Dirección forzada a ${direction.toUpperCase()}`, true);
+                    const delta = getDirectionDelta(direction);
+                    const newX = player.x + delta.dx;
+                    const newY = player.y + delta.dy;
+                    if (canMove(newX, newY)) {
+                        player.x = newX;
+                        player.y = newY;
+                        appendTerminal(`Avanzado ${direction.toUpperCase()} a (${player.x}, ${player.y})`, true);
+                        render();
+                        if (isGoal(player.x, player.y)) {
+                            gameWon = true;
+                            clearInterval(interval);
+                            isExecuting = false;
+                            appendTerminal('¡VICTORIA! Has llegado a la salida.', true);
+                            render();
+                            resetPrompt();
+                            return;
+                        }
+                    } else {
+                        clearInterval(interval);
+                        isExecuting = false;
+                        appendTerminal('Error en la ruta. Movimiento bloqueado.', false);
+                        resetPrompt();
+                        return;
+                    }
+                    index++;
+                }
+
+                if (index >= path.length) {
+                    clearInterval(interval);
+                    isExecuting = false;
+                    if (!gameWon) {
+                        appendTerminal('Camino completado. Revisa si llegaste a la salida.', true);
+                    }
+                    resetPrompt();
+                }
+            }, 700);
+        }
+
+        // ========== REINICIO ==========
+        function resetGame() {
+            player = { x: 0, y: 4 };
+            direction = 'east';
+            gameWon = false;
+            isExecuting = false;
+            const screen = document.getElementById('terminal-screen');
+            screen.innerHTML = `
+                <div class="text-on-secondary-container/40">BABEL SYSTEM CORE v4.0.1</div>
+                <div class="text-on-surface-variant">Sincronización establecida. Ingrese comandos de navegación.</div>
+                <div class="flex items-center gap-2">
+                    <span class="text-primary">&gt;</span>
+                    <span class="text-on-surface" id="command-text"></span>
+                    <span class="terminal-cursor"></span>
+                </div>
+            `;
+            document.getElementById('command-text').innerText = '';
+            render();
+            appendTerminal('Juego reiniciado. ¡Buena suerte!', true);
+            resetPrompt();
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            resetPrompt();
+        });
+    </script>
+</body>
+</html>

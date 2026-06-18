@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <title>Babel · Cocina de Código</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bodoni+Moda:ital,wght@0,600..900;1,600..900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: #11131c;
+            font-family: 'Space Mono', monospace;
+            color: #e2e1ef;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        #game-root {
+            width: 100%;
+            height: 100vh;
+            max-height: 100vh;
+            background: #11131c;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+        }
+
+        /* ——— NAVEGACIÓN ——— */
+        .babel-nav {
+            flex-shrink: 0;
+            background: #11131c;
+            border-bottom: 2px solid #2e5bff;
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .babel-logo {
+            font-family: 'Bodoni Moda', serif;
+            font-style: italic;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 700;
+            color: #b8c3ff;
+            letter-spacing: -0.02em;
+        }
+        .mode-tabs {
+            display: flex;
+            gap: 0;
+        }
+        .mode-tab {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(0.45rem, 1.2vw, 0.7rem);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #434656;
+            background: transparent;
+            color: #8e90a2;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .mode-tab.active {
+            background: #2e5bff;
+            border-color: #2e5bff;
+            color: #fff;
+        }
+        .mode-tab:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        .mode-tab:last-child {
+            border-radius: 0 4px 4px 0;
+            border-left: none;
+        }
+
+        /* ——— ÁREA DE JUEGO ——— */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0.8rem 1rem;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        .section-tag {
+            font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #b8c3ff;
+            background: rgba(46, 91, 255, 0.18);
+            padding: 0.1rem 0.5rem;
+            display: inline-block;
+            margin-bottom: 0.4rem;
+            flex-shrink: 0;
+        }
+        .game-title {
+            font-family: 'Bodoni Moda', serif;
+            font-style: italic;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 700;
+            color: #e2e1ef;
+            margin: 0 0 0.1rem;
+            letter-spacing: -0.01em;
+            word-break: break-word;
+            flex-shrink: 0;
+        }
+        .game-subtitle {
+            font-size: clamp(0.55rem, 1.2vw, 0.8rem);
+            color: #8e90a2;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, rgba(184, 195, 255, 0.35) 0%, rgba(184, 195, 255, 0) 100%);
+            margin: 0.2rem 0 0.6rem;
+            flex-shrink: 0;
+        }
+
+        /* ——— COCINA ——— */
+        .kitchen {
+            background: #1d1f29;
+            border: 1px solid rgba(142, 144, 162, 0.12);
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            margin-bottom: 0.5rem;
+            flex-shrink: 0;
+        }
+        .kitchen-label {
+            font-size: clamp(0.5rem, 1vw, 0.65rem);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #434656;
+            margin-bottom: 0.4rem;
+        }
+
+        /* ——— INGREDIENTES ——— */
+        .ingredients-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+        .ingredient {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.1rem;
+            padding: 0.3rem 0.5rem;
+            background: #282933;
+            border: 1px solid #434656;
+            border-radius: 4px;
+            min-width: 40px;
+            transition: all 0.25s;
+            flex: 0 1 auto;
+        }
+        .ingredient .ing-icon {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+        }
+        .ingredient .ing-name {
+            font-size: clamp(0.4rem, 0.8vw, 0.6rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #8e90a2;
+            text-align: center;
+        }
+        .ingredient.processed {
+            border-color: #2e5bff;
+            background: rgba(46, 91, 255, 0.1);
+        }
+        .ingredient.processed .ing-name {
+            color: #b8c3ff;
+        }
+        .ingredient.cooked {
+            border-color: #ffb59b;
+            background: rgba(255, 181, 155, 0.08);
+        }
+        .ingredient.cooked .ing-name {
+            color: #ffb59b;
+        }
+        .ingredient.missing {
+            border-color: #93000a;
+            background: rgba(147, 0, 10, 0.08);
+            opacity: 0.6;
+        }
+
+        /* ——— ACCIONES ——— */
+        .actions-row {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.4rem;
+        }
+        .action-btn {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(0.45rem, 1vw, 0.65rem);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.6rem;
+            border: 1px solid #434656;
+            background: #1d1f29;
+            color: #c4c5d9;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.18s;
+            flex: 0 1 auto;
+        }
+        .action-btn:hover:not(:disabled) {
+            border-color: #2e5bff;
+            color: #b8c3ff;
+            background: rgba(46, 91, 255, 0.08);
+        }
+        .action-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .action-btn.primary {
+            background: #2e5bff;
+            border-color: #2e5bff;
+            color: #fff;
+        }
+        .action-btn.primary:hover:not(:disabled) {
+            background: #1a3fc9;
+        }
+        .action-btn.danger {
+            border-color: #93000a;
+            color: #ffb4ab;
+        }
+
+        /* ——— TERMINAL ——— */
+        .terminal {
+            background: #0c0e17;
+            border: 1px solid rgba(142, 144, 162, 0.12);
+            border-radius: 4px;
+            padding: 0.4rem 0.7rem;
+            flex: 1;
+            min-height: 60px;
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 0.4rem;
+        }
+        .terminal-line {
+            font-size: clamp(0.55rem, 1.1vw, 0.75rem);
+            line-height: 1.6;
+            letter-spacing: 0.03em;
+            word-break: break-word;
+        }
+        .terminal-line.info    { color: #8e90a2; }
+        .terminal-line.ok      { color: #b8c3ff; }
+        .terminal-line.error   { color: #ffb4ab; }
+        .terminal-line.warn    { color: #ffb59b; }
+        .terminal-line.success { color: #5DC499; }
+
+        /* ——— EDITOR DE RECETA ——— */
+        .recipe-editor {
+            background: #0c0e17;
+            border: 1px solid rgba(142, 144, 162, 0.12);
+            border-radius: 4px;
+            padding: 0.5rem 0.7rem;
+            margin-bottom: 0.4rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .recipe-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 0.4rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .recipe-step {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.5rem;
+            background: #1d1f29;
+            border: 1px solid rgba(142, 144, 162, 0.1);
+            border-radius: 3px;
+            font-size: clamp(0.55rem, 1vw, 0.7rem);
+            letter-spacing: 0.04em;
+            color: #c4c5d9;
+            transition: all 0.2s;
+            flex-wrap: wrap;
+        }
+        .recipe-step .step-num {
+            font-size: clamp(0.45rem, 0.8vw, 0.6rem);
+            color: #434656;
+            min-width: 18px;
+        }
+        .recipe-step .step-fn {
+            color: #b8c3ff;
+        }
+        .recipe-step .step-arg {
+            color: #ffb59b;
+        }
+        .recipe-step .step-status {
+            margin-left: auto;
+            font-size: clamp(0.45rem, 0.8vw, 0.6rem);
+            letter-spacing: 0.12em;
+            white-space: nowrap;
+        }
+        .recipe-step.valid {
+            border-color: rgba(46, 91, 255, 0.3);
+        }
+        .recipe-step.invalid {
+            border-color: rgba(255, 180, 171, 0.4);
+            background: rgba(147, 0, 10, 0.08);
+        }
+        .recipe-step.invalid .step-fn {
+            color: #ffb4ab;
+        }
+        .recipe-step.running {
+            border-color: #2e5bff;
+            background: rgba(46, 91, 255, 0.08);
+        }
+        .recipe-step.done {
+            border-color: rgba(93, 196, 153, 0.3);
+            background: rgba(93, 196, 153, 0.05);
+        }
+
+        .step-palette {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .palette-btn {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(0.4rem, 0.9vw, 0.6rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.5rem;
+            border: 1px dashed #434656;
+            background: transparent;
+            color: #8e90a2;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .palette-btn:hover {
+            border-color: #b8c3ff;
+            color: #b8c3ff;
+            border-style: solid;
+        }
+
+        /* ——— INVENTARIO ——— */
+        .inventory-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: clamp(0.4rem, 0.8vw, 0.6rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            border: 1px solid;
+        }
+        .inventory-badge.available {
+            border-color: rgba(93, 196, 153, 0.4);
+            color: #5DC499;
+            background: rgba(93, 196, 153, 0.07);
+        }
+        .inventory-badge.unavailable {
+            border-color: rgba(255, 180, 171, 0.3);
+            color: #ffb4ab;
+            background: rgba(147, 0, 10, 0.06);
+        }
+
+        .step-counter {
+            font-size: clamp(0.45rem, 0.9vw, 0.6rem);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #434656;
+            margin-bottom: 0.3rem;
+        }
+
+        .fix-row {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        #inv-badges {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.3rem;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+
+        /* ——— FOOTER DE NAVEGACIÓN ——— */
+        .game-footer {
+            flex-shrink: 0;
+            border-top: 1px solid rgba(142,144,162,0.2);
+            padding: 0.6rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            background: #11131c;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+        .nav-link:hover {
+            color: #b8c3ff;
+        }
+        .nav-link .arrow-circle {
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 50%;
+            border: 2px solid #b8c3ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .nav-link:hover .arrow-circle {
+            background: #b8c3ff;
+            color: #11131c;
+        }
+        .nav-link .nav-text {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+        .nav-link .nav-label {
+            font-size: clamp(0.45rem, 0.9vw, 0.6rem);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #8e90a2;
+            transition: color 0.2s;
+        }
+        .nav-link .nav-title {
+            font-family: 'Bodoni Moda', serif;
+            font-style: italic;
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .nav-link:hover .nav-label {
+            color: #b8c3ff;
+        }
+        .game-footer .footer-logo {
+            font-family: 'Bodoni Moda', serif;
+            font-style: italic;
+            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+            color: #b8c3ff;
+            opacity: 0.6;
+        }
+        .nav-link-left {
+            flex-direction: row;
+        }
+        .nav-link-left .nav-text {
+            text-align: left;
+        }
+        .nav-link-left .arrow-circle {
+            order: -1;
+        }
+
+        @media (max-width: 640px) {
+            .game-footer {
+                justify-content: center;
+                gap: 0.3rem;
+            }
+            .game-footer .footer-logo {
+                display: none;
+            }
+            .nav-link .nav-title {
+                font-size: 0.7rem;
+                white-space: normal;
+            }
+            .nav-link .arrow-circle {
+                width: 1.8rem;
+                height: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .babel-nav {
+                padding: 0.3rem 0.5rem;
+            }
+            .game-area {
+                padding: 0.4rem 0.5rem;
+            }
+            .kitchen {
+                padding: 0.3rem 0.5rem;
+            }
+            .terminal {
+                max-height: 80px;
+                min-height: 50px;
+            }
+            .recipe-step {
+                padding: 0.2rem 0.3rem;
+            }
+            .action-btn {
+                padding: 0.2rem 0.4rem;
+            }
+        }
+
+        @media (min-height: 800px) {
+            .terminal {
+                max-height: 180px;
+            }
+            .recipe-steps {
+                max-height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-root">
+        <h2 class="sr-only">Modo interpretado vs compilado — juego de cocina interactivo corregido</h2>
+
+        <div class="babel-nav">
+            <span class="babel-logo">BABEL</span>
+            <div class="mode-tabs">
+                <button class="mode-tab active" id="tab-interp" onclick="switchMode('interp')">🐍 Interpretado</button>
+                <button class="mode-tab" id="tab-comp" onclick="switchMode('comp')">⚙️ Compilado</button>
+            </div>
+        </div>
+
+        <!-- ══ INTERPRETADO ══ -->
+        <div id="panel-interp" class="game-area">
+            <span class="section-tag">Sección 01</span>
+            <h3 class="game-title">El Cocinero Improvisado</h3>
+            <p class="game-subtitle">Python · JavaScript · Ruby — ejecución línea por línea</p>
+            <div class="section-divider"></div>
+
+            <div class="kitchen">
+                <div class="kitchen-label">Encimera — estado en tiempo real</div>
+                <div class="ingredients-row">
+                    <div class="ingredient" id="i-cebolla"><span class="ing-icon">🧅</span><span class="ing-name">Cebolla</span></div>
+                    <div class="ingredient missing" id="i-agua"><span class="ing-icon">💧</span><span class="ing-name">Agua ✕</span></div>
+                    <div class="ingredient" id="i-pasta"><span class="ing-icon">🍝</span><span class="ing-name">Pasta</span></div>
+                </div>
+                <div class="step-counter" id="interp-counter">Paso actual: —</div>
+                <div class="actions-row">
+                    <button class="action-btn" id="ib-picar" onclick="iAct('picar')">PICAR( )</button>
+                    <button class="action-btn" id="ib-saltear" onclick="iAct('saltear')" disabled>SALTEAR( )</button>
+                    <button class="action-btn" id="ib-hervir" onclick="iAct('hervir')" disabled>HERVIR( )</button>
+                    <button class="action-btn" id="ib-anadir" onclick="iAct('anadir')" disabled>AÑADIR(pasta)</button>
+                    <button class="action-btn" id="ib-agua" onclick="iAct('agua')" style="display:none">+ AÑADIR AGUA</button>
+                    <button class="action-btn danger" onclick="resetInterp()">RESET</button>
+                </div>
+            </div>
+
+            <div class="terminal" id="interp-log">
+                <div class="terminal-line info">▸ Sistema listo. Presiona PICAR( ) para comenzar.</div>
+            </div>
+        </div>
+
+        <!-- ══ COMPILADO ══ -->
+        <div id="panel-comp" class="game-area" style="display:none">
+            <span class="section-tag">Sección 02</span>
+            <h3 class="game-title">El Chef Ejecutivo</h3>
+            <p class="game-subtitle">C · Rust · Go — análisis completo antes de ejecutar</p>
+            <div class="section-divider"></div>
+
+            <div class="kitchen">
+                <div class="kitchen-label">Inventario inicial — recursos disponibles desde el arranque</div>
+                <div class="ingredients-row" id="comp-inv-row">
+                    <div class="ingredient" id="ci-cebolla"><span class="ing-icon">🧅</span><span class="ing-name">Cebolla</span></div>
+                    <div class="ingredient missing" id="ci-agua"><span class="ing-icon">💧</span><span class="ing-name">Agua ✕</span></div>
+                    <div class="ingredient" id="ci-pasta"><span class="ing-icon">🍝</span><span class="ing-name">Pasta</span></div>
+                </div>
+
+                <div style="margin-bottom:4px;">
+                    <span style="font-size:clamp(0.4rem,0.8vw,0.55rem); letter-spacing:0.15em; text-transform:uppercase; color:#434656;">
+                        recursos en inventario base:
+                    </span>
+                </div>
+                <div id="inv-badges">
+                    <span class="inventory-badge available">✓ cebolla</span>
+                    <span class="inventory-badge unavailable" id="badge-agua">✕ agua</span>
+                    <span class="inventory-badge available">✓ pasta</span>
+                </div>
+
+                <div class="fix-row">
+                    <button class="action-btn" id="btn-add-agua" onclick="addAgua()">+ COMPRAR AGUA</button>
+                </div>
+            </div>
+
+            <div class="recipe-editor">
+                <div class="kitchen-label" style="margin-bottom:0.3rem;">Editor de receta</div>
+                <div class="recipe-steps" id="comp-steps"></div>
+                <div class="step-palette">
+                    <button class="palette-btn" onclick="addStep('PICAR','cebolla')">+ PICAR(cebolla)</button>
+                    <button class="palette-btn" onclick="addStep('SALTEAR','cebolla,5min')">+ SALTEAR(cebolla)</button>
+                    <button class="palette-btn" onclick="addStep('HERVIR','agua')">+ HERVIR(agua)</button>
+                    <button class="palette-btn" onclick="addStep('AÑADIR','pasta')">+ AÑADIR(pasta)</button>
+                    <button class="palette-btn" onclick="addStep('MEZCLAR','todo')">+ MEZCLAR(todo)</button>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:0.4rem;margin-bottom:0.4rem;flex-wrap:wrap;flex-shrink:0;">
+                <button class="action-btn primary" onclick="compileRun()">▶ COCINAR (compilar + ejecutar)</button>
+                <button class="action-btn danger" onclick="resetComp()">RESET</button>
+            </div>
+
+            <div class="terminal" id="comp-log">
+                <div class="terminal-line info">▸ Añade pasos y presiona COCINAR. El agua empieza como NO disponible — puedes comprarla antes de compilar.</div>
+            </div>
+        </div>
+
+        <!-- ===== FOOTER DE NAVEGACIÓN ===== -->
+        <footer class="game-footer">
+            <!-- Enlace Anterior -->
+            <a class="nav-link nav-link-left" href="#">
+                <div class="arrow-circle">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </div>
+                <div class="nav-text">
+                    <span class="nav-label">FASE ANTERIOR</span>
+                    <span class="nav-title">FUNDAMENTOS</span>
+                </div>
+            </a>
+
+            <!-- Enlace Siguiente -->
+            <a class="nav-link" href="#">
+                <div class="nav-text" style="text-align:right;">
+                    <span class="nav-label">PRÓXIMA FASE</span>
+                    <span class="nav-title">LENGUAJES DE PROGRAMACIÓN</span>
+                </div>
+                <div class="arrow-circle">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </div>
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // ================== Mismo JavaScript de antes ==================
+        function switchMode(m) {
+            document.getElementById('panel-interp').style.display = m === 'interp' ? 'block' : 'none';
+            document.getElementById('panel-comp').style.display = m === 'comp' ? 'block' : 'none';
+            document.getElementById('tab-interp').className = 'mode-tab' + (m === 'interp' ? ' active' : '');
+            document.getElementById('tab-comp').className = 'mode-tab' + (m === 'comp' ? ' active' : '');
+        }
+
+        var iState = { hasWater: false, done: false };
+
+        function iLog(msg, type) {
+            var t = document.getElementById('interp-log');
+            var d = document.createElement('div');
+            d.className = 'terminal-line ' + (type || 'info');
+            d.textContent = msg;
+            t.appendChild(d);
+            t.scrollTop = t.scrollHeight;
+        }
+
+        function iIngClass(id, cls) {
+            var e = document.getElementById(id);
+            if (e) e.className = 'ingredient ' + cls;
+        }
+
+        function iBtn(id, on) {
+            var b = document.getElementById(id);
+            if (!b) return;
+            if (on === 'hide') { b.style.display = 'none'; return; }
+            b.style.display = '';
+            b.disabled = !on;
+        }
+
+        function iCounter(t) {
+            document.getElementById('interp-counter').textContent = 'Paso actual: ' + t;
+        }
+
+        function iAct(a) {
+            if (iState.done) return;
+            if (a === 'picar') {
+                iCounter('01 — PICAR(cebolla)');
+                iLog('▸ PICAR(cebolla) → ejecutando...', 'info');
+                iLog('  ✓ Cebolla picada.', 'ok');
+                iIngClass('i-cebolla', 'ingredient processed');
+                iBtn('ib-picar', false);
+                iBtn('ib-saltear', true);
+            } else if (a === 'saltear') {
+                iCounter('02 — SALTEAR(cebolla, 5min)');
+                iLog('▸ SALTEAR(cebolla, 5min) → ejecutando...', 'info');
+                iLog('  ✓ Cebolla dorada. Estado guardado en memoria.', 'ok');
+                iIngClass('i-cebolla', 'ingredient cooked');
+                iBtn('ib-saltear', false);
+                iBtn('ib-hervir', true);
+            } else if (a === 'hervir') {
+                iCounter('03 — HERVIR(agua)');
+                iLog('▸ HERVIR(agua) → ejecutando...', 'info');
+                if (!iState.hasWater) {
+                    iLog('  ✗ RuntimeError paso 03: no hay agua en la encimera.', 'error');
+                    iLog('  ↳ La cebolla sigue dorada. Añade agua y continúa.', 'warn');
+                    iBtn('ib-agua', true);
+                    iBtn('ib-hervir', false);
+                } else {
+                    iLog('  ✓ Agua hirviendo.', 'ok');
+                    iIngClass('i-agua', 'ingredient processed');
+                    iBtn('ib-hervir', false);
+                    iBtn('ib-anadir', true);
+                }
+            } else if (a === 'agua') {
+                iState.hasWater = true;
+                iIngClass('i-agua', 'ingredient');
+                document.getElementById('i-agua').innerHTML = '<span class="ing-icon">💧</span><span class="ing-name">Agua</span>';
+                iLog('▸ Agua añadida a la encimera.', 'ok');
+                iBtn('ib-agua', 'hide');
+                iBtn('ib-hervir', true);
+            } else if (a === 'anadir') {
+                iCounter('04 — AÑADIR(pasta)');
+                iLog('▸ AÑADIR(pasta) → ejecutando...', 'info');
+                iLog('  ✓ Pasta en el agua hirviendo.', 'ok');
+                iIngClass('i-pasta', 'ingredient cooked');
+                iBtn('ib-anadir', false);
+                setTimeout(function() {
+                    iLog('  ✓ ¡Plato listo! Ejecución línea a línea completada.', 'success');
+                    iState.done = true;
+                }, 500);
+            }
+        }
+
+        function resetInterp() {
+            iState = { hasWater: false, done: false };
+            document.getElementById('interp-log').innerHTML = '<div class="terminal-line info">▸ Reiniciado. Presiona PICAR( ) para comenzar.</div>';
+            iCounter('—');
+            iIngClass('i-cebolla', 'ingredient');
+            iIngClass('i-pasta', 'ingredient');
+            document.getElementById('i-agua').className = 'ingredient missing';
+            document.getElementById('i-agua').innerHTML = '<span class="ing-icon">💧</span><span class="ing-name">Agua ✕</span>';
+            iBtn('ib-picar', true);
+            iBtn('ib-saltear', false);
+            iBtn('ib-hervir', false);
+            iBtn('ib-anadir', false);
+            iBtn('ib-agua', 'hide');
+        }
+
+        var compSteps = [];
+        var compInventory = { cebolla: true, agua: false, pasta: true };
+        var compRunning = false;
+
+        var RULES = {
+            'PICAR': { needs: [], produces: 'cebolla_picada' },
+            'SALTEAR': { needs: ['cebolla_picada'], produces: 'cebolla_dorada' },
+            'HERVIR': { needs: ['agua'], produces: 'agua_hirviendo' },
+            'AÑADIR': { needs: ['agua_hirviendo', 'cebolla_dorada'], produces: 'pasta_cocida' },
+            'MEZCLAR': { needs: ['pasta_cocida'], produces: 'plato_final' },
+        };
+
+        function cLog(msg, type) {
+            var t = document.getElementById('comp-log');
+            var d = document.createElement('div');
+            d.className = 'terminal-line ' + (type || 'info');
+            d.textContent = msg;
+            t.appendChild(d);
+            t.scrollTop = t.scrollHeight;
+        }
+
+        function renderSteps() {
+            var c = document.getElementById('comp-steps');
+            c.innerHTML = '';
+            compSteps.forEach(function(s, i) {
+                var div = document.createElement('div');
+                div.className = 'recipe-step';
+                div.id = 'cstep-' + i;
+                div.innerHTML =
+                    '<span class="step-num">0' + (i + 1) + '</span><span class="step-fn">' + s.fn +
+                    '</span><span style="color:#434656;margin:0 2px">(</span><span class="step-arg">' + s.arg +
+                    '</span><span style="color:#434656;margin:0 2px">)</span><span class="step-status" id="ss-' + i +
+                    '"></span>';
+                c.appendChild(div);
+            });
+        }
+
+        function addStep(fn, arg) {
+            if (compRunning) return;
+            compSteps.push({ fn: fn, arg: arg });
+            renderSteps();
+            document.getElementById('comp-log').innerHTML = '<div class="terminal-line info">▸ ' + compSteps.length +
+                ' paso(s) en receta. Presiona COCINAR cuando estés listo.</div>';
+        }
+
+        function addAgua() {
+            compInventory.agua = true;
+            document.getElementById('ci-agua').className = 'ingredient processed';
+            document.getElementById('ci-agua').innerHTML = '<span class="ing-icon">💧</span><span class="ing-name">Agua ✓</span>';
+            document.getElementById('badge-agua').className = 'inventory-badge available';
+            document.getElementById('badge-agua').textContent = '✓ agua';
+            document.getElementById('btn-add-agua').disabled = true;
+            cLog('▸ Agua añadida al inventario. Ahora HERVIR(agua) puede resolverse.', 'ok');
+        }
+
+        function compileRun() {
+            if (compRunning || compSteps.length === 0) {
+                cLog('▸ Añade al menos un paso.', 'warn');
+                return;
+            }
+            compRunning = true;
+            document.getElementById('comp-log').innerHTML = '';
+            cLog('▸ COMPILADOR — analizando ' + compSteps.length + ' pasos...', 'info');
+
+            setTimeout(function() {
+                var available = new Set();
+                Object.keys(compInventory).forEach(function(k) {
+                    if (compInventory[k]) available.add(k);
+                });
+
+                var errorIdx = -1,
+                    errorMsg = '';
+                for (var i = 0; i < compSteps.length; i++) {
+                    var s = compSteps[i];
+                    var rule = RULES[s.fn];
+                    if (!rule) { errorIdx = i;
+                        errorMsg = 'instrucción desconocida: ' + s.fn; break; }
+                    var missing = rule.needs.filter(function(n) { return !available.has(n); });
+                    if (missing.length) {
+                        errorIdx = i;
+                        var hint = missing.includes('agua') ? ' — ¿olvidaste comprar agua?' : '';
+                        errorMsg = 'dependencia no satisfecha: falta [' + missing.join(', ') + ']' + hint;
+                        break;
+                    }
+                    available.add(rule.produces);
+                }
+
+                if (errorIdx >= 0) {
+                    cLog('  ✗ Error de compilación en paso 0' + (errorIdx + 1) + ': ' + errorMsg, 'error');
+                    cLog('  ↳ No se cocinó nada. Corrige el error y recompila desde cero.', 'warn');
+                    var el = document.getElementById('cstep-' + errorIdx);
+                    if (el) el.className = 'recipe-step invalid';
+                    var ss = document.getElementById('ss-' + errorIdx);
+                    if (ss) { ss.textContent = '✗ ERROR';
+                        ss.style.color = '#ffb4ab'; }
+                    compRunning = false;
+                } else {
+                    cLog('  ✓ Análisis completo: todos los pasos son válidos.', 'ok');
+                    cLog('  ▸ Compilación exitosa — generando ejecutable...', 'ok');
+                    setTimeout(function() {
+                        cLog('  ▸ Ejecutando a máxima velocidad...', 'info');
+                        compSteps.forEach(function(s, i) {
+                            setTimeout(function() {
+                                var el = document.getElementById('cstep-' + i);
+                                if (el) el.className = 'recipe-step running';
+                                var ss = document.getElementById('ss-' + i);
+                                if (ss) ss.textContent = '⟳';
+                                setTimeout(function() {
+                                    if (el) el.className = 'recipe-step done';
+                                    if (ss) { ss.textContent = '✓ OK';
+                                        ss.style.color = '#5DC499'; }
+                                    if (i === compSteps.length - 1) {
+                                        cLog('  ✓ ¡Plato listo en ' + (compSteps
+                                            .length * 120) + 'ms! Cero errores.',
+                                            'success');
+                                        compRunning = false;
+                                    }
+                                }, 110);
+                            }, i * 170);
+                        });
+                    }, 500);
+                }
+            }, 400);
+        }
+
+        function resetComp() {
+            compSteps = [];
+            compInventory = { cebolla: true, agua: false, pasta: true };
+            compRunning = false;
+            document.getElementById('comp-steps').innerHTML = '';
+            document.getElementById('comp-log').innerHTML = '<div class="terminal-line info">▸ Reiniciado. El agua vuelve a estar ausente del inventario.</div>';
+            document.getElementById('ci-agua').className = 'ingredient missing';
+            document.getElementById('ci-agua').innerHTML = '<span class="ing-icon">💧</span><span class="ing-name">Agua ✕</span>';
+            document.getElementById('badge-agua').className = 'inventory-badge unavailable';
+            document.getElementById('badge-agua').textContent = '✕ agua';
+            document.getElementById('btn-add-agua').disabled = false;
+        }
+    </script>
+
+</body>
+</html>

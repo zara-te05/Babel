@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Registro — Babel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #0047AB;
+      --blue-dim:   rgba(0,71,171,0.55);
+      --blue-ghost: rgba(0,71,171,0.12);
+      --blue-line:  rgba(0,71,171,0.18);
+      --white:      #FFFFFF;
+      --off-white:  #F7F7F9;
+    }
+
+    body {
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'Hanken Grotesk', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--blue); }
+    ::-webkit-scrollbar-thumb { background: var(--white); }
+
+    /* ── TOWER ── */
+    .tower {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      height: 100vh; width: auto;
+      object-fit: contain;
+      filter: grayscale(1) invert(1) brightness(1.1) opacity(0.1);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 22px 64px;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    .nav-logo {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 700; font-size: 20px;
+      color: var(--white); text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-links { display: flex; gap: 36px; }
+    .nav-link {
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 15px; color: rgba(255,255,255,0.6);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--white); }
+
+    /* ── PAGE LAYOUT: split ── */
+    .page-split {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* LEFT — decorative panel */
+    .left-panel {
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 140px 56px 64px;
+      position: relative;
+    }
+    .left-big {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 900;
+      font-size: clamp(72px, 11vw, 160px);
+      letter-spacing: -0.035em;
+      line-height: 0.88;
+      text-transform: uppercase;
+      color: var(--white);
+      display: block;
+    }
+    .left-big.outline {
+      -webkit-text-stroke: 2px var(--white);
+      color: transparent;
+    }
+    .left-caption {
+      margin-top: 36px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+      max-width: 320px;
+      font-style: italic;
+    }
+    .left-rule {
+      width: 40px; height: 1px;
+      background: rgba(255,255,255,0.3);
+      margin: 24px 0 16px;
+    }
+    .step-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* RIGHT — form panel (white) */
+    .right-panel {
+      background: var(--white);
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 120px 72px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative giant letter behind form */
+    .form-bg-letter {
+      position: absolute;
+      bottom: -40px; right: -20px;
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 900;
+      font-size: 340px;
+      letter-spacing: -0.05em;
+      color: rgba(0,71,171,0.04);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .form-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.4);
+      margin-bottom: 16px;
+    }
+    .form-title {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 700;
+      font-size: clamp(32px, 4vw, 52px);
+      letter-spacing: -0.025em;
+      color: var(--blue);
+      line-height: 1.05;
+      margin-bottom: 48px;
+    }
+    .form-title span {
+      -webkit-text-stroke: 1.5px var(--blue);
+      color: transparent;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+    }
+    .form-field {
+      display: flex; flex-direction: column;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .form-field.full { grid-column: 1 / -1; }
+
+    .field-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.45);
+      margin-bottom: 8px;
+    }
+    .field-label .opt {
+      color: rgba(0,71,171,0.25);
+      font-size: 9px;
+    }
+
+    .field-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--blue-line);
+      padding: 10px 0 10px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 16px; font-weight: 500;
+      color: var(--blue);
+      outline: none;
+      transition: border-color 0.25s;
+      width: 100%;
+    }
+    .field-input::placeholder {
+      color: rgba(0,71,171,0.2);
+      font-weight: 400;
+    }
+    .field-input:focus {
+      border-bottom-color: var(--blue);
+    }
+    .field-underline {
+      position: absolute; bottom: 0; left: 0;
+      height: 1.5px; width: 0;
+      background: var(--blue);
+      transition: width 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    .field-input:focus ~ .field-underline { width: 100%; }
+
+    /* ── AVATAR UPLOAD ── */
+    .avatar-upload-wrap {
+      grid-column: 1 / -1;
+      margin-bottom: 28px;
+    }
+    .avatar-upload-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.45);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .avatar-upload-label .opt {
+      color: rgba(0,71,171,0.25); font-size: 9px;
+    }
+    .avatar-drop {
+      display: flex; align-items: center; gap: 20px;
+    }
+    .avatar-preview {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 1.5px solid var(--blue-line);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      background: var(--off-white);
+      transition: border-color 0.25s;
+      cursor: pointer;
+      position: relative;
+    }
+    .avatar-preview:hover { border-color: var(--blue); }
+    .avatar-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: none;
+    }
+    .avatar-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .avatar-placeholder svg {
+      width: 22px; height: 22px;
+      stroke: rgba(0,71,171,0.3);
+    }
+    .avatar-placeholder span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.3);
+    }
+    #avatar-file-input { display: none; }
+
+    .avatar-upload-hint {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .avatar-upload-hint p {
+      font-size: 13px; color: rgba(0,71,171,0.5); line-height: 1.5;
+    }
+    .avatar-upload-btn {
+      display: inline-block;
+      border: 1px solid var(--blue-line);
+      padding: 7px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.6);
+      cursor: pointer; transition: all 0.25s;
+      background: transparent;
+      width: fit-content;
+    }
+    .avatar-upload-btn:hover {
+      background: var(--blue); color: var(--white);
+      border-color: var(--blue);
+    }
+
+    /* ── SUBMIT ── */
+    .form-submit-row {
+      grid-column: 1 / -1;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .form-submit-btn {
+      background: var(--blue);
+      color: var(--white);
+      border: 2px solid var(--blue);
+      padding: 16px 48px;
+      border-radius: 9999px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 13px; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+    .form-submit-btn:hover {
+      background: transparent;
+      color: var(--blue);
+      box-shadow: 0 0 30px rgba(0,71,171,0.18);
+    }
+    .form-login-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.4);
+    }
+    .form-login-link a {
+      color: var(--blue);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,71,171,0.25);
+      transition: border-color 0.2s;
+    }
+    .form-login-link a:hover { border-color: var(--blue); }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--blue);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      padding: 14px 32px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 9999px;
+      opacity: 0;
+      transition: all 0.45s cubic-bezier(0.22,1,0.36,1);
+      z-index: 100;
+      white-space: nowrap;
+    }
+    #toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── VERTICAL DIVIDER between panels ── */
+    .v-divider {
+      position: absolute; top: 10%; left: 0;
+      width: 1px; height: 80%;
+      background: rgba(0,71,171,0.1);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .page-split { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      header { padding: 20px 24px; }
+      .right-panel { padding: 100px 28px 60px; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <img class="tower" alt="Torre de Babel"
+    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA26xCryQYp2Wd--AaFHszKX8c3j9wPyZsVJ5_qXfRI8_dr1W2y0Iop5lvw8-x14mjZXlq-_89e4D-nr6hf-oi9jExAPVaJnoDu1bLWncZcfllONH3XNjkRbsbdi62cXZRr-ghl101DllZhPsfpg81z1nfzsUQD85AwedYN0fKGsUb4N9L9pLXOsjO3MD_JFIqvM-rj_rEppkVaIyd8uTAE8xW7xuxai3jci7UtlSFOpeHStuJytxNdvQolkif7NPDL-dT9ei0VoEAR" />
+
+  <!-- NAV -->
+  <header id="site-nav">
+    <a href="index.html" class="nav-logo">Proyecto Torre Babel</a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="arquitectura.html" class="nav-link">Arquitectura</a>
+      <a href="comunidad.html" class="nav-link">Comunidad</a>
+      <a href="perfil.html" class="nav-link">Registro</a>
+    </nav>
+  </header>
+
+  <!-- SPLIT LAYOUT -->
+  <div class="page-split">
+
+    <!-- LEFT — decorative -->
+    <div class="left-panel">
+      <span class="step-label">Paso 01 de 01 · Registro</span>
+      <div class="left-rule"></div>
+
+      <span class="left-big">ÚNETE</span>
+      <span class="left-big outline">AL GREMIO</span>
+
+      <p class="left-caption">
+        Crea tu cuenta y accede al mapa de ruta completo. Un solo paso separa tu curiosidad del conocimiento estructurado.
+      </p>
+
+      <!-- tiny module preview -->
+      <div style="margin-top:48px; display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex;align-items:center;gap:12px;opacity:0.5;">
+          <div style="width:5px;height:5px;border-radius:50%;background:#fff;flex-shrink:0;"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);">01 Fundamentos de la Programación</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;opacity:0.5;">
+          <div style="width:5px;height:5px;border-radius:50%;background:#fff;flex-shrink:0;"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);">02 Estructuras de Datos</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;opacity:0.5;">
+          <div style="width:5px;height:5px;border-radius:50%;background:#fff;flex-shrink:0;"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);">03 Programación Orientada a Objetos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — form -->
+    <div class="right-panel">
+      <div class="v-divider"></div>
+      <span class="form-bg-letter">B</span>
+
+      <p class="form-eyebrow">Registro · Babel v1.0.0</p>
+      <h1 class="form-title">Nueva<br/><span>Cuenta</span></h1>
+
+      <form id="register-form" novalidate>
+        <div class="form-grid">
+
+          <!-- Nombre -->
+          <div class="form-field">
+            <label class="field-label" for="nombre">Nombre</label>
+            <input class="field-input" id="nombre" type="text" placeholder="Adrián" autocomplete="given-name" required />
+            <div class="field-underline"></div>
+          </div>
+
+          <!-- Apellido -->
+          <div class="form-field">
+            <label class="field-label" for="apellido">Apellido</label>
+            <input class="field-input" id="apellido" type="text" placeholder="Molina" autocomplete="family-name" required />
+            <div class="field-underline"></div>
+          </div>
+
+          <!-- Correo -->
+          <div class="form-field full">
+            <label class="field-label" for="correo">Correo electrónico</label>
+            <input class="field-input" id="correo" type="email" placeholder="adrian@babel.dev" autocomplete="email" required />
+            <div class="field-underline"></div>
+          </div>
+
+          <!-- Foto (opcional) -->
+          <div class="avatar-upload-wrap">
+            <span class="avatar-upload-label">Foto de perfil <span class="opt">— Opcional</span></span>
+            <div class="avatar-drop">
+              <div class="avatar-preview" id="avatar-preview" onclick="document.getElementById('avatar-file-input').click()" title="Subir foto">
+                <img id="avatar-img-preview" alt="Vista previa" />
+                <div class="avatar-placeholder" id="avatar-placeholder">
+                  <!-- person icon -->
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" stroke-width="1.5"/>
+                    <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  <span>Foto</span>
+                </div>
+              </div>
+              <input type="file" id="avatar-file-input" accept="image/*" />
+              <div class="avatar-upload-hint">
+                <p>JPG, PNG o WebP · Máx 2 MB<br/>Se recortará en círculo</p>
+                <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-file-input').click()">
+                  Seleccionar archivo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit row -->
+          <div class="form-submit-row">
+            <button type="submit" class="form-submit-btn">Crear cuenta</button>
+            <p class="form-login-link">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></p>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <div id="toast">Cuenta creada — Bienvenido al gremio</div>
+
+  <script>
+    // Nav scroll
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('site-nav');
+      if (window.scrollY > 40) {
+        nav.style.background = 'rgba(0,71,171,0.92)';
+        nav.style.backdropFilter = 'blur(12px)';
+        nav.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+      } else {
+        nav.style.background = 'transparent';
+        nav.style.backdropFilter = 'none';
+        nav.style.borderBottom = 'none';
+      }
+    }, { passive: true });
+
+    // Avatar preview
+    document.getElementById('avatar-file-input').addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Archivo demasiado grande — máx 2 MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById('avatar-img-preview');
+        const placeholder = document.getElementById('avatar-placeholder');
+        img.src = e.target.result;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        document.getElementById('avatar-preview').style.borderColor = '#0047AB';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Form submit
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const nombre  = document.getElementById('nombre').value.trim();
+      const apellido = document.getElementById('apellido').value.trim();
+      const correo  = document.getElementById('correo').value.trim();
+
+      if (!nombre || !apellido || !correo) {
+        showToast('Completa nombre, apellido y correo');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+        showToast('Correo no válido');
+        return;
+      }
+
+      showToast('Cuenta creada — Bienvenido al gremio ✦');
+      this.reset();
+      document.getElementById('avatar-img-preview').style.display = 'none';
+      document.getElementById('avatar-placeholder').style.display = 'flex';
+      document.getElementById('avatar-preview').style.borderColor = '';
+    });
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+  </script>
+</body>
+</html>
