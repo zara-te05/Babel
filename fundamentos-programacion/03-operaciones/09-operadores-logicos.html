@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>08 _ EL CIRCO DE LA LÓGICA | Babel Encyclopedia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#33343e",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#124af0",
+                        "surface-variant": "#33343e",
+                        "surface-dim": "#11131c",
+                        "primary": "#b8c3ff",
+                        "on-tertiary-fixed": "#380d00",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "on-background": "#e2e1ef",
+                        "tertiary-container": "#c24100",
+                        "background": "#11131c",
+                        "secondary": "#c3c7cd",
+                        "surface-tint": "#b8c3ff",
+                        "outline-variant": "#434656",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#001356",
+                        "error-container": "#93000a",
+                        "on-primary": "#002388",
+                        "surface-container": "#1d1f29",
+                        "on-tertiary": "#5b1a00",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "primary-container": "#2e5bff",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-surface-variant": "#c4c5d9",
+                        "on-secondary-fixed": "#171c20",
+                        "tertiary": "#ffb59b",
+                        "surface-container-low": "#191b24",
+                        "surface-bright": "#373943",
+                        "surface": "#11131c",
+                        "secondary-fixed": "#dfe3e9",
+                        "surface-container-high": "#282933",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "outline": "#8e90a2",
+                        "primary-fixed": "#dde1ff",
+                        "on-primary-fixed-variant": "#0035be",
+                        "inverse-surface": "#e2e1ef",
+                        "surface-container-lowest": "#0c0e17",
+                        "on-tertiary-container": "#ffece6",
+                        "on-primary-container": "#efefff",
+                        "on-surface": "#e2e1ef",
+                        "on-secondary-container": "#b4b9bf",
+                        "secondary-container": "#454a4f",
+                        "on-secondary": "#2c3136",
+                        "inverse-on-surface": "#2e303a",
+                        "gold": "#D4AF37"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Bodoni Moda"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Space Mono"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Space Mono"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            font-family: 'Hanken Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .gold-accent {
+            color: #D4AF37;
+        }
+
+        .tent-silhouette {
+            clip-path: polygon(50% 0%, 100% 30%, 100% 100%, 0 100%, 0 30%);
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, rgba(17, 19, 28, 0) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .brutalist-border {
+            border: 1px solid #434656;
+        }
+
+        .operator-btn.active {
+            background-color: #D4AF37;
+            color: #11131c;
+        }
+
+        .status-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .status-light.active {
+            box-shadow: 0 0 15px #D4AF37;
+            background-color: #D4AF37;
+        }
+
+        .status-light.inactive {
+            background-color: #33343e;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface">
+    <!-- HEADER homogeneizado con el resto -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+
+    <main class="pt-28 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <!-- Header Section -->
+        <section class="mb-16 border-l-4 border-gold pl-8">
+            <h1 class="font-display-lg text-display-lg leading-none mb-4">09 _ EL CIRCO DE LA LÓGICA</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                La arquitectura del pensamiento binario despojada de artificios. Los operadores booleanos son los
+                cimientos de la computación, representados aquí como actos de precisión técnica en el gran teatro de la
+                verdad.
+            </p>
+        </section>
+
+        <!-- Acts / Narrative Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-24">
+            <!-- Act: AND -->
+            <div class="bg-surface-container p-8 brutalist-border relative group">
+                <span class="font-label-sm text-label-sm text-gold absolute top-4 right-4">ACTO I</span>
+                <h3 class="font-headline-md text-headline-md mb-6">AND [Conjuncion]</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-8">
+                    La convergencia absoluta. Para que la salida sea verdadera, todas las entradas deben serlo. En la
+                    trapecía de la lógica, ambos acróbatas deben asir la barra simultáneamente; un solo fallo precipita
+                    el silencio.
+                </p>
+                <div class="flex items-center gap-4 border-t border-outline-variant pt-4">
+                    <span class="font-label-sm text-label-sm text-gold">REGLA:</span>
+                    <span class="font-label-sm text-label-sm">T ∧ T = T</span>
+                </div>
+            </div>
+            <!-- Act: OR -->
+            <div class="bg-surface-container p-8 brutalist-border relative group">
+                <span class="font-label-sm text-label-sm text-gold absolute top-4 right-4">ACTO II</span>
+                <h3 class="font-headline-md text-headline-md mb-6">OR [Disyuncion]</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-8">
+                    La redundancia necesaria. La función se mantiene si al menos una voluntad permanece activa. Si un
+                    solo ejecutante sale a escena, la narrativa persiste. Solo la ausencia total de actores detiene el
+                    pulso.
+                </p>
+                <div class="flex items-center gap-4 border-t border-outline-variant pt-4">
+                    <span class="font-label-sm text-label-sm text-gold">REGLA:</span>
+                    <span class="font-label-sm text-label-sm">T ∨ F = T</span>
+                </div>
+            </div>
+            <!-- Act: NOT -->
+            <div class="bg-surface-container p-8 brutalist-border relative group">
+                <span class="font-label-sm text-label-sm text-gold absolute top-4 right-4">ACTO III</span>
+                <h3 class="font-headline-md text-headline-md mb-6">NOT [Inversion]</h3>
+                <p class="font-body-md text-body-md text-on-surface-variant mb-8">
+                    El espejo del ilusionista. El operador unitario que subvierte la identidad. Lo que es, deja de ser;
+                    lo que no es, se manifiesta. Una negación que constituye la base de toda dialéctica digital.
+                </p>
+                <div class="flex items-center gap-4 border-t border-outline-variant pt-4">
+                    <span class="font-label-sm text-label-sm text-gold">REGLA:</span>
+                    <span class="font-label-sm text-label-sm">¬T = F</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Section: La Carpa de la Verdad -->
+        <section class="mb-24">
+            <h2 class="font-headline-md text-headline-md mb-12 text-center">LA CARPA DE LA VERDAD</h2>
+            <div class="tent-silhouette max-w-4xl mx-auto p-12 md:p-24 flex flex-col items-center"
+                style="background: repeating-linear-gradient(90deg, rgba(212, 175, 55, 0.02) 0px, rgba(212, 175, 55, 0.02) 40px, transparent 40px, transparent 80px), linear-gradient(rgba(212, 175, 55, 0.05) 0%, rgba(17, 19, 28, 0) 100%); border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: rgba(212, 175, 55, 0.05) 0px 0px 0px 2px inset;">
+                <div class="w-full flex justify-center -mt-12 md:-mt-24 mb-8">
+                    <div class="w-12 h-12 bg-gold rotate-45 brutalist-border"
+                        style="clip-path: polygon(50% 0%, 100% 100%, 0% 100%);"></div>
+                </div>
+                <div
+                    class="w-full grid grid-cols-1 md:grid-cols-3 items-center gap-12 border-t border-b border-gold/10 py-8">
+                    <!-- Inputs -->
+                    <div class="flex flex-col gap-8 items-center md:items-end">
+                        <div class="flex items-center gap-4">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">INTERRUPTOR A</span>
+                            <button
+                                class="w-16 h-8 bg-surface-container-highest rounded-full p-1 transition-all duration-300 brutalist-border"
+                                id="switchA" onclick="toggleSwitch('A')">
+                                <div class="w-6 h-6 bg-outline-variant rounded-full transition-transform duration-300"
+                                    id="sliderA"></div>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4" id="switchBContainer">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">INTERRUPTOR B</span>
+                            <button
+                                class="w-16 h-8 bg-surface-container-highest rounded-full p-1 transition-all duration-300 brutalist-border"
+                                id="switchB" onclick="toggleSwitch('B')">
+                                <div class="w-6 h-6 bg-outline-variant rounded-full transition-transform duration-300"
+                                    id="sliderB"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Operator Selector -->
+                    <div class="flex flex-col gap-2">
+                        <button
+                            class="operator-btn active border border-gold px-4 py-2 font-label-sm text-label-sm tracking-widest transition-all"
+                            id="btnAND" onclick="setOperator('AND')">AND</button>
+                        <button
+                            class="operator-btn border border-gold px-4 py-2 font-label-sm text-label-sm tracking-widest transition-all"
+                            id="btnOR" onclick="setOperator('OR')">OR</button>
+                        <button
+                            class="operator-btn border border-gold px-4 py-2 font-label-sm text-label-sm tracking-widest transition-all"
+                            id="btnNOT" onclick="setOperator('NOT')">NOT</button>
+                    </div>
+                    <!-- Output / MC Indicator -->
+                    <div class="flex flex-col items-center md:items-start gap-4">
+                        <div
+                            class="flex flex-col items-center p-8 border border-outline-variant w-full md:w-48 text-center bg-surface-container-low relative">
+                            <div class="absolute inset-0 bg-gold opacity-5 blur-2xl rounded-full pointer-events-none">
+                            </div>
+                            <span class="font-label-sm text-label-sm text-outline mb-4">MAESTRO DE CEREMONIAS</span>
+                            <div class="status-light inactive mb-6" id="resultLight"></div>
+                            <span class="font-headline-md text-headline-md text-outline" id="resultLabel">FRACASO</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16 w-full max-w-md border-t border-outline-variant pt-8 text-center">
+                    <p class="font-body-md text-body-md text-on-surface-variant italic" id="operatorDescription">
+                        "Ambos acróbatas deben estar en posición para que el acto sea validado."
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER homogeneizado con el resto (navegación anterior/siguiente) -->
+    <footer class="bg-surface dark:bg-surface border-t border-outline-variant/10 py-12 mt-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-8">
+            <!-- Retroceso -->
+            <a href="/fundamentos-programacion/03-operaciones/08-aritmetica-datos.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Anterior</span>
+                    <span class="font-headline-md text-headline-md italic block">Aritmética de Datos</span>
+                </div>
+            </a>
+            <!-- Avance -->
+            <a href="/fundamentos-programacion/04-control-de-flujo/10-condicional-if.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                <div class="text-center md:text-right">
+                    <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Siguiente</span>
+                    <span class="font-headline-md text-headline-md italic block">If</span>
+                </div>
+                <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </div>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        let state = {
+            inputA: false,
+            inputB: false,
+            operator: 'AND'
+        };
+
+        function toggleSwitch(id) {
+            state[`input${id}`] = !state[`input${id}`];
+            const slider = document.getElementById(`slider${id}`);
+            const btn = document.getElementById(`switch${id}`);
+
+            if (state[`input${id}`]) {
+                slider.style.transform = 'translateX(32px)';
+                slider.style.backgroundColor = '#D4AF37';
+                btn.style.borderColor = '#D4AF37';
+            } else {
+                slider.style.transform = 'translateX(0)';
+                slider.style.backgroundColor = '#434656';
+                btn.style.borderColor = '#434656';
+            }
+            calculateResult();
+        }
+
+        function setOperator(op) {
+            state.operator = op;
+
+            document.querySelectorAll('.operator-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn${op}`).classList.add('active');
+
+            const containerB = document.getElementById('switchBContainer');
+            const desc = document.getElementById('operatorDescription');
+
+            if (op === 'NOT') {
+                containerB.style.opacity = '0.2';
+                containerB.style.pointerEvents = 'none';
+                desc.innerText = '"El espejo del ilusionista invierte la realidad del Interruptor A."';
+            } else {
+                containerB.style.opacity = '1';
+                containerB.style.pointerEvents = 'auto';
+                if (op === 'AND') {
+                    desc.innerText = '"Ambos acróbatas deben estar en posición para que el acto sea validado."';
+                } else {
+                    desc.innerText = '"Basta con que un solo ejecutante tome la iniciativa para continuar."';
+                }
+            }
+
+            calculateResult();
+        }
+
+        function calculateResult() {
+            let result = false;
+
+            switch (state.operator) {
+                case 'AND':
+                    result = state.inputA && state.inputB;
+                    break;
+                case 'OR':
+                    result = state.inputA || state.inputB;
+                    break;
+                case 'NOT':
+                    result = !state.inputA;
+                    break;
+            }
+
+            const light = document.getElementById('resultLight');
+            const label = document.getElementById('resultLabel');
+
+            if (result) {
+                light.classList.add('active');
+                light.classList.remove('inactive');
+                label.innerText = '¡ÉXITO!';
+                label.classList.remove('text-outline');
+                label.classList.add('text-gold');
+            } else {
+                light.classList.remove('active');
+                light.classList.add('inactive');
+                label.innerText = 'FRACASO';
+                label.classList.add('text-outline');
+                label.classList.remove('text-gold');
+            }
+        }
+
+        calculateResult();
+    </script>
+</body>
+</html>

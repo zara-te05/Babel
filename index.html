@@ -80,7 +80,8 @@
     .hero-marquee-line {
       font-family: 'Bodoni Moda', serif;
       font-weight: 900;
-      font-size: clamp(80px, 18vw, 260px);
+      /* Reducido: clamp(36px, 7vw, 110px) en lugar de clamp(80px, 18vw, 260px) */
+      font-size: clamp(36px, 7vw, 110px);
       letter-spacing: -0.03em;
       color: #FFFFFF;
       white-space: nowrap;
@@ -94,15 +95,11 @@
     }
 
     /* ── HERMES-STYLE INTERLUDE ── */
-
-    /* The white band */
     .hermes-band {
       background: #FFFFFF;
       color: #0047AB;
       overflow: hidden;
     }
-
-    /* Three-column feature text inside the band */
     .hermes-col-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
@@ -119,12 +116,9 @@
       line-height: 1.7;
       color: #0047AB;
     }
-
-    /* Giant project name bleeding in blue at bottom of band */
     .hermes-bleed-wrap {
       overflow: hidden;
       line-height: 0.82;
-      /* negative margin pulls it into the blue zone */
       margin-bottom: -0.08em;
     }
     .hermes-bleed-word {
@@ -136,11 +130,8 @@
       color: #0047AB;
       display: block;
       white-space: nowrap;
-      /* Bleed past left edge like Hermes */
       margin-left: -0.03em;
     }
-
-    /* Thin horizontal rule inside the band */
     .hermes-rule {
       border: none;
       border-top: 1px solid rgba(0, 71, 171, 0.18);
@@ -175,12 +166,13 @@
   <!-- NAV -->
   <header class="fixed top-0 w-full z-50 bg-transparent transition-all duration-500">
     <nav class="flex justify-between items-center px-margin-desktop py-6 max-w-container-max mx-auto">
-      <div class="font-headline-md text-headline-md font-bold text-stark-white tracking-tighter" style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:22px;">Proyecto Torre Babel</div>
+      <a href="index.html" class="font-headline-md text-headline-md font-bold text-stark-white tracking-tighter hover:opacity-85 transition-opacity" style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:22px;text-decoration:none;">Proyecto Torre Babel</a>
       <div class="hidden md:flex items-center gap-10">
         <a class="font-body-md text-body-md text-stark-white border-b border-stark-white pb-1 transition-all" href="index.html">Inicio</a>
         <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="arquitectura.html">Arquitectura</a>
         <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="comunidad.html">Comunidad</a>
-        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="perfil.html">Registro</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="re_lenguaje.html">RE</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="logos-editor.html">Logos Editor</a>
       </div>
     </nav>
   </header>
@@ -189,7 +181,7 @@
 
     <!-- HERO -->
     <section class="min-h-screen flex flex-col justify-end pb-16 pt-24 px-4 md:px-margin-desktop">
-      <div class="reveal-node mb-8">
+      <div class="reveal-node mb-6">
         <p class="font-label-caps text-label-caps text-stark-white/60 tracking-widest uppercase">Marco Unificado • v1.0.0</p>
       </div>
       <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.1s">
@@ -201,7 +193,7 @@
       <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.3s">
         <span class="hero-marquee-line">Y SUS APRENDIZAJES</span>
       </div>
-      <div class="mt-12 flex flex-col md:flex-row md:items-end justify-between gap-8 reveal-node" style="transition-delay:0.45s">
+      <div class="mt-10 flex flex-col md:flex-row md:items-end justify-between gap-8 reveal-node" style="transition-delay:0.45s">
         <p class="font-body-lg text-body-lg text-stark-white/80 max-w-lg leading-relaxed italic">
           Infraestructura digital a través de la lógica clásica. Una nueva época de excelencia sistémica, forjamos libertad a través del código abierto.
         </p>
@@ -262,19 +254,10 @@
       </div>
     </section>
 
-    <!-- ══════════════════════════════════════════════
-         BABEL → CTA SCROLL TRANSITION
-         Sticky white section: BABEL fades/scales out,
-         CTA fades in as user scrolls through.
-    ══════════════════════════════════════════════ -->
-
-    <!-- Scroll spacer — gives room for the sticky animation to play -->
+    <!-- BABEL → CTA SCROLL TRANSITION -->
     <div id="babel-scroll-spacer" style="height:250vh; position:relative;">
-
-      <!-- Sticky frame pinned to viewport -->
       <div style="position:sticky; top:0; height:100vh; overflow:hidden; background:#FFFFFF;">
 
-        <!-- BABEL word — centered, massive -->
         <div id="babel-word-wrap" style="
           position:absolute; inset:0;
           display:flex; align-items:center; justify-content:center;
@@ -292,7 +275,6 @@
           ">BABEL</span>
         </div>
 
-        <!-- CTA — fades in as BABEL fades out -->
         <div id="babel-cta" style="
           position:absolute; inset:0;
           display:flex; flex-direction:column;
@@ -361,14 +343,11 @@
 
   <script>
     const tower = document.getElementById('tower-img');
-
-    // ── BABEL → CTA scroll animation ──
     const spacer   = document.getElementById('babel-scroll-spacer');
     const babelEl  = document.getElementById('babel-word');
     const ctaEl    = document.getElementById('babel-cta');
     const ctaBtn   = document.getElementById('cta-deploy-btn');
 
-    // Button hover
     if (ctaBtn) {
       ctaBtn.addEventListener('mouseenter', () => {
         ctaBtn.style.background = '#0047AB';
@@ -388,7 +367,6 @@
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
 
-      // Nav
       const nav = document.querySelector('header');
       if (scrollY > 100) {
         nav.classList.add('bg-electric-royal/90', 'backdrop-blur-md', 'py-4', 'border-b', 'border-stark-white/10');
@@ -398,21 +376,15 @@
         nav.classList.remove('bg-electric-royal/90', 'backdrop-blur-md', 'py-4', 'border-b', 'border-stark-white/10');
       }
 
-      // Tower parallax
       tower.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.12}px))`;
 
-      // Babel → CTA animation
       if (spacer) {
         const rect   = spacer.getBoundingClientRect();
         const total  = spacer.offsetHeight - window.innerHeight;
-        const scrolled = -rect.top; // px scrolled into the spacer
-        // 0 → 1 over the full spacer scroll distance
+        const scrolled = -rect.top;
         const raw = clamp(scrolled / total, 0, 1);
-
-        // Phase 1: 0→0.5  BABEL shrinks + fades out
-        // Phase 2: 0.5→1  CTA fades in
-        const p1 = clamp(raw / 0.5, 0, 1);        // 0..1 during first half
-        const p2 = clamp((raw - 0.5) / 0.5, 0, 1); // 0..1 during second half
+        const p1 = clamp(raw / 0.5, 0, 1);
+        const p2 = clamp((raw - 0.5) / 0.5, 0, 1);
 
         if (babelEl) {
           const scale   = lerp(1, 0.55, p1);
@@ -422,16 +394,13 @@
         }
 
         if (ctaEl) {
-          const ctaOpacity = p2;
-          ctaEl.style.opacity       = ctaOpacity;
+          ctaEl.style.opacity       = p2;
           ctaEl.style.pointerEvents = p2 > 0.5 ? 'auto' : 'none';
-          // Slight rise effect
           ctaEl.style.transform = `translateY(${lerp(30, 0, p2)}px)`;
         }
       }
     }, { passive: true });
 
-    // Reveal on scroll
     document.addEventListener('DOMContentLoaded', () => {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });

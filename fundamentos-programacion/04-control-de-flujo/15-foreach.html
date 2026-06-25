@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Babel - Lección 11: El Inventario Infinito</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Fuentes tipográficas -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet" />
+    <!-- Iconos Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --cobalt: #2e5bff;
+            --surface: #11131c;
+        }
+
+        body {
+            background-color: var(--surface);
+            color: #e2e1ef;
+            font-family: 'Hanken Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Bodoni Moda', serif;
+        }
+
+        .font-mono {
+            font-family: 'Space Mono', monospace;
+        }
+
+        .gallery-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gallery-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .curator-glow {
+            box-shadow: 0 0 30px 2px rgba(46, 91, 255, 0.4);
+        }
+
+        .active-item {
+            border-color: var(--cobalt);
+            transform: translateY(-8px);
+            background-color: #1d1f29;
+        }
+
+        .code-block {
+            background: linear-gradient(135deg, #1d1f29 0%, #11131c 100%);
+            border-left: 4px solid var(--cobalt);
+        }
+
+        @keyframes pulse-slow {
+
+            0%,
+            100% {
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 4s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#c4c5d9",
+                        "surface-tint": "#b8c3ff",
+                        "surface-dim": "#11131c",
+                        "primary-fixed": "#dde1ff",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "surface-container": "#1d1f29",
+                        "outline-variant": "#434656",
+                        "inverse-on-surface": "#2e303a",
+                        "primary-container": "#2e5bff",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "secondary-fixed": "#dfe3e9",
+                        "surface-container-high": "#282933",
+                        "on-primary": "#002388",
+                        "tertiary-fixed": "#ffdbcf",
+                        "tertiary-container": "#c24100",
+                        "inverse-surface": "#e2e1ef",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "on-surface": "#e2e1ef",
+                        "surface-variant": "#33343e",
+                        "background": "#11131c",
+                        "primary": "#b8c3ff",
+                        "secondary": "#c3c7cd",
+                        "on-tertiary": "#5b1a00",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "error": "#ffb4ab",
+                        "on-background": "#e2e1ef",
+                        "tertiary": "#ffb59b",
+                        "on-secondary": "#2c3136",
+                        "outline": "#8e90a2",
+                        "surface-container-lowest": "#0c0e17",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed-variant": "#0035be",
+                        "on-error": "#690005",
+                        "on-secondary-container": "#b4b9bf",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "surface-bright": "#373943",
+                        "on-primary-container": "#efefff",
+                        "surface": "#11131c",
+                        "surface-container-low": "#191b24",
+                        "surface-container-highest": "#33343e",
+                        "on-tertiary-container": "#ffece6",
+                        "on-secondary-fixed": "#171c20",
+                        "inverse-primary": "#124af0",
+                        "on-primary-fixed": "#001356",
+                        "secondary-container": "#454a4f",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Bodoni Moda"],
+                        "label-sm": ["Space Mono"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Bodoni Moda"],
+                        "label-caps": ["Space Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "label-caps": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
+    <!-- Header fijo con solo el título de la enciclopedia -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-20 overflow-hidden">
+        <!-- Hero Section -->
+        <section class="max-w-[700px] mx-auto px-margin-mobile md:px-0 mb-20 text-center">
+            <h1 class="font-display-lg text-display-lg mb-8">El Inventario Infinito</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                En los pasillos de la Gran Biblioteca, no importa cuántos tomos existan, sino el acto de observar cada
+                uno. El ciclo <span class="text-primary font-mono italic">foreach</span> es la mirada del curador que
+                reconoce la esencia sin el peso de la numeración.
+            </p>
+        </section>
+
+        <!-- Interactive Lab: El Recorrido del Curador -->
+        <section class="w-full max-w-container-max mx-auto px-margin-desktop mb-32">
+            <div class="bg-surface-container border border-outline-variant/20 p-8 md:p-12">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                    <div>
+                        <h2 class="font-headline-md text-headline-md mb-2">Laboratorio: El Recorrido del Curador</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Inicie el ciclo para observar cómo
+                            el puntero recorre la colección.</p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <div class="font-label-sm text-label-sm text-on-surface-variant mb-1">Estado del Puntero</div>
+                        <div class="font-mono text-xl text-primary bg-primary-container/10 px-4 py-2 border border-primary/30"
+                            id="curator-status">
+                            IDLE: Esperando Inspección
+                        </div>
+                    </div>
+                </div>
+                <!-- Gallery of items -->
+                <div class="flex gap-6 overflow-x-auto gallery-scroll py-8" id="gallery-container">
+                    <!-- Items will be generated here -->
+                </div>
+                <div class="mt-12 flex justify-center">
+                    <button
+                        class="group relative px-12 py-4 bg-primary-container text-on-primary-container font-label-sm text-label-sm transition-all active:scale-95 overflow-hidden"
+                        id="start-inspection">
+                        <span class="relative z-10">INICIAR INSPECCIÓN</span>
+                        <div
+                            class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <section
+            class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-12 items-start mb-32">
+            <div class="md:col-span-7">
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="material-symbols-outlined text-primary text-4xl">visibility</span>
+                    <h2 class="font-headline-md text-headline-md">La Mirada del Observador</h2>
+                </div>
+                <div class="space-y-6 font-body-lg text-body-lg text-on-surface-variant">
+                    <p>
+                        A diferencia del ciclo tradicional que requiere un contador manual (el índice), el <span
+                            class="text-on-surface font-semibold italic">foreach</span> elimina la fricción entre el
+                        código y los datos. Es una abstracción de alto nivel que dice: "haz esto con cada elemento de
+                        este grupo".
+                    </p>
+                    <p>
+                        Imagine un bibliotecario recorriendo una estantería. No necesita saber que el libro que tiene en
+                        sus manos es el número 432; solo necesita saber que es un libro y qué debe hacer con él. Esta
+                        simplicidad reduce los errores comunes de "fuera de rango" y permite un código más legible y
+                        elegante.
+                    </p>
+                </div>
+            </div>
+            <div class="md:col-span-5 bg-surface-container-high p-8 border border-outline-variant/30">
+                <div class="font-label-sm text-label-sm text-primary mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm"
+                        style="font-variation-settings: 'FILL' 1;">terminal</span>
+                    SINTAXIS DEL SINFÍN
+                </div>
+                <div class="code-block p-6 font-mono text-sm space-y-2 leading-relaxed">
+                    <div class="text-on-surface-variant/50">// La colección de saberes</div>
+                    <div class="text-on-surface">Coleccion <span class="text-primary-fixed">pergaminos</span> =
+                        Biblioteca.get();</div>
+                    <div class="py-2"></div>
+                    <div class="text-primary-fixed">for (<span class="text-on-surface">Pergamino</span> p : <span
+                            class="text-primary-fixed">pergaminos</span>) {</div>
+                    <div class="pl-6 text-on-surface">p.<span class="text-surface-tint">leer</span>();</div>
+                    <div class="pl-6 text-on-surface">p.<span class="text-surface-tint">catalogar</span>();</div>
+                    <div class="text-primary-fixed">}</div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-outline-variant/20">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant italic">
+                        "El curador no cuenta pasos, cuenta hallazgos."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regla de Oro -->
+        <section class="max-w-container-max mx-auto px-margin-desktop mb-32">
+            <div class="relative bg-surface-container-lowest border border-primary/20 p-12 overflow-hidden">
+                <div
+                    class="absolute -right-20 -bottom-20 w-64 h-64 border border-primary/10 rounded-full animate-pulse-slow">
+                </div>
+                <div
+                    class="absolute -left-10 -top-10 w-40 h-40 border border-primary/5 rounded-full animate-pulse-slow">
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
+                    <div class="flex-shrink-0">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center bg-primary text-on-primary rounded-none rotate-45 shadow-xl">
+                            <span class="material-symbols-outlined text-5xl -rotate-45">gavel</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-label-sm text-label-sm text-primary mb-4 tracking-[0.3em]">REGLA DE ORO</h3>
+                        <p class="font-display-lg text-headline-md leading-tight text-on-surface">
+                            Usa <span class="italic text-primary">foreach</span> cuando el orden numérico sea secundario
+                            a la existencia del dato.
+                        </p>
+                        <p class="mt-6 font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                            Si solo necesitas procesar los elementos uno por uno y no te interesa su posición exacta o
+                            modificar la colección mientras la recorres, el inventario infinito es tu herramienta más
+                            fiel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 pt-8 border-t border-outline-variant/20">
+        <div class="flex flex-col md:flex-row items-center md:justify-between gap-8">
+            <a class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-start"
+                href="/fundamentos-programacion/04-control-de-flujo/14-for.html">
+                <div class="w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors">
+                        LECCIÓN 14
+                    </div>
+                    <div class="font-headline-md text-headline-md italic">La Escalera del Infinito (for)</div>
+                </div>
+            </a>
+            <a class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-end md:ml-auto"
+                href="/arquitectura.html">
+                <div class="text-center md:text-right">
+                    <div class="font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors">
+                        MÓDULO DOS
+                    </div>
+                    <div class="font-headline-md text-headline-md italic">Programación Orientada a Objetos</div>
+                </div>
+                <div class="w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="mt-12 text-center">
+            <p class="font-label-sm text-[10px] text-on-secondary-container/30 uppercase tracking-[0.3em]">
+                © 2026 BABEL ARCHITECTURE. NO IMAGES. PURE LOGIC.
+            </p>
+        </div>
+    </footer>
+    <script>
+        const scrolls = [ "Chainsaw Man",
+            "Hunter x Hunter", "Jujutsu Kaisen",
+            "Crimen y Castigo", "Manfred", "El Idiota",
+            "La Metamorfosis", "Lolita", "El Lobo Estepario",
+            "El Extranjero", "Soy un Gato"
+        ];
+        const container = document.getElementById('gallery-container');
+        const startBtn = document.getElementById('start-inspection');
+        const statusDisplay = document.getElementById('curator-status');
+
+        scrolls.forEach((name, index) => {
+            const item = document.createElement('div');
+            item.className = `flex-shrink-0 w-48 h-72 border border-outline-variant/30 flex flex-col items-center justify-center p-6 transition-all duration-500 bg-surface-container-low`;
+            item.dataset.index = index;
+            item.dataset.name = name;
+            item.innerHTML = `
+                <div class="w-full h-1 bg-outline-variant/20 mb-auto"></div>
+                <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-4 opacity-30">menu_book</span>
+                <div class="font-label-sm text-center text-xs opacity-50 mb-2">SABER #${index + 1}</div>
+                <div class="font-display text-center leading-tight mb-auto text-on-surface">${name}</div>
+                <div class="w-full h-1 bg-outline-variant/20 mt-auto"></div>
+            `;
+            container.appendChild(item);
+        });
+
+        async function runInspection() {
+            startBtn.disabled = true;
+            startBtn.style.opacity = '0.5';
+            const items = container.querySelectorAll('[data-index]');
+            for (let i = 0; i < items.length; i++) {
+                if (i > 0) {
+                    items[i - 1].classList.remove('active-item', 'curator-glow');
+                    items[i - 1].querySelector('span').classList.remove('text-primary', 'opacity-100');
+                }
+                const current = items[i];
+                current.classList.add('active-item', 'curator-glow');
+                const icon = current.querySelector('span');
+                icon.classList.add('text-primary', 'opacity-100');
+                statusDisplay.innerText = `Elemento Actual: ${current.dataset.name}`;
+                current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                await new Promise(r => setTimeout(r, 800));
+            }
+            setTimeout(() => {
+                items[items.length - 1].classList.remove('active-item', 'curator-glow');
+                statusDisplay.innerText = "Inspección Completa";
+                startBtn.disabled = false;
+                startBtn.style.opacity = '1';
+            }, 1000);
+        }
+        startBtn.addEventListener('click', runInspection);
+    </script>
+</body>
+
+</html>

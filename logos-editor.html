@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Logos Editor — El IDE del Lenguaje Re</title>
+  <meta name="description" content="Logos es el editor de código diseñado para Re. Escribe, ejecuta y visualiza tus algoritmos con el diseñador gráfico estilo Raptor integrado." />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "stark-white": "#FFFFFF",
+            "electric-royal": "#0047AB",
+            "ghost-white": "#F5F5F5",
+          },
+          spacing: {
+            "container-max": "1280px",
+            "margin-desktop": "64px",
+            "gutter": "24px",
+            "margin-mobile": "16px"
+          },
+          fontFamily: {
+            "body-md": ["Hanken Grotesk"],
+            "body-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Bodoni Moda"],
+            "headline-md": ["Bodoni Moda"],
+            "button-text": ["Hanken Grotesk"],
+            "label-caps": ["JetBrains Mono"],
+            "display-lg": ["Bodoni Moda"],
+          },
+          fontSize: {
+            "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+            "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+            "headline-lg": ["40px", { lineHeight: "1.2", fontWeight: "600" }],
+            "headline-md": ["28px", { lineHeight: "1.3", fontWeight: "500" }],
+            "button-text": ["14px", { lineHeight: "1.0", letterSpacing: "0.05em", fontWeight: "600" }],
+            "label-caps": ["11px", { lineHeight: "1.0", letterSpacing: "0.1em", fontWeight: "500" }],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background-color: #0047AB;
+      color: #FFFFFF;
+      font-family: 'Hanken Grotesk', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0047AB; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); }
+
+    /* ── NAV ── */
+    .site-header {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    .site-header.scrolled {
+      background: rgba(0,55,140,0.93);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── HERO MARQUEE ── */
+    .hero-marquee-wrap { overflow: hidden; width: 100%; line-height: 0.87; }
+    .hero-marquee-line {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 900;
+      font-size: clamp(40px, 8vw, 120px);
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      white-space: nowrap;
+      text-transform: uppercase;
+      display: block;
+    }
+    .hero-marquee-line.outline {
+      -webkit-text-stroke: 1.5px #FFFFFF;
+      color: transparent;
+    }
+
+    /* ── REVEAL ── */
+    .reveal-node {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 1.1s cubic-bezier(0.22,1,0.36,1), transform 1.1s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-node.revealed { opacity: 1; transform: none; }
+    .reveal-stagger > * {
+      opacity: 0; transform: translateY(18px);
+      transition: all 0.85s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-stagger.revealed > *:nth-child(1) { opacity:1; transform:none; transition-delay:0s; }
+    .reveal-stagger.revealed > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.09s; }
+    .reveal-stagger.revealed > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.18s; }
+    .reveal-stagger.revealed > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.27s; }
+    .reveal-stagger.revealed > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.36s; }
+
+    /* ── EDITOR SHELL ── */
+    .editor-shell {
+      background: #001830;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.45);
+    }
+    .editor-titlebar {
+      background: #001122;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      user-select: none;
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #febc2e; }
+    .dot.g { background: #28c840; }
+
+    .editor-tabs {
+      display: flex;
+      background: #001830;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      gap: 0;
+      overflow-x: auto;
+    }
+    .editor-tab {
+      padding: 9px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.45);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .editor-tab:hover { color: rgba(255,255,255,0.75); }
+    .editor-tab.active { color: #fff; border-bottom-color: #fff; background: rgba(255,255,255,0.04); }
+
+    .editor-body {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      min-height: 340px;
+    }
+    .line-nums {
+      background: rgba(0,0,0,0.3);
+      padding: 18px 0;
+      text-align: right;
+      padding-right: 10px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .line-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.2);
+      display: block;
+    }
+    .editor-code {
+      padding: 18px 20px;
+      overflow-x: auto;
+    }
+    .code-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.88);
+      white-space: pre;
+      display: block;
+    }
+    .kw  { color: #79b8ff; font-weight: 600; }   /* keywords */
+    .ty  { color: #85e89d; font-weight: 500; }   /* types */
+    .st  { color: #f97583; }                      /* strings */
+    .nm  { color: #ffab70; }                      /* numbers */
+    .cm  { color: rgba(255,255,255,0.28); font-style: italic; } /* comments */
+    .fn  { color: #b392f0; }                      /* functions */
+    .pt  { color: rgba(255,255,255,0.5); }        /* punctuation */
+    .pl  { color: #e1e4e8; }                      /* plain */
+
+    .editor-output {
+      background: #00101e;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 20px 14px;
+      display: flex; align-items: center; gap: 16px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .out-tag {
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); flex-shrink: 0;
+    }
+    .out-text { font-size: 13px; color: #85e89d; }
+
+    .editor-toolbar {
+      background: #001122;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .toolbar-btn {
+      padding: 6px 14px;
+      border-radius: 5px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-run { background: #28c840; color: #001500; }
+    .btn-run:hover { background: #33d14d; transform: translateY(-1px); }
+    .btn-clear { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.12); }
+    .btn-clear:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .btn-export { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.12); }
+    .btn-export:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+    /* ── RAPTOR CANVAS ── */
+    .raptor-shell {
+      background: #F7F7FA;
+      border: 1px solid rgba(0,71,171,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.22);
+    }
+    .raptor-titlebar {
+      background: #FFFFFF;
+      border-bottom: 1px solid rgba(0,71,171,0.12);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .raptor-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0,71,171,0.5);
+    }
+
+    .raptor-sidebar {
+      background: #FFFFFF;
+      border-right: 1px solid rgba(0,71,171,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 12px 8px;
+      min-width: 52px;
+      align-items: center;
+    }
+    .raptor-tool {
+      width: 36px; height: 36px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      background: transparent;
+      position: relative;
+    }
+    .raptor-tool:hover { background: rgba(0,71,171,0.07); border-color: rgba(0,71,171,0.2); }
+    .raptor-tool.active { background: rgba(0,71,171,0.1); border-color: rgba(0,71,171,0.35); }
+    .raptor-tool svg { width: 17px; height: 17px; }
+
+    .raptor-canvas-area {
+      background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 23px, rgba(0,71,171,0.05) 23px, rgba(0,71,171,0.05) 24px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent, transparent 23px, rgba(0,71,171,0.05) 23px, rgba(0,71,171,0.05) 24px
+      );
+      position: relative;
+      overflow: hidden;
+      min-height: 420px;
+    }
+
+    /* ── FLOW NODES ── */
+    .flow-node {
+      position: absolute;
+      cursor: grab;
+      user-select: none;
+      transition: box-shadow 0.2s;
+      touch-action: none;
+    }
+    .flow-node:active { cursor: grabbing; }
+    .flow-node:hover .node-body { box-shadow: 0 6px 24px rgba(0,71,171,0.25); }
+
+    .node-body {
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #0047AB;
+      transition: box-shadow 0.2s;
+    }
+
+    /* Oval (start/end) */
+    .node-oval .node-body {
+      background: #0047AB;
+      color: #fff;
+      border-radius: 999px;
+      width: 130px; height: 46px;
+      border: 2px solid rgba(0,71,171,0.3);
+      box-shadow: 0 4px 14px rgba(0,71,171,0.2);
+    }
+
+    /* Rectangle (process) */
+    .node-rect .node-body {
+      background: #FFFFFF;
+      border: 2px solid #0047AB;
+      width: 160px; min-height: 48px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0,71,171,0.1);
+      text-align: center;
+    }
+
+    /* Diamond (decision) */
+    .node-diamond { width: 120px; height: 90px; }
+    .node-diamond .node-body {
+      background: #FFFFFF;
+      border: 2px solid #0047AB;
+      width: 100%; height: 100%;
+      border-radius: 4px;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      box-shadow: 0 4px 14px rgba(0,71,171,0.12);
+      letter-spacing: 0.04em;
+      font-size: 10px;
+    }
+
+    /* Parallelogram (I/O) */
+    .node-io .node-body {
+      background: rgba(0,71,171,0.08);
+      border: 2px solid #0047AB;
+      width: 160px; height: 48px;
+      clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+      box-shadow: 0 4px 14px rgba(0,71,171,0.1);
+    }
+
+    /* SVG connector lines */
+    .flow-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .flow-arrow {
+      stroke: rgba(0,71,171,0.6);
+      stroke-width: 1.8;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+    .flow-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      fill: rgba(0,71,171,0.55);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── FEATURE CARDS ── */
+    .feat-card {
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 28px;
+      transition: background 0.35s, border-color 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feat-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.03);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-card:hover { border-color: rgba(255,255,255,0.4); }
+
+    .feat-icon {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .feat-icon svg { width: 18px; height: 18px; }
+
+    /* ── KEYBOARD SHORTCUT PILL ── */
+    .kbd {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── SECTION ── */
+    .section-py { padding-top: 96px; padding-bottom: 96px; }
+    .section-px { padding-left: 64px; padding-right: 64px; }
+    @media (max-width: 768px) {
+      .section-px { padding-left: 20px; padding-right: 20px; }
+      .editor-body { grid-template-columns: 36px 1fr; }
+    }
+
+    /* ── TICKER ── */
+    .ticker-track {
+      display: flex; gap: 3rem;
+      animation: ticker 26s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      font-family: 'Bodoni Moda', serif; font-weight: 700;
+      font-size: clamp(24px,3.5vw,44px);
+      letter-spacing: -0.01em; text-transform: uppercase;
+      color: rgba(255,255,255,0.12); flex-shrink: 0;
+    }
+    .ticker-item.accent { color: rgba(255,255,255,0.45); }
+
+    /* ── HORIZONTAL RULE ── */
+    .rule { border-top: 1px solid rgba(255,255,255,0.13); }
+
+    /* ── TOOLTIP ── */
+    .has-tooltip { position: relative; }
+    .has-tooltip::after {
+      content: attr(data-tip);
+      position: absolute; left: 50%; bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      background: #001122; color: rgba(255,255,255,0.8);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 5px 10px;
+      white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity 0.2s; border-radius: 4px;
+    }
+    .has-tooltip:hover::after { opacity: 1; }
+
+    /* ── RAPTOR PANEL TABS ── */
+    .raptor-tabs { display: flex; gap: 0; border-bottom: 1px solid rgba(0,71,171,0.12); background: #fff; }
+    .raptor-tab {
+      padding: 8px 18px; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(0,71,171,0.4); cursor: pointer; transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+    .raptor-tab:hover { color: #0047AB; }
+    .raptor-tab.active { color: #0047AB; border-bottom-color: #0047AB; }
+
+    /* ── GENERATED CODE PANEL ── */
+    .generated-panel { display: none; }
+    .generated-panel.active { display: block; }
+    .canvas-panel.active { display: flex; flex-direction: row; }
+    .canvas-panel { display: none; }
+
+    /* node highlight when selected */
+    .flow-node.selected .node-body { outline: 2px solid #0047AB; outline-offset: 2px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <header class="site-header" id="site-nav">
+    <nav class="flex justify-between items-center px-margin-desktop py-6 max-w-container-max mx-auto">
+      <a href="index.html" class="font-headline-md text-headline-md font-bold text-stark-white tracking-tighter hover:opacity-85 transition-opacity" style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:22px;text-decoration:none;">Proyecto Torre Babel</a>
+      <div class="hidden md:flex items-center gap-10">
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="index.html">Inicio</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="arquitectura.html">Arquitectura</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="comunidad.html">Comunidad</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="re_lenguaje.html">RE</a>
+        <a class="font-body-md text-body-md text-stark-white border-b border-stark-white pb-1 transition-all" href="logos-editor.html">Logos Editor</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════
+         HERO
+    ═══════════════════════════════ -->
+    <section class="min-h-screen flex flex-col justify-end pb-16 pt-28 section-px" style="position:relative;overflow:hidden;">
+
+      <!-- subtle grid bg -->
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,0.03) 59px,rgba(255,255,255,0.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,0.03) 59px,rgba(255,255,255,0.03) 60px);pointer-events:none;z-index:0;"></div>
+
+      <div style="position:relative;z-index:1;">
+        <div class="reveal-node" style="margin-bottom:32px;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.5);">Editor oficial del lenguaje Re · v1.0.0</p>
+        </div>
+
+        <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.08s">
+          <span class="hero-marquee-line">LOGOS</span>
+        </div>
+        <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.16s">
+          <span class="hero-marquee-line outline">EL EDITOR</span>
+        </div>
+        <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.24s">
+          <span class="hero-marquee-line">DEL CÓDIGO</span>
+        </div>
+
+        <div class="mt-10 flex flex-col md:flex-row md:items-end justify-between gap-8 reveal-node" style="transition-delay:0.38s">
+          <p style="font-size:18px;line-height:1.65;color:rgba(255,255,255,0.75);max-width:460px;font-style:italic;">
+            Escribe Re. Visualiza el flujo. Diseña algoritmos con el diseñador gráfico integrado — todo en un solo entorno, sin configuración.
+          </p>
+          <div class="flex gap-3 flex-shrink-0">
+            <a href="#editor" style="background:#fff;color:#0047AB;padding:13px 26px;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;border-radius:0;" onmouseover="this.style.opacity='0.88';this.style.transform='translateY(-1px)'" onmouseout="this.style.opacity='1';this.style.transform='none'">
+              <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+                <path d="M3.5 2v11L12 7.5z" fill="#0047AB"/>
+              </svg>
+              Abrir editor
+            </a>
+            <a href="#diseñador" style="background:transparent;color:#fff;padding:13px 26px;font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.28);transition:all 0.2s;border-radius:0;" onmouseover="this.style.borderColor='#fff';this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.28)';this.style.background='transparent'">
+              Ver diseñador →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════
+         TICKER
+    ═══════════════════════════════ -->
+    <div class="py-8 rule border-b overflow-hidden">
+      <div class="ticker-track">
+        <span class="ticker-item">Editor</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Diseñador</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Algoritmos</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Re</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Syntax</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Flujo</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Logos</span>
+        <span class="ticker-item accent">·</span>
+        <!-- repeat for seamless loop -->
+        <span class="ticker-item">Editor</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Diseñador</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Algoritmos</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Re</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Syntax</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Flujo</span>
+        <span class="ticker-item accent">·</span>
+        <span class="ticker-item">Logos</span>
+        <span class="ticker-item accent">·</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         EDITOR DE CÓDIGO
+    ═══════════════════════════════ -->
+    <section class="section-py section-px" id="editor">
+      <div class="max-w-container-max mx-auto">
+
+        <div class="reveal-node" style="margin-bottom:56px;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;">01 · Editor de Código</p>
+          <h2 style="font-family:'Bodoni Moda',serif;font-size:clamp(36px,5.5vw,72px);font-weight:900;letter-spacing:-0.025em;color:#fff;line-height:0.9;margin-bottom:18px;">Escribe Re.<br/><span style="-webkit-text-stroke:1.5px #fff;color:transparent;">Directamente.</span></h2>
+          <p style="font-size:17px;line-height:1.65;color:rgba(255,255,255,0.65);max-width:500px;">Logos incluye resaltado de sintaxis completo para el lenguaje Re, autocompletado, verificación de tipos en tiempo real y ejecución simulada.</p>
+        </div>
+
+        <!-- CODE EDITOR SHELL -->
+        <div class="editor-shell reveal-node" style="transition-delay:0.1s;" id="code-editor-shell">
+          <!-- titlebar -->
+          <div class="editor-titlebar">
+            <span class="dot r"></span>
+            <span class="dot y"></span>
+            <span class="dot g"></span>
+            <span style="margin-left:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;">logos · main.re</span>
+            <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.22);letter-spacing:0.08em;text-transform:uppercase;">Re 1.0.0</span>
+          </div>
+
+          <!-- tabs -->
+          <div class="editor-tabs" id="editor-tabs">
+            <div class="editor-tab active" data-file="main" onclick="switchFile('main',this)">main.re</div>
+            <div class="editor-tab" data-file="funciones" onclick="switchFile('funciones',this)">funciones.re</div>
+            <div class="editor-tab" data-file="tipos" onclick="switchFile('tipos',this)">tipos.re</div>
+            <div class="editor-tab" data-file="colecciones" onclick="switchFile('colecciones',this)">colecciones.re</div>
+          </div>
+
+          <!-- body -->
+          <div class="editor-body">
+            <div class="line-nums" id="line-nums"></div>
+            <div class="editor-code" id="code-area"></div>
+          </div>
+
+          <!-- output -->
+          <div class="editor-output" id="editor-output">
+            <span class="out-tag">salida →</span>
+            <span class="out-text" id="out-text">Esperando ejecución…</span>
+          </div>
+
+          <!-- toolbar -->
+          <div class="editor-toolbar">
+            <button class="toolbar-btn btn-run" onclick="runCode()" id="run-btn">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 1.5v9L10 6z" fill="currentColor"/>
+              </svg>
+              Ejecutar
+            </button>
+            <button class="toolbar-btn btn-clear" onclick="clearOutput()">Limpiar</button>
+            <button class="toolbar-btn btn-export" onclick="exportCode()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v7M2 8l4 3 4-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Exportar .re
+            </button>
+            <span style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+              <span class="kbd">Ctrl</span><span style="color:rgba(255,255,255,0.3);font-size:11px;">+</span><span class="kbd">Enter</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3);margin-left:4px;letter-spacing:0.08em;text-transform:uppercase;">ejecutar</span>
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════
+         DISEÑADOR GRÁFICO (RAPTOR-STYLE)
+    ═══════════════════════════════ -->
+    <section class="section-py section-px rule" id="diseñador">
+      <div class="max-w-container-max mx-auto">
+
+        <div class="reveal-node" style="margin-bottom:56px;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;">02 · Diseñador de Algoritmos</p>
+          <h2 style="font-family:'Bodoni Moda',serif;font-size:clamp(36px,5.5vw,72px);font-weight:900;letter-spacing:-0.025em;color:#fff;line-height:0.9;margin-bottom:18px;"><span style="-webkit-text-stroke:1.5px #fff;color:transparent;">Visualiza</span><br/>el flujo.</h2>
+          <p style="font-size:17px;line-height:1.65;color:rgba(255,255,255,0.65);max-width:500px;">Diseña diagramas de flujo estilo Raptor con arrastrar y soltar. El diseñador convierte tu diagrama en código Re automáticamente — o genera el diagrama desde tu código existente.</p>
+        </div>
+
+        <!-- RAPTOR SHELL -->
+        <div class="raptor-shell reveal-node" style="transition-delay:0.1s;">
+
+          <!-- titlebar -->
+          <div class="raptor-titlebar">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="dot r" style="background:#ff5f57;"></span>
+              <span class="dot y" style="background:#febc2e;"></span>
+              <span class="dot g" style="background:#28c840;"></span>
+              <span class="raptor-title" style="margin-left:8px;">logos · diseñador — algoritmo_principal.flow</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button onclick="addFlowNode('rect')" title="Agregar proceso" style="padding:5px 12px;background:#0047AB;color:#fff;border:none;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">+ Proceso</button>
+              <button onclick="addFlowNode('diamond')" title="Agregar decisión" style="padding:5px 12px;background:transparent;color:#0047AB;border:1px solid #0047AB;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,71,171,0.08)'" onmouseout="this.style.background='transparent'">+ Decisión</button>
+              <button onclick="addFlowNode('io')" title="Agregar I/O" style="padding:5px 12px;background:transparent;color:#0047AB;border:1px solid #0047AB;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,71,171,0.08)'" onmouseout="this.style.background='transparent'">+ I/O</button>
+              <button onclick="generateFromFlow()" style="padding:5px 12px;background:rgba(0,71,171,0.06);color:rgba(0,71,171,0.6);border:1px solid rgba(0,71,171,0.2);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,71,171,0.12)';this.style.color='#0047AB'" onmouseout="this.style.background='rgba(0,71,171,0.06)';this.style.color='rgba(0,71,171,0.6)'">→ Generar Re</button>
+            </div>
+          </div>
+
+          <!-- tabs -->
+          <div class="raptor-tabs">
+            <div class="raptor-tab active" onclick="switchRaptorTab('canvas',this)">Diagrama</div>
+            <div class="raptor-tab" onclick="switchRaptorTab('generated',this)">Código generado</div>
+          </div>
+
+          <!-- canvas + sidebar -->
+          <div class="canvas-panel active" id="panel-canvas" style="min-height:420px;">
+            <!-- sidebar tools -->
+            <div class="raptor-sidebar">
+              <div class="raptor-tool active has-tooltip" data-tip="Seleccionar" onclick="setTool('select',this)" id="tool-select">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="2">
+                  <path d="M4 4l7.5 18 3.5-7 7-3.5z" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="raptor-tool has-tooltip" data-tip="Conectar" onclick="setTool('connect',this)" id="tool-connect">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="2">
+                  <path d="M5 12h14M14 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div style="width:100%;height:1px;background:rgba(0,71,171,0.1);margin:4px 0;"></div>
+              <div class="raptor-tool has-tooltip" data-tip="Proceso" onclick="addFlowNode('rect')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="1.8">
+                  <rect x="3" y="7" width="18" height="10" rx="1"/>
+                </svg>
+              </div>
+              <div class="raptor-tool has-tooltip" data-tip="Decisión" onclick="addFlowNode('diamond')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="1.8">
+                  <path d="M12 2 22 12 12 22 2 12z"/>
+                </svg>
+              </div>
+              <div class="raptor-tool has-tooltip" data-tip="Entrada/Salida" onclick="addFlowNode('io')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="1.8">
+                  <path d="M2 7h14l6 5-6 5H2l4-5z"/>
+                </svg>
+              </div>
+              <div class="raptor-tool has-tooltip" data-tip="Inicio/Fin" onclick="addFlowNode('oval')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="1.8">
+                  <ellipse cx="12" cy="12" rx="10" ry="6"/>
+                </svg>
+              </div>
+              <div style="width:100%;height:1px;background:rgba(0,71,171,0.1);margin:4px 0;"></div>
+              <div class="raptor-tool has-tooltip" data-tip="Eliminar selección" onclick="deleteSelected()" id="tool-delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="rgba(0,71,171,0.7)" stroke-width="1.8">
+                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- canvas -->
+            <div class="raptor-canvas-area" id="flow-canvas" style="flex:1;">
+              <svg class="flow-svg" id="flow-svg">
+                <defs>
+                  <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <path d="M0 0 L8 3 L0 6 z" fill="rgba(0,71,171,0.6)"/>
+                  </marker>
+                </defs>
+                <!-- connections drawn by JS -->
+              </svg>
+              <!-- flow nodes drawn by JS -->
+            </div>
+          </div>
+
+          <!-- generated code panel -->
+          <div class="generated-panel" id="panel-generated" style="min-height:420px;">
+            <div style="padding:20px 24px;background:#F7F7FA;min-height:420px;">
+              <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,71,171,0.4);margin-bottom:16px;">Código Re generado desde el diagrama</p>
+              <pre id="generated-code" style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;color:#0047AB;white-space:pre;overflow-x:auto;"></pre>
+              <p id="gen-hint" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(0,71,171,0.4);margin-top:12px;">— Agrega nodos al diagrama y pulsa "→ Generar Re" para ver el código —</p>
+            </div>
+          </div>
+
+          <!-- status bar -->
+          <div style="background:#fff;border-top:1px solid rgba(0,71,171,0.1);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(0,71,171,0.38);" id="node-count">Nodos: 5 · Conexiones: 4</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(0,71,171,0.38);">Logos Designer · modo flujo</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════
+         FEATURES
+    ═══════════════════════════════ -->
+    <section class="section-py section-px rule">
+      <div class="max-w-container-max mx-auto">
+
+        <div class="reveal-node" style="margin-bottom:56px;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;">03 · Características</p>
+          <h2 style="font-family:'Bodoni Moda',serif;font-size:clamp(36px,5.5vw,72px);font-weight:900;letter-spacing:-0.025em;color:#fff;line-height:0.9;">Un entorno<br/>completo.</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 reveal-stagger">
+
+          <div class="feat-card" style="background:#0047AB;">
+            <div class="feat-icon" style="border-color:rgba(255,255,255,0.3);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <path d="M8 3H5a2 2 0 00-2 2v3M21 8V5a2 2 0 00-2-2h-3M3 16v3a2 2 0 002 2h3M16 21h3a2 2 0 002-2v-3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">Sintaxis</div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;">Resaltado completo para Re</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.62);line-height:1.65;">Colores semánticos para keywords, tipos, strings, funciones, comentarios y puntuación — diseñados para enseñar la gramática del lenguaje, no solo embellecerlo.</p>
+          </div>
+
+          <div class="feat-card" style="background:#0047AB;">
+            <div class="feat-icon" style="border-color:rgba(255,255,255,0.3);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">Tipado</div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;">Verificación de tipos en tiempo real</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.62);line-height:1.65;">El TypeChecker de Re analiza tu código mientras escribes. Los errores de tipo aparecen antes de ejecutar — aprendes el contrato del código desde el primer día.</p>
+          </div>
+
+          <div class="feat-card" style="background:#0047AB;">
+            <div class="feat-icon" style="border-color:rgba(255,255,255,0.3);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <path d="M17.5 14v7M14 17.5h7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">Diseñador</div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;">Diseñador tipo Raptor integrado</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.62);line-height:1.65;">Diseña tu algoritmo visualmente con bloques de proceso, decisión y entrada/salida. El sistema genera el código Re equivalente automáticamente.</p>
+          </div>
+
+          <div class="feat-card" style="background:#0047AB;">
+            <div class="feat-icon" style="border-color:rgba(255,255,255,0.3);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <path d="M4 8h16M4 16h16" stroke-linecap="round"/>
+                <path d="M9 3v18M15 3v18" stroke-linecap="round" stroke-dasharray="3 3"/>
+              </svg>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">Multi-archivo</div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;">Varios archivos en pestañas</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.62);line-height:1.65;">Organiza tu proyecto en múltiples archivos <code style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:12px;">.re</code> — funciones, tipos, colecciones — y navega entre ellos sin perder el contexto.</p>
+          </div>
+
+          <div class="feat-card" style="background:#0047AB;">
+            <div class="feat-icon" style="border-color:rgba(255,255,255,0.3);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">Sin instalación</div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;">Funciona directo en el navegador</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.62);line-height:1.65;">Logos corre completamente en el navegador. Sin instalar runtimes, sin configurar entornos. Abre la página y empieza a escribir código Re ahora mismo.</p>
+          </div>
+
+          <div class="feat-card" style="background:#0047AB;">
+            <div class="feat-icon" style="border-color:rgba(255,255,255,0.3);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8">
+                <path d="M12 3v1m0 16v1M4.22 4.22l.71.71m14.14 14.14.71.71M3 12H4m17 0h-1M4.22 19.78l.71-.71M19.07 4.93l-.71.71" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;">Exportar</div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:10px;">Exporta tu código o diagrama</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.62);line-height:1.65;">Descarga tus archivos <code style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:12px;">.re</code> o exporta tu diagrama de flujo como SVG para compartirlo, imprimirlo o usarlo en tu documentación.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════
+         BLEED WORD
+    ═══════════════════════════════ -->
+    <div class="rule overflow-hidden" style="padding-top:64px;padding-bottom:8px;pointer-events:none;user-select:none;">
+      <span style="font-family:'Bodoni Moda',serif;font-weight:900;font-size:clamp(100px,22vw,300px);letter-spacing:-0.04em;text-transform:uppercase;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.12);display:block;line-height:0.85;margin-left:-0.03em;">LOGOS</span>
+    </div>
+
+    <!-- ═══════════════════════════════
+         FOOTER
+    ═══════════════════════════════ -->
+    <footer class="rule section-px py-14">
+      <div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div>
+          <span style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:22px;color:#fff;letter-spacing:-0.02em;">Proyecto Torre Babel</span>
+          <p style="font-size:13px;color:rgba(255,255,255,0.38);margin-top:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;">Logos Editor · v1.0.0</p>
+        </div>
+        <nav style="display:flex;gap:32px;flex-wrap:wrap;">
+          <a href="index.html" style="font-size:14px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Inicio</a>
+          <a href="arquitectura.html" style="font-size:14px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Arquitectura</a>
+          <a href="comunidad.html" style="font-size:14px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Comunidad</a>
+          <a href="re_lenguaje.html" style="font-size:14px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">RE</a>
+        </nav>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.22);">© 2025 · Open Source</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    /* ══════════════════════════════════════════════
+       NAV SCROLL
+    ══════════════════════════════════════════════ */
+    window.addEventListener('scroll', () => {
+      const h = document.getElementById('site-nav');
+      if (window.scrollY > 60) h.classList.add('scrolled');
+      else h.classList.remove('scrolled');
+    }, { passive: true });
+
+    /* ══════════════════════════════════════════════
+       REVEAL OBSERVER
+    ══════════════════════════════════════════════ */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal-node, .reveal-stagger').forEach(el => observer.observe(el));
+
+    /* ══════════════════════════════════════════════
+       CODE EDITOR — FILE CONTENT
+    ══════════════════════════════════════════════ */
+    const files = {
+      main: {
+        output: '¡Hola, Logos! · Área: 25 · Suma: 6.28',
+        lines: [
+          `<span class="kw">program</span> <span class="pl">Principal</span> <span class="pt">{</span>`,
+          `  <span class="cm">// Entrada de datos</span>`,
+          `  <span class="ty">string</span> <span class="pl">nombre</span> <span class="pt">=</span> <span class="fn">input</span><span class="pt">(</span><span class="st">"¿Tu nombre? "</span><span class="pt">);</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="st">"¡Hola, "</span> <span class="pt">+</span> <span class="pl">nombre</span> <span class="pt">+</span> <span class="st">"!"</span><span class="pt">);</span>`,
+          ``,
+          `  <span class="cm">// Calcular área de triángulo</span>`,
+          `  <span class="ty">int</span> <span class="pl">area</span> <span class="pt">=</span> <span class="fn">calcularArea</span><span class="pt">(</span><span class="nm">10</span><span class="pt">,</span> <span class="nm">5</span><span class="pt">);</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="st">"Área: "</span> <span class="pt">+</span> <span class="fn">to_str</span><span class="pt">(</span><span class="pl">area</span><span class="pt">));</span>`,
+          ``,
+          `  <span class="cm">// Pi aproximado</span>`,
+          `  <span class="ty">double</span> <span class="pl">pi</span> <span class="pt">=</span> <span class="nm">3.14159</span><span class="pt">;</span>`,
+          `  <span class="ty">double</span> <span class="pl">suma</span> <span class="pt">=</span> <span class="pl">pi</span> <span class="pt">+</span> <span class="pl">pi</span><span class="pt">;</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="st">"Suma: "</span> <span class="pt">+</span> <span class="fn">to_str</span><span class="pt">(</span><span class="pl">suma</span><span class="pt">));</span>`,
+          `<span class="pt">}</span>`,
+        ]
+      },
+      funciones: {
+        output: 'Área: 25 · Hola, MUNDO',
+        lines: [
+          `<span class="cm">// Funciones con tipos explícitos</span>`,
+          ``,
+          `<span class="ty">int</span> <span class="fn">calcularArea</span><span class="pt">(</span><span class="ty">int</span> <span class="pl">base</span><span class="pt">,</span> <span class="ty">int</span> <span class="pl">altura</span><span class="pt">) {</span>`,
+          `  <span class="kw">return</span> <span class="pt">(</span><span class="pl">base</span> <span class="pt">*</span> <span class="pl">altura</span><span class="pt">)</span> <span class="pt">/</span> <span class="nm">2</span><span class="pt">;</span>`,
+          `<span class="pt">}</span>`,
+          ``,
+          `<span class="ty">string</span> <span class="fn">saludar</span><span class="pt">(</span><span class="ty">string</span> <span class="pl">nombre</span><span class="pt">) {</span>`,
+          `  <span class="kw">return</span> <span class="st">"Hola, "</span> <span class="pt">+</span> <span class="pl">nombre</span><span class="pt">.</span><span class="fn">upper</span><span class="pt">();</span>`,
+          `<span class="pt">}</span>`,
+          ``,
+          `<span class="kw">program</span> <span class="pl">Funciones</span> <span class="pt">{</span>`,
+          `  <span class="ty">int</span> <span class="pl">area</span> <span class="pt">=</span> <span class="fn">calcularArea</span><span class="pt">(</span><span class="nm">10</span><span class="pt">,</span> <span class="nm">5</span><span class="pt">);</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="st">"Área: "</span> <span class="pt">+</span> <span class="fn">to_str</span><span class="pt">(</span><span class="pl">area</span><span class="pt">));</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="fn">saludar</span><span class="pt">(</span><span class="st">"mundo"</span><span class="pt">));</span>`,
+          `<span class="pt">}</span>`,
+        ]
+      },
+      tipos: {
+        output: 'Tengo 20 años. · activo: true',
+        lines: [
+          `<span class="kw">program</span> <span class="pl">TiposSeguros</span> <span class="pt">{</span>`,
+          `  <span class="cm">// Primitivos de Re</span>`,
+          `  <span class="ty">int</span>    <span class="pl">edad</span>   <span class="pt">=</span> <span class="nm">20</span><span class="pt">;</span>`,
+          `  <span class="ty">double</span> <span class="pl">altura</span> <span class="pt">=</span> <span class="nm">1.75</span><span class="pt">;</span>`,
+          `  <span class="ty">bool</span>   <span class="pl">activo</span> <span class="pt">=</span> <span class="kw">true</span><span class="pt">;</span>`,
+          `  <span class="ty">string</span> <span class="pl">nombre</span> <span class="pt">=</span> <span class="st">"Estudiante"</span><span class="pt">;</span>`,
+          ``,
+          `  <span class="cm">// Conversión explícita — nunca implícita</span>`,
+          `  <span class="ty">string</span> <span class="pl">msg</span> <span class="pt">=</span> <span class="st">"Tengo "</span> <span class="pt">+</span> <span class="fn">to_str</span><span class="pt">(</span><span class="pl">edad</span><span class="pt">)</span> <span class="pt">+</span> <span class="st">" años."</span><span class="pt">;</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="pl">msg</span><span class="pt">);</span>`,
+          `  <span class="fn">print</span><span class="pt">(</span><span class="st">"activo: "</span> <span class="pt">+</span> <span class="fn">to_str</span><span class="pt">(</span><span class="pl">activo</span><span class="pt">));</span>`,
+          `<span class="pt">}</span>`,
+        ]
+      },
+      colecciones: {
+        output: 'Procesando: 20, 40, 60, 80',
+        lines: [
+          `<span class="kw">program</span> <span class="pl">EjemploColecciones</span> <span class="pt">{</span>`,
+          `  <span class="cm">// Cola tipada (FIFO)</span>`,
+          `  <span class="ty">queue</span><span class="pt">&lt;</span><span class="ty">int</span><span class="pt">&gt;</span> <span class="pl">turnos</span> <span class="pt">= [</span><span class="nm">10</span><span class="pt">,</span> <span class="nm">20</span><span class="pt">,</span> <span class="nm">30</span><span class="pt">];</span>`,
+          `  <span class="pl">turnos</span><span class="pt">.</span><span class="fn">enqueue</span><span class="pt">(</span><span class="nm">40</span><span class="pt">);</span>`,
+          ``,
+          `  <span class="cm">// Bucle for-in con inferencia de tipo</span>`,
+          `  <span class="kw">for</span> <span class="pl">t</span> <span class="kw">in</span> <span class="pl">turnos</span> <span class="pt">{</span>`,
+          `    <span class="fn">print</span><span class="pt">(</span><span class="st">"Procesando: "</span> <span class="pt">+</span> <span class="fn">to_str</span><span class="pt">(</span><span class="pl">t</span> <span class="pt">*</span> <span class="nm">2</span><span class="pt">));</span>`,
+          `  <span class="pt">}</span>`,
+          ``,
+          `  <span class="cm">// Pila (LIFO)</span>`,
+          `  <span class="ty">stack</span><span class="pt">&lt;</span><span class="ty">string</span><span class="pt">&gt;</span> <span class="pl">hist</span> <span class="pt">= [];</span>`,
+          `  <span class="pl">hist</span><span class="pt">.</span><span class="fn">push</span><span class="pt">(</span><span class="st">"inicio"</span><span class="pt">);</span>`,
+          `  <span class="pl">hist</span><span class="pt">.</span><span class="fn">push</span><span class="pt">(</span><span class="st">"página1"</span><span class="pt">);</span>`,
+          `  <span class="ty">string</span> <span class="pl">ult</span> <span class="pt">=</span> <span class="pl">hist</span><span class="pt">.</span><span class="fn">pop</span><span class="pt">();</span>`,
+          `<span class="pt">}</span>`,
+        ]
+      }
+    };
+
+    let currentFile = 'main';
+
+    function renderFile(name) {
+      const f = files[name];
+      const codeArea = document.getElementById('code-area');
+      const lineNums = document.getElementById('line-nums');
+      codeArea.innerHTML = f.lines.map(l => `<span class="code-line">${l || ' '}</span>`).join('');
+      lineNums.innerHTML = f.lines.map((_, i) => `<span class="line-num">${i + 1}</span>`).join('');
+      document.getElementById('out-text').textContent = 'Esperando ejecución…';
+      document.getElementById('out-text').style.color = '#85e89d';
+    }
+
+    function switchFile(name, tabEl) {
+      currentFile = name;
+      document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+      tabEl.classList.add('active');
+      renderFile(name);
+    }
+
+    function runCode() {
+      const btn = document.getElementById('run-btn');
+      btn.textContent = '● Ejecutando…';
+      btn.style.background = '#febc2e';
+      setTimeout(() => {
+        const out = document.getElementById('out-text');
+        out.textContent = files[currentFile].output;
+        out.style.color = '#85e89d';
+        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1.5v9L10 6z" fill="currentColor"/></svg> Ejecutar`;
+        btn.style.background = '#28c840';
+      }, 900);
+    }
+
+    function clearOutput() {
+      document.getElementById('out-text').textContent = 'Limpiar completado.';
+      document.getElementById('out-text').style.color = 'rgba(255,255,255,0.4)';
+    }
+
+    function exportCode() {
+      const blob = new Blob([document.getElementById('code-area').innerText], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = currentFile + '.re';
+      a.click();
+    }
+
+    renderFile('main');
+
+    // Ctrl+Enter to run
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+    });
+
+    /* ══════════════════════════════════════════════
+       RAPTOR DESIGNER
+    ══════════════════════════════════════════════ */
+    let currentTool = 'select';
+    let nodeCounter = 0;
+    let nodes = [];      // { id, type, x, y, label, el }
+    let edges = [];      // { from, to }
+    let selectedNode = null;
+    let connectFrom = null;
+
+    // Initial example diagram
+    const initialNodes = [
+      { id: 'n0', type: 'oval',    x: 160, y: 20,  label: 'INICIO' },
+      { id: 'n1', type: 'io',      x: 130, y: 100, label: 'LEER nombre' },
+      { id: 'n2', type: 'diamond', x: 145, y: 190, label: 'nombre\nvacío?' },
+      { id: 'n3', type: 'rect',    x: 120, y: 320, label: 'Imprimir\n"¡Hola, "+nombre' },
+      { id: 'n4', type: 'oval',    x: 160, y: 420, label: 'FIN' },
+    ];
+    const initialEdges = [
+      { from: 'n0', to: 'n1', label: '' },
+      { from: 'n1', to: 'n2', label: '' },
+      { from: 'n2', to: 'n3', label: 'No' },
+      { from: 'n3', to: 'n4', label: '' },
+      { from: 'n2', to: 'n4', label: 'Sí', offset: 80 },
+    ];
+
+    function getNodeTypeClass(type) {
+      return { oval: 'node-oval', rect: 'node-rect', diamond: 'node-diamond', io: 'node-io' }[type] || 'node-rect';
+    }
+
+    function createNodeEl(node) {
+      const wrap = document.createElement('div');
+      wrap.className = `flow-node ${getNodeTypeClass(node.type)}`;
+      wrap.id = `node-${node.id}`;
+      wrap.style.left = node.x + 'px';
+      wrap.style.top  = node.y + 'px';
+
+      const body = document.createElement('div');
+      body.className = 'node-body';
+      body.textContent = node.label;
+      wrap.appendChild(body);
+
+      makeDraggable(wrap, node);
+
+      wrap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentTool === 'connect') {
+          handleConnectClick(node);
+        } else {
+          selectNode(node, wrap);
+        }
+      });
+
+      return wrap;
+    }
+
+    function renderNodes() {
+      const canvas = document.getElementById('flow-canvas');
+      nodes.forEach(n => {
+        const existing = document.getElementById(`node-${n.id}`);
+        if (!existing) canvas.appendChild(createNodeEl(n));
+      });
+    }
+
+    function renderEdges() {
+      const svg = document.getElementById('flow-svg');
+      // remove old paths
+      svg.querySelectorAll('.flow-arrow, .flow-label, .edge-group').forEach(e => e.remove());
+
+      edges.forEach(edge => {
+        const fromNode = nodes.find(n => n.id === edge.from);
+        const toNode   = nodes.find(n => n.id === edge.to);
+        if (!fromNode || !toNode) return;
+
+        const fx = fromNode.x + 65, fy = fromNode.y + 46;
+        const tx = toNode.x + 65,   ty = toNode.y + 2;
+
+        const offsetX = edge.offset || 0;
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.classList.add('edge-group');
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const midX = (fx + tx) / 2 + offsetX;
+        const midY = (fy + ty) / 2;
+        path.setAttribute('d', `M ${fx} ${fy} Q ${midX} ${fy} ${tx + offsetX} ${midY} Q ${tx + offsetX} ${ty} ${tx} ${ty}`);
+        path.classList.add('flow-arrow');
+        g.appendChild(path);
+
+        if (edge.label) {
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', midX);
+          text.setAttribute('y', fy - 6);
+          text.classList.add('flow-label');
+          text.textContent = edge.label;
+          g.appendChild(text);
+        }
+
+        svg.appendChild(g);
+      });
+    }
+
+    function initDiagram() {
+      nodes = initialNodes.map(n => ({ ...n }));
+      edges = initialEdges.map(e => ({ ...e }));
+      nodeCounter = nodes.length;
+      renderNodes();
+      renderEdges();
+      updateNodeCount();
+    }
+
+    function makeDraggable(el, nodeData) {
+      let startX, startY, startLeft, startTop, dragging = false;
+
+      el.addEventListener('mousedown', (e) => {
+        if (currentTool !== 'select') return;
+        dragging = true;
+        startX = e.clientX; startY = e.clientY;
+        startLeft = nodeData.x; startTop = nodeData.y;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        nodeData.x = startLeft + (e.clientX - startX);
+        nodeData.y = startTop  + (e.clientY - startY);
+        el.style.left = nodeData.x + 'px';
+        el.style.top  = nodeData.y + 'px';
+        renderEdges();
+      });
+
+      document.addEventListener('mouseup', () => { dragging = false; });
+    }
+
+    function selectNode(node, el) {
+      document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('selected'));
+      selectedNode = node;
+      el.classList.add('selected');
+    }
+
+    function handleConnectClick(node) {
+      if (!connectFrom) {
+        connectFrom = node;
+        document.getElementById(`node-${node.id}`).style.outline = '2px dashed #0047AB';
+      } else {
+        if (connectFrom.id !== node.id) {
+          edges.push({ from: connectFrom.id, to: node.id, label: '' });
+          renderEdges();
+          updateNodeCount();
+        }
+        document.getElementById(`node-${connectFrom.id}`).style.outline = '';
+        connectFrom = null;
+      }
+    }
+
+    function setTool(name, el) {
+      currentTool = name;
+      document.querySelectorAll('.raptor-tool').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      if (connectFrom) {
+        document.getElementById(`node-${connectFrom.id}`).style.outline = '';
+        connectFrom = null;
+      }
+    }
+
+    function addFlowNode(type) {
+      const canvas = document.getElementById('flow-canvas');
+      const rect = canvas.getBoundingClientRect();
+      const id = 'n' + (nodeCounter++);
+      const labels = { oval: 'OVAL', rect: 'Proceso', diamond: 'Decisión?', io: 'I/O' };
+      const node = { id, type, x: 60 + Math.random() * (rect.width - 200), y: 50 + Math.random() * 250, label: labels[type] || 'Nodo' };
+      nodes.push(node);
+      canvas.appendChild(createNodeEl(node));
+      updateNodeCount();
+    }
+
+    function deleteSelected() {
+      if (!selectedNode) return;
+      edges = edges.filter(e => e.from !== selectedNode.id && e.to !== selectedNode.id);
+      nodes = nodes.filter(n => n.id !== selectedNode.id);
+      const el = document.getElementById(`node-${selectedNode.id}`);
+      if (el) el.remove();
+      selectedNode = null;
+      renderEdges();
+      updateNodeCount();
+    }
+
+    document.getElementById('flow-canvas').addEventListener('click', () => {
+      if (currentTool === 'select') {
+        document.querySelectorAll('.flow-node').forEach(n => n.classList.remove('selected'));
+        selectedNode = null;
+      }
+    });
+
+    function updateNodeCount() {
+      document.getElementById('node-count').textContent = `Nodos: ${nodes.length} · Conexiones: ${edges.length}`;
+    }
+
+    function generateFromFlow() {
+      const lines = [];
+      lines.push('program AlgoritmoGenerado {');
+      nodes.forEach(n => {
+        if (n.type === 'io')      lines.push(`  // I/O — ${n.label}`);
+        else if (n.type === 'rect')    lines.push(`  // Proceso — ${n.label}`);
+        else if (n.type === 'diamond') lines.push(`  // Decisión — ${n.label}`);
+      });
+      lines.push('}');
+
+      document.getElementById('generated-code').textContent = lines.join('\n');
+      document.getElementById('gen-hint').style.display = 'none';
+
+      // switch to generated tab
+      const tabs = document.querySelectorAll('.raptor-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      tabs[1].classList.add('active');
+      switchRaptorTab('generated', tabs[1]);
+    }
+
+    function switchRaptorTab(panel, tabEl) {
+      document.querySelectorAll('.raptor-tab').forEach(t => t.classList.remove('active'));
+      tabEl.classList.add('active');
+      document.getElementById('panel-canvas').className    = panel === 'canvas'    ? 'canvas-panel active' : 'canvas-panel';
+      document.getElementById('panel-generated').className = panel === 'generated' ? 'generated-panel active' : 'generated-panel';
+    }
+
+    initDiagram();
+  </script>
+
+</body>
+</html>

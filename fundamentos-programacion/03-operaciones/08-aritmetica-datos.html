@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>07 _ ARITMÉTICA DE DATOS | Babel Encyclopedia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Hanken+Grotesk:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#33343e",
+                        "surface-tint": "#b8c3ff",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-surface": "#e2e1ef",
+                        "secondary": "#c3c7cd",
+                        "surface-container-low": "#191b24",
+                        "tertiary-container": "#c24100",
+                        "on-tertiary-container": "#ffece6",
+                        "inverse-on-surface": "#2e303a",
+                        "tertiary-fixed": "#ffdbcf",
+                        "surface-dim": "#11131c",
+                        "surface-container-high": "#282933",
+                        "primary-container": "#2e5bff",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "error": "#ffb4ab",
+                        "primary": "#b8c3ff",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "surface": "#11131c",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "on-surface-variant": "#c4c5d9",
+                        "tertiary": "#ffb59b",
+                        "primary-fixed": "#dde1ff",
+                        "on-error": "#690005",
+                        "background": "#11131c",
+                        "outline": "#8e90a2",
+                        "inverse-surface": "#e2e1ef",
+                        "surface-bright": "#373943",
+                        "on-primary-fixed-variant": "#0035be",
+                        "secondary-fixed": "#dfe3e9",
+                        "secondary-container": "#454a4f",
+                        "surface-container-highest": "#33343e",
+                        "on-background": "#e2e1ef",
+                        "on-primary": "#002388",
+                        "on-primary-fixed": "#001356",
+                        "surface-container": "#1d1f29",
+                        "on-secondary-fixed": "#171c20",
+                        "on-secondary-container": "#b4b9bf",
+                        "inverse-primary": "#124af0",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "on-tertiary": "#5b1a00",
+                        "on-tertiary-fixed": "#380d00",
+                        "outline-variant": "#434656",
+                        "on-secondary": "#2c3136",
+                        "surface-container-lowest": "#0c0e17",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-primary-container": "#efefff",
+                        "bronze": "#cd7f32",
+                        "gold-ancient": "#b8860b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Space Mono"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "display-lg": ["Bodoni Moda"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(184, 195, 255, 0.1);
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(142, 144, 162, 0.1);
+        }
+
+        .coliseum-floor {
+            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.4) 0%, rgba(17, 19, 28, 0.8) 100%);
+            border: 4px double #8e90a2;
+            border-radius: 50% / 15%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coliseum-floor::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/black-linen.png");
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .stone-border {
+            border: 2px solid #434656;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .arena-pillar {
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #8e90a2, transparent);
+            height: 100%;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23b8c3ff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em 1.5em;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col font-body-md">
+    <!-- Top Navigation Anchor -->
+    <!-- Header fijo con solo el título de la enciclopedia -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+    <main class="flex-grow pt-32 pb-20 px-margin-mobile md:px-margin-desktop max-w-[1000px] mx-auto w-full">
+        <!-- Hero Section -->
+        <section class="mb-20 text-center">
+            <span class="font-label-sm text-label-sm text-gold-ancient tracking-[0.3em] mb-4 block uppercase">Arena de
+                Verdad Lógica</span>
+            <h1
+                class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-8 leading-tight italic uppercase tracking-tight">
+                08 _ ARITMÉTICA DE DATOS
+            </h1>
+            <div class="w-24 h-0.5 bg-gold-ancient mx-auto mb-12"></div>
+            <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed max-w-[700px] mx-auto">
+                La aritmética en programación no es solo matemáticas; es el choque entre diferentes
+                naturalezas de datos. Observe cómo los numeros se transforman bajo las operaciones aritmeticas en el
+                <span class="text-primary italic">casting</span> en el centro de la arena.
+            </p>
+        </section>
+        <!-- Coliseum Laboratory -->
+        <section class="mb-20 relative">
+            <!-- Architectural Motifs (Simplified SVG Arches) -->
+            <div class="absolute -top-12 left-0 right-0 flex justify-around opacity-20 pointer-events-none">
+                <div class="w-32 h-24 border-t-4 border-x-4 border-outline rounded-t-full"></div>
+                <div class="w-32 h-24 border-t-4 border-x-4 border-outline rounded-t-full"></div>
+                <div class="w-32 h-24 border-t-4 border-x-4 border-outline rounded-t-full"></div>
+            </div>
+            <div class="coliseum-floor p-8 md:p-16 border-t-0 shadow-2xl relative">
+                <div class="flex flex-col items-center gap-2 mb-12 relative z-10">
+                    <span class="material-symbols-outlined text-gold-ancient text-4xl mb-2">swords</span>
+                    <h2
+                        class="font-headline-md text-headline-md text-on-surface italic text-center uppercase tracking-widest">
+                        Coliseo de Colisión</h2>
+                    <div class="h-px w-full max-w-xs bg-gradient-to-r from-transparent via-gold-ancient to-transparent">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-12 items-center relative z-10">
+                    <!-- Combatant A -->
+                    <div class="flex flex-col items-center space-y-6 group">
+                        <div class="text-center">
+                            <label
+                                class="font-label-sm text-label-sm text-gold-ancient uppercase tracking-widest block mb-1">Dato
+                                A</label>
+                            <div
+                                class="h-0.5 w-12 bg-gold-ancient/30 mx-auto group-focus-within:w-full transition-all duration-500">
+                            </div>
+                        </div>
+                        <div class="w-full space-y-4 stone-border p-6 bg-surface-container-low/50">
+                            <input
+                                class="w-full bg-transparent border-b border-outline-variant text-center text-on-surface px-4 py-3 font-headline-md focus:outline-none focus:border-gold-ancient transition-colors"
+                                id="valA" type="text" value="10" />
+                            <select
+                                class="w-full bg-surface-container-highest/30 border border-outline-variant text-primary px-4 py-2 font-label-sm text-center focus:outline-none focus:border-gold-ancient"
+                                id="typeA">
+                                <option value="INT">INT</option>
+                                <option value="DOUBLE">DOUBLE</option>
+                                <option value="STRING">STRING</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Central Operator (The Clash) -->
+                    <div class="flex flex-col items-center justify-center gap-4">
+                        <div class="w-px h-12 bg-gradient-to-b from-transparent to-outline-variant"></div>
+                        <div class="relative group">
+                            <div
+                                class="absolute -inset-4 bg-gold-ancient/10 rounded-full blur-xl group-hover:bg-gold-ancient/20 transition-all">
+                            </div>
+                            <select
+                                class="relative z-10 bg-surface-container-highest border-2 border-gold-ancient text-gold-ancient px-6 py-4 font-label-sm focus:outline-none text-2xl font-bold rounded-full shadow-lg hover:scale-110 transition-transform"
+                                id="op">
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                                <option value="*">×</option>
+                                <option value="/">÷</option>
+                            </select>
+                        </div>
+                        <div class="w-px h-12 bg-gradient-to-t from-transparent to-outline-variant"></div>
+                    </div>
+                    <!-- Combatant B -->
+                    <div class="flex flex-col items-center space-y-6 group">
+                        <div class="text-center">
+                            <label
+                                class="font-label-sm text-label-sm text-gold-ancient uppercase tracking-widest block mb-1">Dato
+                                B</label>
+                            <div
+                                class="h-0.5 w-12 bg-gold-ancient/30 mx-auto group-focus-within:w-full transition-all duration-500">
+                            </div>
+                        </div>
+                        <div class="w-full space-y-4 stone-border p-6 bg-surface-container-low/50">
+                            <input
+                                class="w-full bg-transparent border-b border-outline-variant text-center text-on-surface px-4 py-3 font-headline-md focus:outline-none focus:border-gold-ancient transition-colors"
+                                id="valB" type="text" value="5.5" />
+                            <select
+                                class="w-full bg-surface-container-highest/30 border border-outline-variant text-primary px-4 py-2 font-label-sm text-center focus:outline-none focus:border-gold-ancient"
+                                id="typeB">
+                                <option value="INT">INT</option>
+                                <option selected="" value="DOUBLE">DOUBLE</option>
+                                <option value="STRING">STRING</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16 flex flex-col items-center gap-10 relative z-10">
+                    <button
+                        class="bg-gradient-to-b from-gold-ancient to-bronze text-black font-extrabold tracking-[0.15em] text-xl px-16 py-5 shadow-[0_10px_20px_rgba(184,134,11,0.2),0_0_0_1px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_30px_rgba(184,134,11,0.4)] hover:-translate-y-1 active:translate-y-0 active:scale-95 transition-all w-full md:w-auto uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                        id="btnProcess">
+                        ¡QUE COMIENCE EL PROCESO!
+                    </button>
+                    <!-- Result Area (The Victor) -->
+                    <div class="w-full max-w-2xl border-2 border-double border-gold-ancient/30 p-1 bg-surface-container-low/80 opacity-0 translate-y-4 transition-all duration-700"
+                        id="resultBox">
+                        <div
+                            class="border border-gold-ancient/20 p-8 flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
+                            <div class="space-y-2">
+                                <span
+                                    class="font-label-sm text-label-sm text-gold-ancient/60 block uppercase tracking-widest">EL
+                                    VICTORIOSO</span>
+                                <div class="font-display-lg text-4xl md:text-5xl text-primary drop-shadow-sm italic"
+                                    id="resultVal">--</div>
+                            </div>
+                            <div class="md:text-right max-w-xs">
+                                <span
+                                    class="font-label-sm text-label-sm text-gold-ancient/60 block mb-2 uppercase tracking-widest text-xs">Veredicto
+                                    de la Arena</span>
+                                <div class="font-body-md text-sm italic text-secondary leading-relaxed" id="resultNote">
+                                    Seleccione sus combatientes y ejecute la sentencia.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pillar Motifs -->
+            <div class="absolute left-0 bottom-0 arena-pillar hidden md:block"></div>
+            <div class="absolute right-0 bottom-0 arena-pillar hidden md:block"></div>
+        </section>
+        <!-- Technical Rules Note -->
+        <footer class="bg-surface dark:bg-surface border-t border-outline-variant/10 py-12 mt-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-8">
+                <!-- Retroceso -->
+                <a href="/fundamentos-programacion/02-tipos-de-datos/07-bool.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                    <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Anterior</span>
+                        <span class="font-headline-md text-headline-md italic block">Booleano</span>
+                    </div>
+                </a>
+                <!-- Avance -->
+                <a href="/fundamentos-programacion/03-operaciones/09-operadores-logicos.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                    <div class="text-center md:text-right">
+                        <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Siguiente</span>
+                        <span class="font-headline-md text-headline-md italic block">Operadores Logicos</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                    </div>
+                </a>
+            </div>
+        </footer>
+    </main>
+    <!-- Global Footer Component -->
+    <footer class="bg-surface-container-low border-t border-outline-variant full-width py-12">
+        <div
+            class="flex flex-col md:flex-row justify-between items-center px-margin-desktop w-full max-w-container-max mx-auto gap-gutter">
+            <div class="font-headline-md text-headline-md text-on-surface">Babel Encyclopedia</div>
+            <p class="font-body-md text-body-md text-secondary opacity-60 text-center md:text-right">
+                © 2026 Babel Encyclopedia. Built for the scholarly pursuit of code.
+            </p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('btnProcess').addEventListener('click', () => {
+            const valA = document.getElementById('valA').value;
+            const typeA = document.getElementById('typeA').value;
+            const valB = document.getElementById('valB').value;
+            const typeB = document.getElementById('typeB').value;
+            const op = document.getElementById('op').value;
+
+            const resultBox = document.getElementById('resultBox');
+            const resultVal = document.getElementById('resultVal');
+            const resultNote = document.getElementById('resultNote');
+
+            let output = "";
+            let note = "";
+
+            // Logic Simulation
+            if (typeA === 'STRING' || typeB === 'STRING') {
+                if (op === '+') {
+                    output = `"${valA}${valB}"`;
+                    note = "Concatenación implícita. El combatiente String absorbe al numérico.";
+                } else {
+                    output = "¡CAÍDO!";
+                    note = "Operación aritmética ilegal. El sistema de tipos colapsa ante la entrada de texto.";
+                }
+            } else {
+                let numA = parseFloat(valA);
+                let numB = parseFloat(valB);
+
+                if (isNaN(numA) || isNaN(numB)) {
+                    output = "DESCALIFICADO";
+                    note = "Entrada inválida. Los valores no coinciden con la disciplina declarada.";
+                } else {
+                    let calc = 0;
+                    switch (op) {
+                        case '+': calc = numA + numB; break;
+                        case '-': calc = numA - numB; break;
+                        case '*': calc = numA * numB; break;
+                        case '/': calc = numB !== 0 ? numA / numB : "∞"; break;
+                    }
+
+                    output = calc;
+
+                    if (typeA === 'DOUBLE' || typeB === 'DOUBLE' || op === '/') {
+                        note = "Promoción automática a Punto Flotante. La precisión prevalece.";
+                    } else if (typeA === 'INT' && typeB === 'INT') {
+                        note = "Aritmética de Enteros pura. Se mantiene la estructura sólida del INT.";
+                        output = Math.floor(calc);
+                    }
+                }
+            }
+
+            // Animate
+            resultBox.classList.add('opacity-0', 'translate-y-4');
+            resultBox.classList.remove('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                resultVal.textContent = output;
+                resultNote.textContent = note;
+                resultBox.classList.remove('opacity-0', 'translate-y-4');
+                resultBox.classList.add('opacity-100', 'translate-y-0');
+            }, 300);
+        });
+
+        // Micro-interactions for inputs
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.closest('.stone-border')?.classList.add('border-gold-ancient');
+            });
+            input.addEventListener('blur', () => {
+                input.closest('.stone-border')?.classList.remove('border-gold-ancient');
+            });
+        });
+    </script>
+</body>
+
+</html>

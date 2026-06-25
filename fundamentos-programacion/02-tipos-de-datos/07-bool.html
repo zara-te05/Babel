@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Babel Encyclopedia - 06 _ VALORES BOOLEANOS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries">
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&amp;family=Hanken+Grotesk:wght@300;400;600;700&amp;family=Space+Mono:wght@400;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#454a4f",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "on-secondary": "#2c3136",
+                        "surface-container-low": "#191b24",
+                        "secondary-fixed": "#dfe3e9",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-secondary-fixed": "#171c20",
+                        "tertiary": "#ffb59b",
+                        "on-background": "#e2e1ef",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#0035be",
+                        "surface": "#11131c",
+                        "on-tertiary-container": "#ffece6",
+                        "background": "#11131c",
+                        "tertiary-container": "#c24100",
+                        "on-primary": "#002388",
+                        "on-surface-variant": "#c4c5d9",
+                        "surface-dim": "#11131c",
+                        "on-secondary-container": "#b4b9bf",
+                        "primary-container": "#2e5bff",
+                        "surface-container-highest": "#33343e",
+                        "surface-tint": "#b8c3ff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary": "#5b1a00",
+                        "on-primary-container": "#efefff",
+                        "outline": "#8e90a2",
+                        "secondary": "#c3c7cd",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "inverse-surface": "#e2e1ef",
+                        "on-primary-fixed": "#001356",
+                        "inverse-on-surface": "#2e303a",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "surface-container-high": "#282933",
+                        "outline-variant": "#434656",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "surface-container": "#1d1f29",
+                        "surface-bright": "#373943",
+                        "inverse-primary": "#124af0",
+                        "surface-variant": "#33343e",
+                        "on-surface": "#e2e1ef",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#0c0e17",
+                        "primary": "#b8c3ff",
+                        "on-tertiary-fixed": "#380d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "container-max": "1280px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "display-lg": ["Bodoni Moda"],
+                        "label-sm": ["Space Mono"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em",
+                            "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em",
+                            "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            background-color: #0F172A;
+            /* Deep Navy base for Neo-Classical Noir */
+            color: #E2E1EF;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .canvas-grid {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .light-glow {
+            filter: drop-shadow(0 0 40px rgba(184, 195, 255, 0.6));
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dark-bulb {
+            filter: drop-shadow(0 0 0px transparent);
+            opacity: 0.3;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .switch-track {
+            width: 120px;
+            height: 48px;
+            background: #1E293B;
+            border: 1px solid rgba(142, 144, 162, 0.2);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .switch-thumb {
+            width: 50%;
+            height: 100%;
+            background: #B8C3FF;
+            position: absolute;
+            left: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .switch-active .switch-thumb {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-body-md overflow-x-hidden">
+    <!-- HEADER adaptado -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas (padding-top ajustado a pt-28) -->
+    <main class="pt-28 pb-24 px-margin-mobile md:px-margin-desktop min-h-screen flex flex-col items-center">
+        <div class="canvas-grid w-full">
+            <!-- Header Section -->
+            <header class="mb-16">
+                <p class="font-label-sm text-label-sm text-primary mb-base">SECCIÓN FUNDAMENTAL</p>
+                <h1
+                    class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface leading-none mb-gutter">
+                    07 _ VALORES BOOLEANOS (BOOL)
+                </h1>
+                <div class="w-24 h-px bg-primary/30"></div>
+            </header>
+            <!-- Introduction Content -->
+            <section class="mb-20 space-y-gutter">
+                <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                    Un <span class="text-primary italic">Booleano (bool)</span> es la unidad más simple y elegante de la
+                    lógica computacional. En su esencia, representa únicamente dos estados posibles: <span
+                        class="font-bold text-on-surface">true (verdadero)</span> o <span
+                        class="font-bold text-on-surface">false (falso)</span>.
+                </p>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Esta dualidad absoluta es el cimiento sobre el cual las máquinas construyen su capacidad de
+                    discernimiento. Cada decisión, desde la más trivial hasta la arquitectura de una inteligencia
+                    artificial, se reduce a una serie de bifurcaciones de sí o no.
+                </p>
+            </section>
+            <!-- Interactive Laboratory: "El Interruptor Lógico" -->
+            <section
+                class="bg-surface-container-lowest border border-outline-variant/10 p-gutter md:p-12 mb-20 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-[120px]" data-icon="terminal">terminal</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center gap-12">
+                    <h2 class="font-headline-md text-headline-md text-on-surface text-center">Interactive Laboratory:
+                        "El Interruptor Lógico"</h2>
+                    <!-- Visual Light Bulb Container -->
+                    <div class="relative w-32 h-32 flex items-center justify-center" id="bulb-container">
+                        <span class="material-symbols-outlined text-8xl dark-bulb text-primary" data-icon="lightbulb"
+                            id="bulb-icon" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+                    </div>
+                    <!-- Toggle Interface -->
+                    <div class="flex flex-col items-center gap-gutter w-full">
+                        <div class="switch-track" id="logic-switch" onclick="toggleLogic()">
+                            <div class="switch-thumb"></div>
+                        </div>
+                        <div class="flex justify-between w-32 text-center">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">FALSE</span>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">TRUE</span>
+                        </div>
+                        <div
+                            class="bg-surface-container p-base border border-outline-variant/20 min-w-[200px] text-center">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">ESTADO ACTUAL: </span>
+                            <span class="font-label-sm text-label-sm text-primary font-bold uppercase"
+                                id="state-text">false</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Technical Note -->
+            <aside class="flex gap-gutter items-start border-l-2 border-primary/50 pl-gutter py-gutter bg-primary/5">
+                <span class="material-symbols-outlined text-primary" data-icon="history_edu">history_edu</span>
+                <div>
+                    <h3 class="font-label-sm text-label-sm text-on-surface mb-2 font-bold tracking-widest">TECHNICAL
+                        NOTE</h3>
+                    <p class="font-body-md text-body-md italic text-on-surface-variant">
+                        "En el nivel más bajo de la arquitectura, un bool es la diferencia entre el paso de la corriente
+                        y el vacío. 1 o 0. Existencia o Ausencia."
+                    </p>
+                </div>
+            </aside>
+            <!-- Decorative Illustration -->
+
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-surface dark:bg-surface border-t border-outline-variant/10 py-12 mt-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-8">
+                <!-- Retroceso -->
+                <a href="/fundamentos-programacion/02-tipos-de-datos/06-string.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                    <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Anterior</span>
+                        <span class="font-headline-md text-headline-md italic block">String</span>
+                    </div>
+                </a>
+                <!-- Avance -->
+                <a href="/fundamentos-programacion/03-operaciones/08-aritmetica-datos.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                    <div class="text-center md:text-right">
+                        <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Siguiente</span>
+                        <span class="font-headline-md text-headline-md italic block">Aritmetica de Datos</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                    </div>
+                </a>
+            </div>
+        </footer>
+    <script>
+        let isTrue = false;
+
+        function toggleLogic() {
+            isTrue = !isTrue;
+            const switchEl = document.getElementById('logic-switch');
+            const bulbIcon = document.getElementById('bulb-icon');
+            const stateText = document.getElementById('state-text');
+
+            if (isTrue) {
+                switchEl.classList.add('switch-active');
+                bulbIcon.classList.remove('dark-bulb');
+                bulbIcon.classList.add('light-glow');
+                stateText.innerText = 'true';
+                stateText.classList.replace('text-on-surface-variant', 'text-primary');
+            } else {
+                switchEl.classList.remove('switch-active');
+                bulbIcon.classList.remove('light-glow');
+                bulbIcon.classList.add('dark-bulb');
+                stateText.innerText = 'false';
+                stateText.classList.replace('text-primary', 'text-on-surface-variant');
+            }
+        }
+    </script>
+
+</body>
+
+</html>

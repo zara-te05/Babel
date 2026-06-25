@@ -36,11 +36,11 @@
       z-index: 0;
     }
 
-    /* ── HERO TYPE ── */
+    /* ── HERO TYPE ── (ajustado) */
     .hero-word {
       font-family: 'Bodoni Moda', serif;
       font-weight: 900;
-      font-size: clamp(72px, 16vw, 230px);
+      font-size: clamp(48px, 10vw, 140px);
       letter-spacing: -0.03em;
       line-height: 0.88;
       text-transform: uppercase;
@@ -50,6 +50,26 @@
     .hero-word.outline {
       -webkit-text-stroke: 2px #FFFFFF;
       color: transparent;
+    }
+
+    /* ── BLEED WORD (ajustado) ── */
+    .bleed-word {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 900;
+      font-size: clamp(60px, 12vw, 160px);
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      color: #0047AB;
+      white-space: nowrap;
+      display: block;
+      line-height: 0.84;
+      margin-left: -0.02em;
+      margin-bottom: -0.06em;
+    }
+    .bleed-word.right {
+      text-align: right;
+      margin-left: 0;
+      margin-right: -0.02em;
     }
 
     /* ── REVEAL ── */
@@ -172,26 +192,6 @@
       background: rgba(0,71,171,0.4);
     }
 
-    /* Bleed word at bottom */
-    .bleed-word {
-      font-family: 'Bodoni Moda', serif;
-      font-weight: 900;
-      font-size: clamp(100px, 22vw, 320px);
-      letter-spacing: -0.04em;
-      text-transform: uppercase;
-      color: #0047AB;
-      white-space: nowrap;
-      display: block;
-      line-height: 0.84;
-      margin-left: -0.02em;
-      margin-bottom: -0.06em;
-    }
-    .bleed-word.right {
-      text-align: right;
-      margin-left: 0;
-      margin-right: -0.02em;
-    }
-
     /* ── NAV ── */
     header {
       position: fixed; top: 0; width: 100%; z-index: 50;
@@ -200,8 +200,11 @@
     }
     nav {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 24px 64px;
+      padding: 24px 20px;
       max-width: 1280px; margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      nav { padding: 24px 64px; }
     }
     .nav-logo {
       font-family: 'Bodoni Moda', serif;
@@ -209,7 +212,8 @@
       color: #FFFFFF; text-decoration: none;
       letter-spacing: -0.02em;
     }
-    .nav-links { display: flex; gap: 40px; align-items: center; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    @media (min-width: 768px) { .nav-links { gap: 40px; } }
     .nav-link {
       font-family: 'Hanken Grotesk', sans-serif;
       font-size: 16px; color: rgba(255,255,255,0.65);
@@ -223,12 +227,58 @@
       position: relative; z-index: 20;
       background: #0047AB;
       border-top: 1px solid rgba(255,255,255,0.1);
-      padding: 64px;
+      padding: 40px 20px;
     }
+    @media (min-width: 768px) { footer { padding: 64px; } }
     .footer-inner {
       max-width: 1280px; margin: 0 auto;
       display: flex; justify-content: space-between; align-items: center;
       flex-wrap: wrap; gap: 24px;
+    }
+
+    /* ── SECCIÓN HERO ── */
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 120px 20px 64px;
+    }
+    @media (min-width: 768px) {
+      .hero-section { padding: 120px 64px 64px; }
+    }
+
+    /* ── ROADMAP CONTENT ── */
+    .roadmap-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 60px 20px 0;
+    }
+    @media (min-width: 768px) {
+      .roadmap-content { padding: 80px 64px 0; }
+    }
+
+    /* ── MODULE TITLE ── */
+    .module-title-main {
+      font-size: clamp(32px, 5vw, 72px);
+      margin: 0;
+    }
+    .module-title-outline {
+      font-size: clamp(32px, 5vw, 72px);
+      margin: 0;
+      -webkit-text-stroke: 1.5px #0047AB;
+      color: transparent;
+    }
+
+    /* ── CLOSING ── */
+    .closing-section {
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    @media (min-width: 768px) {
+      .closing-section { padding: 120px 64px; }
     }
   </style>
 </head>
@@ -238,7 +288,6 @@
   <img alt="La Torre de Babel" class="tower-axis" id="tower-img"
     src="https://lh3.googleusercontent.com/aida-public/AB6AXuA26xCryQYp2Wd--AaFHszKX8c3j9wPyZsVJ5_qXfRI8_dr1W2y0Iop5lvw8-x14mjZXlq-_89e4D-nr6hf-oi9jExAPVaJnoDu1bLWncZcfllONH3XNjkRbsbdi62cXZRr-ghl101DllZhPsfpg81z1nfzsUQD85AwedYN0fKGsUb4N9L9pLXOsjO3MD_JFIqvM-rj_rEppkVaIyd8uTAE8xW7xuxai3jci7UtlSFOpeHStuJytxNdvQolkif7NPDL-dT9ei0VoEAR" />
 
-  <!-- NAV -->
   <header id="site-nav">
     <nav>
       <a href="index.html" class="nav-logo">Proyecto Torre Babel</a>
@@ -246,7 +295,8 @@
         <a href="index.html" class="nav-link">Inicio</a>
         <a href="arquitectura.html" class="nav-link active">Arquitectura</a>
         <a href="comunidad.html" class="nav-link">Comunidad</a>
-        <a href="perfil.html" class="nav-link">Registro</a>
+        <a href="re_lenguaje.html" class="nav-link">RE</a>
+        <a href="perfil.html" class="nav-link">Logos Editor</a>
       </div>
     </nav>
   </header>
@@ -256,7 +306,7 @@
     <!-- ══════════════════════════════════
          HERO
     ══════════════════════════════════ -->
-    <section style="min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:0 64px 64px; padding-top:120px;">
+    <section class="hero-section">
 
       <p class="reveal-node" style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:40px;">
         Mapa de Ruta • Tres Módulos Fundamentales
@@ -279,13 +329,13 @@
             <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);"></span>
             01 Fundamentos
           </a>
-          <a href="#estructuras" style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.3);padding:8px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.25s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.3)'">
-            <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);"></span>
-            02 Estructuras de Datos
-          </a>
           <a href="#poo" style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.3);padding:8px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.25s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.3)'">
             <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);"></span>
-            03 POO
+            02 POO
+          </a>
+          <a href="#estructuras" style="display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.3);padding:8px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.8);text-decoration:none;transition:all 0.25s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(255,255,255,0.3)'">
+            <span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);"></span>
+            03 Estructuras
           </a>
         </div>
       </div>
@@ -296,21 +346,21 @@
     ══════════════════════════════════ -->
     <div class="roadmap-band reveal-node">
 
-      <!-- ─── TOP BLEED: ARQUITECTURA ─── -->
+      <!-- ─── TOP BLEED: ARQUITECTURA (ahora más pequeño) ─── -->
       <div style="overflow:hidden; padding-top:0; line-height:0.84;">
         <span class="bleed-word">ARQUITECTURA</span>
       </div>
 
       <!-- ─── ROADMAP CONTENT ─── -->
-      <div style="max-width:1280px; margin:0 auto; padding:80px 64px 0;">
+      <div class="roadmap-content">
 
         <!-- ══ MODULE 01: FUNDAMENTOS ══ -->
         <div id="fundamentos" style="scroll-margin-top:100px;">
           <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:32px;">
             <div>
               <p class="mod-number" style="margin-bottom:8px;">Módulo 01</p>
-              <h2 class="mod-title" style="font-size:clamp(42px,7vw,96px); margin:0;">Fundamentos</h2>
-              <p class="mod-title" style="font-size:clamp(42px,7vw,96px); margin:0; -webkit-text-stroke:1.5px #0047AB; color:transparent;">de la Programación</p>
+              <h2 class="mod-title module-title-main">Fundamentos</h2>
+              <p class="mod-title module-title-outline">de la Programación</p>
             </div>
             <span class="progress-pill"><span class="pill-dot"></span>Punto de partida</span>
           </div>
@@ -360,7 +410,7 @@
           <div style="margin-top:24px; margin-bottom:32px; padding:24px; border:1px dashed rgba(0,71,171,0.2); background:rgba(0,71,171,0.02);">
             <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(0,71,171,0.55);margin-bottom:20px;">— Lecciones Prácticas</p>
             <div style="display:flex; flex-direction:column; gap:16px;">
-              <a href="fundamentos-programacion/que-es-la-programacion.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+              <a href="fundamentos-programacion\01-conceptos-basicos\01-que-es-la-programacion.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
                 <div>
                   <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 01</span>
                   <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Laberinto de la Lógica</h4>
@@ -369,7 +419,7 @@
                 <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
               </a>
               
-              <a href="fundamentos-programacion/lenguajes-de-programacion.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+              <a href="fundamentos-programacion\01-conceptos-basicos\02-lenguajes-de-programacion.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
                 <div>
                   <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 02</span>
                   <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Lenguaje de la Máquina</h4>
@@ -378,7 +428,7 @@
                 <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
               </a>
               
-              <a href="fundamentos-programacion/interpretado-vs-compilado.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+              <a href="fundamentos-programacion\01-conceptos-basicos\03-interpretado-vs-compilado.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
                 <div>
                   <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 03</span>
                   <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Cocina de Código (Interpretado vs Compilado)</h4>
@@ -386,6 +436,115 @@
                 </div>
                 <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
               </a>
+
+              <a href="fundamentos-programacion/02-tipos-de-datos/04-int.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 04</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Números Enteros (int)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Explora el tipo de dato entero y cómo la computadora almacena números sin decimales.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion\02-tipos-de-datos\05-double.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 05</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Números Decimales (double)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Descubre los números de punto flotante y su precisión en el mundo digital.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/02-tipos-de-datos/06-string.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 06</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Cadenas de Texto (string)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Aprende cómo las computadoras representan y manipulan texto con el tipo string.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/02-tipos-de-datos/07-bool.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 07</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Valores Booleanos (bool)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">El tipo más fundamental: true o false. La base de toda lógica computacional.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/03-operaciones/08-aritmetica-datos.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 08</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Aritmética de Datos</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Domina las operaciones aritméticas y cómo se comportan con distintos tipos de datos.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/03-operaciones/09-operadores-logicos.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 09</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Circo de la Lógica (Operadores Lógicos)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Domina AND, OR y NOT para construir condiciones complejas y precisas.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/04-control-de-flujo/10-condicional-if.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 10</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Guardián del Umbral (condicional if)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Aprende a tomar decisiones en tu código con el condicional if.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/04-control-de-flujo/11-condicional-else.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 11</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Sendero Secundario (else)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Descubre qué pasa cuando la condición no se cumple: el camino alternativo con else.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/04-control-de-flujo/12-switch.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 12</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">Los Mil Espejos (switch)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Maneja múltiples casos con elegancia usando la estructura switch.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/04-control-de-flujo/13-while.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 13</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Motor Perpetuo (while)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Crea bucles con while: repite código mientras una condición sea verdadera.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/04-control-de-flujo/14-for.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 14</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">La Escalera del Infinito (for)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Domina el bucle for para iterar con control total sobre el inicio, fin y paso.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
+              <a href="fundamentos-programacion/04-control-de-flujo/15-foreach.html" style="display:flex; justify-content:space-between; align-items:center; text-decoration:none; border:1px solid rgba(0,71,171,0.15); padding:20px; background:#fff; transition:all 0.3s; width:100%;" onmouseover="this.style.borderColor='#0047AB';this.style.boxShadow='0 4px 12px rgba(0,71,171,0.08)'" onmouseout="this.style.borderColor='rgba(0,71,171,0.15)';this.style.boxShadow='none'">
+                <div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(0,71,171,0.5);">LECCIÓN 15</span>
+                  <h4 style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:18px;color:#0047AB;margin:2px 0;">El Inventario Infinito (foreach)</h4>
+                  <p style="font-size:14px;color:rgba(0,71,171,0.7);margin:0;">Recorre colecciones elemento por elemento con el bucle foreach.</p>
+                </div>
+                <span class="material-symbols-outlined" style="color:#0047AB;">arrow_forward</span>
+              </a>
+
             </div>
           </div>
         </div>
@@ -401,9 +560,9 @@
         <div id="poo" style="scroll-margin-top:100px;">
           <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:32px;">
             <div>
-              <p class="mod-number" style="margin-bottom:8px;">Módulo 03</p>
-              <h2 class="mod-title" style="font-size:clamp(42px,7vw,96px); margin:0;">Programación</h2>
-              <p class="mod-title" style="font-size:clamp(42px,7vw,96px); margin:0; -webkit-text-stroke:1.5px #0047AB; color:transparent;">Orientada a Objetos</p>
+              <p class="mod-number" style="margin-bottom:8px;">Módulo 02</p>
+              <h2 class="mod-title module-title-main">Programación</h2>
+              <p class="mod-title module-title-outline">Orientada a Objetos</p>
             </div>
             <span class="progress-pill"><span class="pill-dot"></span>Abstracción del mundo real</span>
           </div>
@@ -475,21 +634,20 @@
           </div>
         </div>
 
-                <!-- CONNECTOR -->
+        <!-- CONNECTOR -->
         <div class="module-connector" style="padding:40px 0;">
           <div class="connector-line"></div>
           <span class="connector-label">↓ siguiente módulo</span>
           <div class="connector-line"></div>
         </div>
 
-
         <!-- ══ MODULE 03: ESTRUCTURAS DE DATOS ══ -->
         <div id="estructuras" style="scroll-margin-top:100px;">
           <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:32px;">
             <div>
-              <p class="mod-number" style="margin-bottom:8px;">Módulo 02</p>
-              <h2 class="mod-title" style="font-size:clamp(42px,7vw,96px); margin:0;">Estructuras</h2>
-              <p class="mod-title" style="font-size:clamp(42px,7vw,96px); margin:0; -webkit-text-stroke:1.5px #0047AB; color:transparent;">de Datos</p>
+              <p class="mod-number" style="margin-bottom:8px;">Módulo 03</p>
+              <h2 class="mod-title module-title-main">Estructuras</h2>
+              <p class="mod-title module-title-outline">de Datos</p>
             </div>
             <span class="progress-pill"><span class="pill-dot"></span>Organización del conocimiento</span>
           </div>
@@ -561,7 +719,7 @@
 
       </div><!-- end roadmap content -->
 
-      <!-- Bottom bleed word -->
+      <!-- Bottom bleed word (también ajustado) -->
       <div style="overflow:hidden; padding-top:80px; line-height:0.84; text-align:right;">
         <span class="bleed-word right">CAMINO</span>
       </div>
@@ -571,7 +729,7 @@
     <!-- ══════════════════════════════════
          CLOSING — back to blue
     ══════════════════════════════════ -->
-    <section style="padding:120px 64px; text-align:center; position:relative; z-index:10;">
+    <section class="closing-section">
       <div class="reveal-node" style="max-width:680px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:32px;">
         <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);">
           Tres módulos · Progresión lineal · Código abierto
@@ -621,12 +779,18 @@
         nav.style.background = 'rgba(0,71,171,0.92)';
         nav.style.backdropFilter = 'blur(12px)';
         nav.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
-        nav.querySelectorAll('nav')[0].style.padding = '14px 64px';
+        nav.querySelectorAll('nav')[0].style.padding = '14px 20px';
+        if (window.innerWidth >= 768) {
+          nav.querySelectorAll('nav')[0].style.padding = '14px 64px';
+        }
       } else {
         nav.style.background = 'transparent';
         nav.style.backdropFilter = 'none';
         nav.style.borderBottom = 'none';
-        nav.querySelectorAll('nav')[0].style.padding = '24px 64px';
+        nav.querySelectorAll('nav')[0].style.padding = '24px 20px';
+        if (window.innerWidth >= 768) {
+          nav.querySelectorAll('nav')[0].style.padding = '24px 64px';
+        }
       }
       tower.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.1}px))`;
     }, { passive: true });

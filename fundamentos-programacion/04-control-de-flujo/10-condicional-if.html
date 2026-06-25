@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>09 _ EL GUARDIÁN DEL UMBRAL | Babel Encyclopedia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "on-tertiary-container": "#ffece6",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#33343e",
+                        "surface-container": "#1d1f29",
+                        "on-secondary": "#2c3136",
+                        "surface-container-high": "#282933",
+                        "on-tertiary": "#5b1a00",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-surface": "#e2e1ef",
+                        "on-secondary-container": "#b4b9bf",
+                        "error": "#ffb4ab",
+                        "inverse-primary": "#124af0",
+                        "surface-bright": "#373943",
+                        "secondary-fixed": "#dfe3e9",
+                        "on-error": "#690005",
+                        "background": "#11131c",
+                        "surface-variant": "#33343e",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "surface-tint": "#b8c3ff",
+                        "on-primary-fixed-variant": "#0035be",
+                        "on-surface": "#e2e1ef",
+                        "tertiary-container": "#c24100",
+                        "on-background": "#e2e1ef",
+                        "inverse-on-surface": "#2e303a",
+                        "tertiary": "#ffb59b",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "primary": "#b8c3ff",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "surface-container-lowest": "#0c0e17",
+                        "outline": "#8e90a2",
+                        "on-primary": "#002388",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "surface-dim": "#11131c",
+                        "surface": "#11131c",
+                        "primary-fixed": "#dde1ff",
+                        "secondary-container": "#454a4f",
+                        "primary-container": "#2e5bff",
+                        "on-surface-variant": "#c4c5d9",
+                        "on-secondary-fixed": "#171c20",
+                        "on-primary-container": "#efefff",
+                        "tertiary-fixed": "#ffdbcf",
+                        "surface-container-low": "#191b24",
+                        "secondary": "#c3c7cd",
+                        "outline-variant": "#434656",
+                        "on-primary-fixed": "#001356"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "base": "8px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Bodoni Moda"],
+                        "label-sm": ["Space Mono"],
+                        "headline-md": ["Bodoni Moda"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Space Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0F172A;
+            color: #e2e1ef;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .woodcut-effect {
+            filter: grayscale(1) contrast(1.2) brightness(0.8) sepia(0.2) hue-rotate(180deg);
+        }
+        .cat-eye-glow {
+            box-shadow: 0 0 10px rgba(184, 195, 255, 0.4);
+        }
+        .decision-line {
+            background: linear-gradient(to bottom, #b8c3ff 0%, transparent 100%);
+        }
+        .door-perspective {
+            perspective: 1000px;
+        }
+        #interactive-door {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left;
+        }
+        #cat-guardian {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+        <!-- Header fijo con solo el título de la enciclopedia -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="px-margin-desktop py-16 max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+            <div class="lg:col-span-7">
+                <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-8 leading-tight">
+                    El Guardián del <span class="italic text-primary">Umbral</span>
+                </h2>
+                <div class="max-w-[700px] space-y-6">
+                    <p class="font-body-lg text-body-lg text-on-surface-variant">
+                        En el laberinto del código, los caminos no siempre son rectos. La sentencia <code class="font-label-sm text-primary bg-surface-container px-2 py-0.5 rounded">if</code> actúa como una oportunidad para tomar decisiones...
+                    </p>
+                    <p class="font-body-md text-body-md text-on-surface-variant opacity-80">
+                        Si la condición propuesta es verdadera (True), el flujo de ejecución atraviesa la puerta...
+                    </p>
+                </div>
+            </div>
+            <div class="lg:col-span-5 flex justify-center lg:justify-end">
+                <div class="relative w-64 h-80 border border-outline-variant bg-surface-container-low p-4 flex items-center justify-center">
+                    <div class="absolute inset-0 opacity-10 pointer-events-none"></div>
+                    <div class="border-2 border-primary w-full h-full flex flex-col items-center justify-center gap-4 relative z-10">
+                        <span class="material-symbols-outlined text-6xl text-primary" style="font-variation-settings: 'wght' 200">flowsheet</span>
+                        <div class="font-label-sm text-center px-4">THE LOGICAL BIFURCATION</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Game Section: El Refugio del Gato -->
+        <section class="bg-surface-container-lowest py-20 border-y border-outline-variant">
+            <div class="px-margin-desktop max-w-container-max mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="font-headline-md text-headline-md mb-4 underline decoration-primary decoration-2 underline-offset-8 uppercase tracking-widest">El Refugio del Gato</h3>
+                    <p class="font-body-md text-body-md text-secondary">Presenta el tributo correcto para que el Guardián te permita pasar.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <!-- Left: Control Panel -->
+                    <div class="space-y-12">
+                        <div class="glass-panel p-8 rounded-lg shadow-2xl">
+                            <h4 class="font-label-sm text-label-sm text-primary mb-6 uppercase">Estado de la Condición</h4>
+                            <div class="flex items-center justify-between p-6 bg-surface-container-high border border-outline-variant rounded mb-8">
+                                <div class="flex flex-col">
+                                    <span class="font-headline-md text-[24px]">Tributo Presente</span>
+                                    <span class="font-label-sm text-secondary" id="condition-status">VALOR: FALSE</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input class="sr-only peer" id="tribute-toggle" type="checkbox" />
+                                    <div class="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+                                </label>
+                            </div>
+                            <div class="font-label-sm p-4 bg-surface-container-low border-l-4 border-primary text-on-surface-variant overflow-x-auto">
+                                <span class="text-tertiary">if</span> (<span class="text-primary" id="code-variable">tributo == true</span>) {<br />
+                                  <span class="text-secondary opacity-60">// El Guardián se retira</span><br />
+                                  abrirPuerta();<br />
+                                }
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 border border-outline-variant flex flex-col gap-2">
+                                <span class="material-symbols-outlined text-primary">priority_high</span>
+                                <span class="font-body-md text-sm">La condición es binaria: Existe o No Existe.</span>
+                            </div>
+                            <div class="p-4 border border-outline-variant flex flex-col gap-2">
+                                <span class="material-symbols-outlined text-primary">psychology</span>
+                                <span class="font-body-md text-sm">El "if" es la base de toda inteligencia artificial.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right: Visual Representation -->
+                    <div class="relative h-[500px] flex items-center justify-center door-perspective">
+                        <div class="absolute inset-0 border-8 border-surface-container-highest rounded-lg opacity-40"></div>
+                        <div class="w-64 h-96 bg-surface-container border-4 border-outline-variant relative flex items-center justify-center z-10 overflow-hidden" id="interactive-door">
+                            <div class="absolute inset-0 opacity-10">
+                                <div class="w-full h-full" style="background-image: repeating-linear-gradient(45deg, #8e90a2 0, #8e90a2 1px, transparent 0, transparent 50%); background-size: 10px 10px;"></div>
+                            </div>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-12 border-2 border-outline-variant rounded-full"></div>
+                            <div class="absolute inset-0 bg-primary opacity-0 transition-opacity duration-1000" id="door-glow"></div>
+                            <span class="font-display-lg text-primary text-4xl opacity-20 relative z-20">UMBRAL</span>
+                        </div>
+                        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center" id="cat-guardian">
+                            <div class="w-20 h-16 bg-on-secondary rounded-t-full relative flex justify-center">
+                                <div class="absolute -top-4 -left-1 w-6 h-8 bg-on-secondary" style="clip-path: polygon(100% 100%, 0 100%, 100% 0);"></div>
+                                <div class="absolute -top-4 -right-1 w-6 h-8 bg-on-secondary" style="clip-path: polygon(0 100%, 100% 100%, 0 0);"></div>
+                                <div class="flex gap-4 mt-6">
+                                    <div class="w-3 h-1.5 bg-primary rounded-full cat-eye-glow transition-all duration-300" id="eye-l"></div>
+                                    <div class="w-3 h-1.5 bg-primary rounded-full cat-eye-glow transition-all duration-300" id="eye-r"></div>
+                                </div>
+                            </div>
+                            <div class="w-28 h-28 bg-on-secondary rounded-t-3xl relative">
+                                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-16 h-4 bg-black/30 blur-md"></div>
+                            </div>
+                            <div class="absolute -top-12 opacity-0 transition-all duration-500 scale-50" id="tribute-visual">
+                                <span class="material-symbols-outlined text-primary text-5xl">auto_awesome</span>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-8 w-80 h-12 bg-black/40 blur-xl rounded-[100%] z-0"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Academic Context Section -->
+        <section class="px-margin-desktop py-20 max-w-container-max mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="md:col-span-1">
+                    <h5 class="font-headline-md text-[24px] mb-4 text-primary">La Anatomía del Salto</h5>
+                    <div class="h-1 w-12 bg-primary mb-6"></div>
+                    <p class="font-body-md text-on-surface-variant italic">
+                        "La libertad es la capacidad de elegir entre dos verdades, pero en el código, la libertad está sujeta a la validación de un booleano."
+                    </p>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <div class="p-6 border border-outline-variant hover:bg-surface-container-high transition-colors">
+                        <span class="font-label-sm text-secondary block mb-2">PROPIEDAD 01</span>
+                        <h6 class="font-headline-md text-lg mb-2">Evaluación Estricta</h6>
+                        <p class="font-body-md text-sm opacity-70">Cualquier expresión que devuelva un valor booleano puede alimentar el umbral.</p>
+                    </div>
+                    <div class="p-6 border border-outline-variant hover:bg-surface-container-high transition-colors">
+                        <span class="font-label-sm text-secondary block mb-2">PROPIEDAD 02</span>
+                        <h6 class="font-headline-md text-lg mb-2">Cláusula de Escape</h6>
+                        <p class="font-body-md text-sm opacity-70">El 'else' (que veremos luego) define el camino alterno ante la falsedad.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navegación (botones Anterior / Siguiente) -->
+        <footer class="bg-surface dark:bg-surface border-t border-outline-variant/10 py-12 mt-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-8">
+                <div class="flex flex-col items-center md:items-start gap-2">
+                    <span class="font-display-lg text-display-lg-mobile text-on-surface text-[24px]">Babel</span>
+                    <p class="font-body-md text-label-sm text-on-surface-variant">© 2026 Babel All rights reserved.</p>
+                </div>
+                <!-- Retroceso -->
+                <a href="/fundamentos-programacion/03-operaciones/09-operadores-logicos.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                    <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Anterior</span>
+                        <span class="font-headline-md text-headline-md italic block">Operadores Lógicos</span>
+                    </div>
+                </a>
+                <!-- Avance -->
+                <a href="/fundamentos-programacion/04-control-de-flujo/11-condicional-else.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                    <div class="text-center md:text-right">
+                        <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Siguiente</span>
+                        <span class="font-headline-md text-headline-md italic block">Else</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                    </div>
+                </a>
+            </div>
+        </footer>
+    </main>
+    <script>
+        const toggle = document.getElementById('tribute-toggle');
+        const statusText = document.getElementById('condition-status');
+        const codeVar = document.getElementById('code-variable');
+        const cat = document.getElementById('cat-guardian');
+        const door = document.getElementById('interactive-door');
+        const doorGlow = document.getElementById('door-glow');
+        const tributeVisual = document.getElementById('tribute-visual');
+        const eyeL = document.getElementById('eye-l');
+        const eyeR = document.getElementById('eye-r');
+
+        toggle.addEventListener('change', (e) => {
+            const isTributePresent = e.target.checked;
+            if (isTributePresent) {
+                statusText.textContent = "VALOR: TRUE";
+                statusText.classList.replace('text-secondary', 'text-primary');
+                codeVar.textContent = "tributo == true";
+                codeVar.classList.replace('text-primary', 'text-primary-fixed');
+                cat.style.transform = 'translateX(120px) scale(0.9)';
+                cat.style.opacity = '0.7';
+                door.style.transform = 'rotateY(-110deg)';
+                doorGlow.style.opacity = '0.3';
+                tributeVisual.style.opacity = '1';
+                tributeVisual.style.transform = 'translateY(-20px) scale(1)';
+                eyeL.style.height = '12px';
+                eyeR.style.height = '12px';
+                eyeL.style.backgroundColor = '#b8c3ff';
+                eyeR.style.backgroundColor = '#b8c3ff';
+            } else {
+                statusText.textContent = "VALOR: FALSE";
+                statusText.classList.replace('text-primary', 'text-secondary');
+                codeVar.textContent = "tributo == false";
+                codeVar.classList.replace('text-primary-fixed', 'text-primary');
+                cat.style.transform = 'translateX(-50%) scale(1)';
+                cat.style.opacity = '1';
+                door.style.transform = 'rotateY(0deg)';
+                doorGlow.style.opacity = '0';
+                tributeVisual.style.opacity = '0';
+                tributeVisual.style.transform = 'translateY(0) scale(0.5)';
+                eyeL.style.height = '1.5px';
+                eyeR.style.height = '1.5px';
+                eyeL.style.backgroundColor = '#8e90a2';
+                eyeR.style.backgroundColor = '#8e90a2';
+            }
+        });
+
+        let angle = 0;
+        function animate() {
+            angle += 0.02;
+            const yOffset = Math.sin(angle) * 5;
+            if (!toggle.checked) {
+                cat.style.bottom = `${48 + yOffset}px`;
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

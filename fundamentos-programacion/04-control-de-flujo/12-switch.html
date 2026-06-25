@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Babel - Los Mil Espejos (Switch)</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#1d1f29",
+                        "on-primary-fixed-variant": "#0035be",
+                        "surface-container-lowest": "#0c0e17",
+                        "surface-bright": "#373943",
+                        "error-container": "#93000a",
+                        "inverse-on-surface": "#2e303a",
+                        "primary-container": "#2e5bff",
+                        "outline-variant": "#434656",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "on-primary": "#002388",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "primary-fixed": "#dde1ff",
+                        "on-secondary-fixed": "#171c20",
+                        "on-error": "#690005",
+                        "surface": "#11131c",
+                        "surface-container-low": "#191b24",
+                        "inverse-primary": "#124af0",
+                        "tertiary-fixed": "#ffdbcf",
+                        "surface-variant": "#33343e",
+                        "on-primary-container": "#efefff",
+                        "on-secondary": "#2c3136",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-primary-fixed": "#001356",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#e2e1ef",
+                        "inverse-surface": "#e2e1ef",
+                        "surface-container-highest": "#33343e",
+                        "surface-tint": "#b8c3ff",
+                        "outline": "#8e90a2",
+                        "on-tertiary-container": "#ffece6",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "tertiary": "#ffb59b",
+                        "surface-dim": "#11131c",
+                        "tertiary-container": "#c24100",
+                        "on-surface-variant": "#c4c5d9",
+                        "on-tertiary": "#5b1a00",
+                        "surface-container-high": "#282933",
+                        "secondary": "#c3c7cd",
+                        "secondary-container": "#454a4f",
+                        "secondary-fixed": "#dfe3e9",
+                        "on-surface": "#e2e1ef",
+                        "on-secondary-container": "#b4b9bf",
+                        "primary": "#b8c3ff",
+                        "background": "#11131c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Space Mono"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "display-lg": ["Bodoni Moda"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+
+        .mirror-glow {
+            filter: drop-shadow(0 0 8px rgba(184, 195, 255, 0.4));
+        }
+
+        .portal-active {
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from {
+                opacity: 0.3;
+                filter: blur(4px);
+            }
+
+            to {
+                opacity: 1;
+                filter: blur(0px);
+            }
+        }
+
+        .prism-shape {
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .beam-path {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Custom scrollbar for academic feel */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0c0e17;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #434656;
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen flex flex-col overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+    <main class="flex-grow w-full max-w-container-max mx-auto px-margin-desktop py-12 flex flex-col gap-16">
+        <!-- Header fijo con solo el título de la enciclopedia -->
+        <header
+            class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+            <div class="flex justify-center items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+                <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+            </div>
+        </header>
+
+        <!-- Introduction Section con título de la lección -->
+        <section class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center pt-20">
+            <div class="md:col-span-7 flex flex-col gap-6">
+                <!-- TITULO DE LA LECCIÓN -->
+                <div>
+                    <h1 class="text-4xl md:text-display-lg font-bold text-on-surface leading-tight">Los Mil Espejos</h1>
+                    <p class="font-label-sm text-outline uppercase tracking-widest mt-2">Estructura de control switch</p>
+                </div>
+
+                <div class="bg-surface-container-low border border-outline-variant/20 p-8 relative">
+                    <span
+                        class="material-symbols-outlined absolute -top-4 -left-4 bg-background p-2 text-primary border border-outline-variant/20"
+                        style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                    <p class="font-body-lg text-body-lg italic text-on-surface opacity-90 leading-loose">
+                        "En la arquitectura de Babel, cuando las opciones se multiplican, la bifurcación simple resulta
+                        insuficiente. La sentencia switch actúa como un selector de frecuencias: una sola señal que
+                        resuena en un salón de múltiples espejos, activando solo aquel que comparte su misma vibración."
+                    </p>
+                </div>
+            </div>
+            <div class="md:col-span-5 h-64 flex items-center justify-center relative">
+                <div class="absolute inset-0 bg-primary/5 blur-3xl rounded-full"></div>
+
+                <!-- Fallback Icon if animation fails -->
+                <span class="material-symbols-outlined text-primary/40 text-8xl"
+                    style="font-variation-settings: 'wght' 100;">settings_input_component</span>
+            </div>
+        </section>
+
+        <!-- Interactive Laboratory -->
+        <section class="flex flex-col gap-8">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">science</span>
+                <h2 class="font-headline-md text-headline-md text-on-surface">El Salón de Frecuencias</h2>
+            </div>
+            <div
+                class="grid grid-cols-1 lg:grid-cols-12 gap-px bg-outline-variant/10 border border-outline-variant/20 overflow-hidden">
+                <!-- Selector Side -->
+                <div class="lg:col-span-4 bg-surface-container-lowest p-8 flex flex-col gap-8">
+                    <h3 class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Sintonizar Frecuencia
+                    </h3>
+                    <div class="flex flex-col gap-4" id="frequency-selector">
+                        <button
+                            class="freq-btn group flex items-center justify-between p-4 border border-outline-variant/30 hover:border-primary-container transition-all bg-surface-container-low active:scale-95"
+                            data-id="1" onclick="selectFreq(1, 'Azul', '#2e5bff')">
+                            <div class="flex flex-col text-left">
+                                <span
+                                    class="font-label-sm text-outline group-hover:text-primary transition-colors">01</span>
+                                <span class="font-body-md font-bold text-on-surface">Frecuencia Azul</span>
+                            </div>
+                            <span
+                                class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">radio_button_checked</span>
+                        </button>
+                        <button
+                            class="freq-btn group flex items-center justify-between p-4 border border-outline-variant/30 hover:border-emerald-500 transition-all bg-surface-container-low active:scale-95"
+                            data-id="2" onclick="selectFreq(2, 'Esmeralda', '#10b981')">
+                            <div class="flex flex-col text-left">
+                                <span
+                                    class="font-label-sm text-outline group-hover:text-emerald-400 transition-colors">02</span>
+                                <span class="font-body-md font-bold text-on-surface">Frecuencia Esmeralda</span>
+                            </div>
+                            <span
+                                class="material-symbols-outlined text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">radio_button_checked</span>
+                        </button>
+                        <button
+                            class="freq-btn group flex items-center justify-between p-4 border border-outline-variant/30 hover:border-purple-500 transition-all bg-surface-container-low active:scale-95"
+                            data-id="3" onclick="selectFreq(3, 'Amatista', '#a855f7')">
+                            <div class="flex flex-col text-left">
+                                <span
+                                    class="font-label-sm text-outline group-hover:text-purple-400 transition-colors">03</span>
+                                <span class="font-body-md font-bold text-on-surface">Frecuencia Amatista</span>
+                            </div>
+                            <span
+                                class="material-symbols-outlined text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity">radio_button_checked</span>
+                        </button>
+                        <button
+                            class="freq-btn group flex items-center justify-between p-4 border border-outline-variant/30 hover:border-outline transition-all bg-surface-container-low active:scale-95"
+                            data-id="0" onclick="selectFreq(0, 'Origen', '#8e90a2')">
+                            <div class="flex flex-col text-left">
+                                <span
+                                    class="font-label-sm text-outline group-hover:text-on-surface transition-colors">Default</span>
+                                <span class="font-body-md font-bold text-on-surface">Retornar al Origen</span>
+                            </div>
+                            <span
+                                class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">settings_backup_restore</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Visualization Side -->
+                <div
+                    class="lg:col-span-8 bg-surface-container p-8 relative overflow-hidden min-h-[400px] flex flex-col items-center justify-center">
+
+                    <div class="relative w-full h-full flex items-center justify-center">
+                        <!-- Portal Azul (Top Left) -->
+                        <div class="absolute top-0 left-0 w-32 h-32 border-2 border-primary/20 flex flex-col items-center justify-center transition-all duration-500 opacity-20"
+                            id="portal-1">
+                            <span class="font-label-sm text-[10px] text-primary mb-2">PORTAL AZUL</span>
+                            <div class="w-16 h-16 rounded-full border border-primary/40 animate-spin-slow"></div>
+                        </div>
+                        <!-- Portal Esmeralda (Top Right) -->
+                        <div class="absolute top-0 right-0 w-32 h-32 border-2 border-emerald-500/20 flex flex-col items-center justify-center transition-all duration-500 opacity-20"
+                            id="portal-2">
+                            <span class="font-label-sm text-[10px] text-emerald-400 mb-2">PORTAL ESMERALDA</span>
+                            <div class="w-16 h-16 rounded-full border border-emerald-500/40 animate-pulse"></div>
+                        </div>
+                        <!-- Portal Amatista (Bottom Right) -->
+                        <div class="absolute bottom-0 right-0 w-32 h-32 border-2 border-purple-500/20 flex flex-col items-center justify-center transition-all duration-500 opacity-20"
+                            id="portal-3">
+                            <span class="font-label-sm text-[10px] text-purple-400 mb-2">PORTAL AMATISTA</span>
+                            <div class="w-16 h-16 rotate-45 border border-purple-500/40 animate-bounce"></div>
+                        </div>
+                        <!-- Central Prism -->
+                        <div class="z-10 flex flex-col items-center">
+                            <div
+                                class="w-24 h-24 prism-shape bg-surface-bright border border-outline-variant/30 flex items-center justify-center relative shadow-2xl">
+                                <div class="w-4 h-4 rounded-full bg-white blur-sm transition-all duration-700"
+                                    id="prism-core"></div>
+                            </div>
+                            <span class="font-label-sm mt-4 text-outline">EL SELECTOR</span>
+                        </div>
+                        <!-- Light Beams (SVG) -->
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
+                            <defs>
+                                <filter id="glow">
+                                    <fegaussianblur result="coloredBlur" stddeviation="3"></fegaussianblur>
+                                    <femerge>
+                                        <femergenode in="coloredBlur"></femergenode>
+                                        <femergenode in="SourceGraphic"></femergenode>
+                                    </femerge>
+                                </filter>
+                            </defs>
+                            <line filter="url(#glow)" id="beam-entry" stroke="white" stroke-dasharray="4"
+                                stroke-width="2" x1="50%" x2="50%" y1="100%" y2="55%"></line>
+                            <line class="beam-path" filter="url(#glow)" id="beam-exit" stroke="transparent"
+                                stroke-width="3" x1="50%" x2="50%" y1="45%" y2="45%"></line>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <!-- Code Block -->
+            <div class="bg-surface-container-lowest border border-outline-variant/20 rounded-lg overflow-hidden">
+                <div
+                    class="bg-surface-container-low px-6 py-3 flex items-center justify-between border-b border-outline-variant/10">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/30"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/30"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/30"></div>
+                    </div>
+                    <span class="font-label-sm text-outline">syntaxis_babel.js</span>
+                </div>
+                <div class="p-8 font-label-sm leading-relaxed overflow-x-auto">
+                    <pre class="text-on-surface"><span class="text-primary-fixed-dim">switch</span> (frecuencia) {
+  <span class="text-primary-fixed-dim">case</span> 1:
+    abrirPortal(<span class="text-on-tertiary-fixed">"Azul"</span>);
+    <span class="text-primary-fixed-dim">break</span>;
+  <span class="text-primary-fixed-dim">case</span> 2:
+    abrirPortal(<span class="text-on-tertiary-fixed">"Esmeralda"</span>);
+    <span class="text-primary-fixed-dim">break</span>;
+  <span class="text-primary-fixed-dim">default</span>:
+    retornarAlOrigen();
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Section -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3 text-primary">
+                    <span class="material-symbols-outlined">block</span>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">La Regla del Quiebre</h3>
+                </div>
+                <p class="font-body-md text-on-surface-variant leading-relaxed">
+                    El comando <code class="text-primary">break</code> actúa como el muro de contención. En el Salón de
+                    Frecuencias, evita que la luz "sangre" hacia el siguiente espejo. Sin el quiebre, el programa
+                    continuaría ejecutando los casos subsiguientes en cascada (fall-through), perdiendo la precisión del
+                    selector.
+                </p>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3 text-primary">
+                    <span class="material-symbols-outlined">security</span>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">Salida de Emergencia</h3>
+                </div>
+                <p class="font-body-md text-on-surface-variant leading-relaxed">
+                    El <code class="text-primary">default</code> es nuestra red de seguridad. Si ninguna de las
+                    frecuencias sintonizadas coincide con la vibración entrante, Babel recurre a esta instrucción final,
+                    asegurando que el flujo nunca quede atrapado en el vacío de la indefinición.
+                </p>
+            </div>
+        </section>
+
+        <!-- Navegación entre lecciones -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-center gap-8 py-12 border-t border-outline-variant/20">
+            <!-- Retroceso -->
+            <a href="/fundamentos-programacion/04-control-de-flujo/11-condicional-else.html"
+                class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-start">
+                <div
+                    class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <span
+                        class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Anterior</span>
+                    <span class="font-headline-md text-headline-md italic block">El Camino no Tomado (ELSE)</span>
+                </div>
+            </a>
+            <!-- Avance -->
+            <a href="/fundamentos-programacion/04-control-de-flujo/13-while.html"
+                class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-end">
+                <div class="text-center md:text-right">
+                    <span
+                        class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Siguiente</span>
+                    <span class="font-headline-md text-headline-md italic block">El Motor Perpeturo (While)</span>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/10 w-full mt-12">
+        <div class="max-w-container-max mx-auto px-margin-desktop py-12 flex flex-col gap-12">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex flex-col gap-2 text-center md:text-left">
+                    <span class="font-display-lg text-headline-md text-on-surface tracking-tighter">Babel</span>
+                    <p class="font-label-sm text-outline">© 2026 Babel Scholarly Encyclopedia. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function selectFreq(id, name, color) {
+            // Reset portal styles
+            const portals = [1, 2, 3];
+            portals.forEach(pId => {
+                const portal = document.getElementById(`portal-${pId}`);
+                portal.style.opacity = '0.1';
+                portal.classList.remove('portal-active');
+                portal.style.borderColor = 'rgba(67, 70, 86, 0.2)';
+            });
+
+            // Reset buttons
+            document.querySelectorAll('.freq-btn').forEach(btn => {
+                btn.style.borderColor = 'rgba(67, 70, 86, 0.3)';
+                btn.classList.remove('bg-surface-container-high');
+            });
+
+            // Set active button
+            const activeBtn = document.querySelector(`[data-id="${id}"]`);
+            if (activeBtn) {
+                activeBtn.style.borderColor = color;
+                activeBtn.classList.add('bg-surface-container-high');
+            }
+
+            // Animate prism
+            const core = document.getElementById('prism-core');
+            core.style.backgroundColor = color;
+            core.style.boxShadow = `0 0 20px ${color}`;
+
+            // Animate beam
+            const beamExit = document.getElementById('beam-exit');
+            const prismPos = { x: '50%', y: '50%' };
+
+            if (id > 0) {
+                const portal = document.getElementById(`portal-${id}`);
+                portal.style.opacity = '1';
+                portal.style.borderColor = color;
+                portal.classList.add('portal-active');
+
+                // Update Beam logic
+                beamExit.setAttribute('stroke', color);
+
+                // Targets
+                let targetX, targetY;
+                if (id === 1) { targetX = '5%'; targetY = '5%'; }
+                if (id === 2) { targetX = '95%'; targetY = '5%'; }
+                if (id === 3) { targetX = '95%'; targetY = '95%'; }
+
+                beamExit.setAttribute('x1', '50%');
+                beamExit.setAttribute('y1', '50%');
+                beamExit.setAttribute('x2', targetX);
+                beamExit.setAttribute('y2', targetY);
+                beamExit.setAttribute('stroke-dasharray', '0');
+            } else {
+                beamExit.setAttribute('stroke', 'transparent');
+            }
+        }
+
+        // Initialize first selection
+        window.onload = () => selectFreq(1, 'Azul', '#2e5bff');
+    </script>
+</body>
+
+</html>

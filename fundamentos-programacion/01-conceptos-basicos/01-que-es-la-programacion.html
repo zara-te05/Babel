@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
+
 <head>
+
+    <head>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    </head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Babel | El Laberinto de Comandos</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -99,6 +107,7 @@
             color: #e2e1ef;
             -webkit-font-smoothing: antialiased;
         }
+
         .terminal-cursor {
             display: inline-block;
             width: 8px;
@@ -106,26 +115,31 @@
             background-color: #b8c3ff;
             animation: blink 1s step-end infinite;
         }
+
         @keyframes blink {
             50% {
                 opacity: 0;
             }
         }
+
         .grid-cell {
             border: 1px solid rgba(255, 255, 255, 0.1);
             aspect-ratio: 1;
         }
+
         .player-unit {
             background-color: #b8c3ff;
             box-shadow: 0 0 15px rgba(184, 195, 255, 0.5);
             border-radius: 2px;
         }
+
         .labyrinth-grid {
             background-size: 40px 40px;
             background-image:
                 linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
         }
+
         #game-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
@@ -134,6 +148,7 @@
             height: 100%;
             min-height: 400px;
         }
+
         @media (min-width: 1024px) {
             #game-grid {
                 min-height: 500px;
@@ -147,9 +162,9 @@
         <!-- Header -->
         <header class="mb-16">
             <div class="flex items-baseline gap-4 mb-8">
-                <span class="font-headline-md text-primary text-2xl uppercase tracking-tighter">Babel</span>
+                <a href="../../index.html" class="font-headline-md text-primary text-2xl uppercase tracking-tighter hover:underline" style="text-decoration:none;">Babel</a>
                 <div class="h-px flex-1 bg-outline-variant/30"></div>
-                <span class="font-label-sm text-on-secondary-container">FUNDAMENTOS DE PROGRAMACION</span>
+                <span class="font-label-sm text-on-secondary-container">FUNDAMENTOS DE PROGRAMACIÓN - LECCIÓN 1</span>
             </div>
             <div class="max-w-3xl">
                 <h1 class="font-display-lg text-5xl md:text-64px mb-8 text-on-surface leading-tight">
@@ -157,7 +172,8 @@
                     <span class="italic font-normal">El Laberinto</span>
                 </h1>
                 <p class="font-body-lg text-xl text-on-surface-variant leading-relaxed max-w-2xl">
-                    La programación es <span class="text-on-surface font-semibold">la arquitectura de la lógica</span>. Moldeamos nuestro pensamiento en secuencias rígidas para construir sistemas digitales.
+                    La programación es <span class="text-on-surface font-semibold">la arquitectura de la lógica</span>.
+                    Moldeamos nuestro pensamiento en secuencias rígidas para construir sistemas digitales.
                 </p>
             </div>
         </header>
@@ -167,13 +183,18 @@
             <!-- Mapa -->
             <div class="lg:col-span-7 flex flex-col">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="font-label-sm uppercase tracking-widest text-primary/70">Visualización de Memoria</span>
+                    <span class="font-label-sm uppercase tracking-widest text-primary/70">Visualización de
+                        Memoria</span>
                     <span class="font-label-sm text-on-secondary-container" id="position-display">POS: X00 Y04</span>
-                    <span class="font-label-sm text-tertiary uppercase tracking-widest">OBJETIVO: ALCANZAR NODO DE SALIDA [X07 Y07]</span>
+                    <span class="font-label-sm text-tertiary uppercase tracking-widest">OBJETIVO: ALCANZAR NODO DE
+                        SALIDA [X07 Y07]</span>
                 </div>
-                <div class="flex-1 aspect-square lg:aspect-auto min-h-[400px] border border-white/20 relative labyrinth-grid flex items-center justify-center overflow-hidden">
+                <div
+                    class="flex-1 aspect-square lg:aspect-auto min-h-[400px] border border-white/20 relative labyrinth-grid flex items-center justify-center overflow-hidden">
                     <div id="game-grid"></div>
-                    <div class="absolute inset-0 pointer-events-none border-[12px] border-surface-dim/50 mix-blend-multiply"></div>
+                    <div
+                        class="absolute inset-0 pointer-events-none border-[12px] border-surface-dim/50 mix-blend-multiply">
+                    </div>
                 </div>
             </div>
 
@@ -184,9 +205,11 @@
                     <span class="font-label-sm text-on-secondary-container">STATUS: ACTIVO</span>
                 </div>
                 <div class="flex-1 bg-surface-container-lowest border border-outline-variant/40 flex flex-col">
-                    <div class="flex-1 p-6 font-label-sm text-body-md overflow-y-auto space-y-3 max-h-[400px]" id="terminal-screen">
+                    <div class="flex-1 p-6 font-label-sm text-body-md overflow-y-auto space-y-3 max-h-[400px]"
+                        id="terminal-screen">
                         <div class="text-on-secondary-container/40">BABEL SYSTEM CORE v4.0.1</div>
-                        <div class="text-on-surface-variant">Sincronización establecida. Ingrese comandos de navegación.</div>
+                        <div class="text-on-surface-variant">Sincronización establecida. Ingrese comandos de navegación.
+                        </div>
                         <div class="flex items-center gap-2">
                             <span class="text-primary">&gt;</span>
                             <span class="text-on-surface" id="command-text"></span>
@@ -195,9 +218,15 @@
                     </div>
                     <div class="p-6 border-t border-outline-variant/20 bg-surface-container">
                         <div class="grid grid-cols-2 gap-3">
-                            <button class="border border-white/10 py-4 font-label-sm text-on-surface hover:bg-white/5 transition-all text-xs tracking-widest" onclick="runCommand('AVANZAR')">AVANZAR</button>
-                            <button class="border border-white/10 py-4 font-label-sm text-on-surface hover:bg-white/5 transition-all text-xs tracking-widest" onclick="runCommand('ROTAR')">ROTAR</button>
-                            <button class="col-span-2 bg-primary py-4 font-label-sm font-bold text-on-primary hover:opacity-90 transition-all text-xs tracking-widest ring-2 ring-primary/20 ring-offset-2 ring-offset-surface" onclick="runCommand('EJECUTAR LÓGICA')">EJECUTAR LÓGICA</button>
+                            <button
+                                class="border border-white/10 py-4 font-label-sm text-on-surface hover:bg-white/5 transition-all text-xs tracking-widest"
+                                onclick="runCommand('AVANZAR')">AVANZAR</button>
+                            <button
+                                class="border border-white/10 py-4 font-label-sm text-on-surface hover:bg-white/5 transition-all text-xs tracking-widest"
+                                onclick="runCommand('ROTAR')">ROTAR</button>
+                            <button
+                                class="col-span-2 bg-primary py-4 font-label-sm font-bold text-on-primary hover:opacity-90 transition-all text-xs tracking-widest ring-2 ring-primary/20 ring-offset-2 ring-offset-surface"
+                                onclick="runCommand('EJECUTAR LÓGICA')">EJECUTAR LÓGICA</button>
                         </div>
                     </div>
                 </div>
@@ -206,19 +235,33 @@
 
         <!-- Footer -->
         <footer class="mt-16 pt-8 border-t border-outline-variant/20">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex items-center gap-6">
-                    <div class="w-64 h-px bg-outline-variant/30 relative">
-                        <div class="absolute left-0 top-0 h-px bg-primary w-[12.5%]"></div>
-                    </div>
-                </div>
-                <div class="flex gap-12">
+            <div class="flex flex-col md:flex-row items-center md:justify-between gap-8">
+
+                <div class="flex gap-12 items-center">
                     <button class="font-label-sm text-on-secondary-container hover:text-on-surface transition-colors" onclick="resetGame()">REINICIAR</button>
                     <button class="font-label-sm text-primary hover:tracking-widest transition-all uppercase font-bold" onclick="runCommand('EJECUTAR LÓGICA')">SIGUIENTE NODO</button>
                 </div>
+
+                <a class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-end md:ml-auto"
+                    href="/fundamentos-programacion/01-conceptos-basicos/02-lenguajes-de-programacion.html">
+                    <div class="text-center md:text-right">
+                        <div
+                            class="font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors">
+                            PRÓXIMA FASE
+                        </div>
+                        <div class="font-headline-md text-headline-md italic">LENGUAJES DE PROGRAMACION</div>
+                    </div>
+                    <div
+                        class="w-16 h-16 rounded-full border-2 border-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </div>
+                </a>
             </div>
+
             <div class="mt-12 text-center">
-                <p class="font-label-sm text-[10px] text-on-secondary-container/30 uppercase tracking-[0.3em]">© 2026 BABEL ARCHITECTURE. NO IMAGES. PURE LOGIC.</p>
+                <p class="font-label-sm text-[10px] text-on-secondary-container/30 uppercase tracking-[0.3em]">
+                    © 2026 BABEL ARCHITECTURE. NO IMAGES. PURE LOGIC.
+                </p>
             </div>
         </footer>
     </main>
@@ -251,8 +294,8 @@
             switch (dir) {
                 case 'north': return { dx: 0, dy: -1 };
                 case 'south': return { dx: 0, dy: 1 };
-                case 'east':  return { dx: 1, dy: 0 };
-                case 'west':  return { dx: -1, dy: 0 };
+                case 'east': return { dx: 1, dy: 0 };
+                case 'west': return { dx: -1, dy: 0 };
                 default: return { dx: 0, dy: 0 };
             }
         }
@@ -561,4 +604,5 @@
         });
     </script>
 </body>
+
 </html>

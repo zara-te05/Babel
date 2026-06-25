@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>10 _ ELSE | El Sendero Secundario</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#812800",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "primary": "#b8c3ff",
+                        "on-secondary-fixed": "#171c20",
+                        "secondary-fixed": "#dfe3e9",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#2c3136",
+                        "surface-container": "#1d1f29",
+                        "surface-dim": "#11131c",
+                        "on-tertiary-container": "#ffece6",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "on-primary-fixed": "#001356",
+                        "tertiary": "#ffb59b",
+                        "surface-tint": "#b8c3ff",
+                        "primary-fixed": "#dde1ff",
+                        "background": "#11131c",
+                        "error-container": "#93000a",
+                        "tertiary-container": "#c24100",
+                        "surface-container-low": "#191b24",
+                        "on-tertiary": "#5b1a00",
+                        "surface-container-lowest": "#0c0e17",
+                        "secondary-container": "#454a4f",
+                        "surface-container-high": "#282933",
+                        "on-surface-variant": "#c4c5d9",
+                        "on-error": "#690005",
+                        "on-primary-fixed-variant": "#0035be",
+                        "inverse-primary": "#124af0",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "primary-container": "#2e5bff",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-surface": "#e2e1ef",
+                        "inverse-surface": "#e2e1ef",
+                        "on-primary": "#002388",
+                        "outline": "#8e90a2",
+                        "surface-variant": "#33343e",
+                        "surface": "#11131c",
+                        "outline-variant": "#434656",
+                        "surface-bright": "#373943",
+                        "on-primary-container": "#efefff",
+                        "on-background": "#e2e1ef",
+                        "error": "#ffb4ab",
+                        "secondary": "#c3c7cd",
+                        "inverse-on-surface": "#2e303a",
+                        "on-secondary-container": "#b4b9bf",
+                        "surface-container-highest": "#33343e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Bodoni Moda"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Space Mono"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-caps": ["Space Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            font-family: 'Hanken Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .woodcut-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 3s ease forwards;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .glow-filter {
+            filter: drop-shadow(0 0 8px rgba(184, 195, 255, 0.4));
+        }
+
+        .split-path-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="selection:bg-primary/30">
+    <!-- Header fijo con solo el título de la enciclopedia -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+
+    <main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-32 pb-12">
+        <!-- Narrative Section -->
+        <section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-32 items-center">
+            <div class="md:col-span-7">
+                <h2 class="font-headline-md text-headline-md mb-8">El Sendero no Tomado</h2>
+                <div class="space-y-6 font-body-lg text-body-lg text-on-surface-variant">
+                    <p>En nuestra lección anterior, el Guardián del Umbral solo permitía el paso si se cumplía una
+                        condición exacta. Pero, ¿qué sucede cuando el aspirante no posee el tributo? ¿Se detiene el
+                        flujo de la realidad?</p>
+                    <p>La cláusula <code class="text-primary font-label-sm">else</code> actúa como una red de seguridad.
+                        Es la rama del árbol que sostiene la ejecución cuando la premisa inicial se desvanece. No
+                        requiere preguntas, no exige nuevas condiciones; simplemente se activa cuando el <code
+                            class="text-primary font-label-sm">if</code> fracasa.</p>
+                </div>
+            </div>
+            <div
+                class="md:col-span-5 bg-surface-container rounded-lg p-8 border border-outline-variant/10 relative overflow-hidden group">
+                <div
+                    class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                </div>
+                <span class="material-symbols-outlined text-6xl text-primary/40 block mb-6">alt_route</span>
+                <p class="font-body-md text-body-md italic text-on-surface">"Si no hay llave de oro, el guardián señala
+                    hacia la escalera de plata. No hay vacío en la lógica, solo alternativas."</p>
+            </div>
+        </section>
+
+        <!-- Interactive Laboratory -->
+        <section class="mb-32">
+            <div class="mb-12">
+                <h2 class="font-headline-md text-headline-md mb-2">Laboratorio: El Sendero Secundario</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">Interactúa con el mecanismo para observar
+                    cómo el flujo se bifurca según el estado de la verdad.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <!-- Visual Logic -->
+                <div
+                    class="bg-surface-container-lowest p-8 rounded-lg border border-outline-variant/20 shadow-2xl relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-12">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">ESTADO DEL MUNDO</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input class="sr-only peer" id="logicToggle" type="checkbox" />
+                            <div
+                                class="w-14 h-7 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-on-surface after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container">
+                            </div>
+                            <span class="ml-3 font-label-sm text-label-sm text-on-surface" id="toggleLabel">TRIBUTO
+                                AUSENTE</span>
+                        </label>
+                    </div>
+                    <div class="split-path-container flex flex-col items-center justify-center">
+                        <svg class="w-full h-full" viewbox="0 0 400 300">
+                            <path class="text-outline-variant" d="M 200 0 V 100" fill="none" stroke="currentColor"
+                                stroke-width="2"></path>
+                            <path class="text-outline-variant transition-colors duration-500"
+                                d="M 200 100 C 250 100 350 150 350 250" fill="none" id="pathIf" stroke="currentColor"
+                                stroke-width="2"></path>
+                            <circle class="text-outline-variant transition-all duration-500" cx="350" cy="250"
+                                fill="none" id="nodeIf" r="12" stroke="currentColor" stroke-width="2"></circle>
+                            <text class="font-label-sm text-[10px] fill-on-surface-variant" x="370" y="255">Portal
+                                Dorado</text>
+                            <path class="text-primary transition-colors duration-500"
+                                d="M 200 100 C 150 100 50 150 50 250" fill="none" id="pathElse" stroke="currentColor"
+                                stroke-width="2"></path>
+                            <circle class="text-primary transition-all duration-500" cx="50" cy="250"
+                                fill="currentColor" id="nodeElse" r="12"></circle>
+                            <text class="font-label-sm text-[10px] fill-on-surface-variant" text-anchor="middle" x="50"
+                                y="280">Túnel Secreto</text>
+                            <circle class="glow-filter" cx="200" cy="0" fill="#b8c3ff" id="flowOrb" r="4">
+                                <animate attributename="cy" dur="2s" from="0" id="orbAnim" repeatcount="indefinite"
+                                    to="250"></animate>
+                            </circle>
+                        </svg>
+                    </div>
+                </div>
+                <!-- Code Logic -->
+                <div
+                    class="bg-surface-container-high p-8 rounded-lg border border-outline-variant/10 font-label-sm text-body-md overflow-x-auto">
+                    <div class="flex items-center gap-2 mb-6 border-b border-outline-variant/20 pb-4">
+                        <div class="w-3 h-3 rounded-full bg-error/40"></div>
+                        <div class="w-3 h-3 rounded-full bg-tertiary/40"></div>
+                        <div class="w-3 h-3 rounded-full bg-primary/40"></div>
+                        <span class="ml-4 opacity-50">babel_script.arc</span>
+                    </div>
+                    <pre class="leading-relaxed"><span class="text-primary">if</span> (tributoPresente) {
+    <span class="text-on-surface-variant">// El Guardián abre el umbral principal</span>
+    abrirPortal(<span class="text-tertiary">"Dorado"</span>);
+    caminarHacia(<span class="text-tertiary">"Luz"</span>);
+} <span class="text-primary" id="codeElse">else</span> {
+    <span class="text-on-surface-variant">// La alternativa se revela en las sombras</span>
+    revelarTunel(<span class="text-tertiary">"Secreto"</span>);
+    descenderEscaleras();
+}
+                    </pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Anatomy Section -->
+        <section class="mb-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div>
+                    <h3 class="font-headline-md text-headline-md mb-8">Anatomía de la Alternativa</h3>
+                    <div class="space-y-8">
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center text-primary font-display-lg text-headline-md">
+                                1</div>
+                            <div>
+                                <h4 class="font-body-lg font-bold mb-2">Simplicidad Binaria</h4>
+                                <p class="font-body-md text-on-surface-variant">A diferencia del <code
+                                        class="text-primary">if</code>, el <code class="text-primary">else</code> no
+                                    lleva paréntesis. No evalúa; simplemente captura todo lo que no fue aceptado
+                                    previamente.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center text-primary font-display-lg text-headline-md">
+                                2</div>
+                            <div>
+                                <h4 class="font-body-lg font-bold mb-2">Continuidad del Flujo</h4>
+                                <p class="font-body-md text-on-surface-variant">Garantiza que el programa siempre tenga
+                                    una instrucción de salida, evitando estados de parálisis lógica o indefinición.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-surface-container-low p-10 border border-outline-variant/10 rounded-xl">
+                    <h4 class="font-label-sm text-label-sm text-primary mb-6">REGLA DE ORO</h4>
+                    <p class="font-body-lg text-headline-md leading-snug text-on-surface italic">
+                        "Un 'If' sin 'Else' es una pregunta al vacío. Un 'Else' es la promesa de que, pase lo que pase,
+                        el camino continúa."
+                    </p>
+                    <div class="mt-10 border-t border-outline-variant/20 pt-6">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant block mb-2 uppercase">Nota del
+                            Erudito</span>
+                        <p class="font-body-md text-on-surface-variant">Nunca encadenes demasiados 'Else If' sin un
+                            'Else' final. Es de mala educación académica dejar cabos sueltos en el tejido de la lógica.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navegación con botones circulares (Anterior / Siguiente) -->
+        <div
+            class="flex flex-col md:flex-row justify-between items-center gap-8 py-12 border-t border-outline-variant/20">
+            <!-- Retroceso -->
+            <a href="/fundamentos-programacion/04-control-de-flujo/10-condicional-if.html"
+                class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-start">
+                <div
+                    class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <span
+                        class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Anterior</span>
+                    <span class="font-headline-md text-headline-md italic block">El Guardián (IF)</span>
+                </div>
+            </a>
+            <!-- Avance -->
+            <a href="/fundamentos-programacion/04-control-de-flujo/12-switch.html"
+                class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center md:justify-end">
+                <div class="text-center md:text-right">
+                    <span
+                        class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest">Siguiente</span>
+                    <span class="font-headline-md text-headline-md italic block">Los Mil Espejos (SWITCH)</span>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/10 w-full px-margin-desktop py-base mt-20">
+        <div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="font-headline-md text-headline-md text-on-surface">Babel</div>
+            <div class="font-label-sm text-label-sm text-secondary dark:text-secondary-fixed-dim">© 2026 Babel Scholarly
+                Encyclopedia. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        const toggle = document.getElementById('logicToggle');
+        const toggleLabel = document.getElementById('toggleLabel');
+        const pathIf = document.getElementById('pathIf');
+        const pathElse = document.getElementById('pathElse');
+        const nodeIf = document.getElementById('nodeIf');
+        const nodeElse = document.getElementById('nodeElse');
+        const flowOrb = document.getElementById('flowOrb');
+        const orbAnim = document.getElementById('orbAnim');
+        const codeElse = document.getElementById('codeElse');
+
+        toggle.addEventListener('change', (e) => {
+            const isTributePresent = e.target.checked;
+            if (isTributePresent) {
+                toggleLabel.textContent = "TRIBUTO PRESENTE";
+                pathIf.classList.replace('text-outline-variant', 'text-primary');
+                pathElse.classList.replace('text-primary', 'text-outline-variant');
+                nodeIf.setAttribute('fill', 'currentColor');
+                nodeIf.classList.replace('text-outline-variant', 'text-primary');
+                nodeElse.setAttribute('fill', 'none');
+                nodeElse.classList.replace('text-primary', 'text-outline-variant');
+                codeElse.classList.remove('bg-primary/20', 'px-1');
+                orbAnim.setAttribute('values', '200,0; 200,100; 350,250');
+            } else {
+                toggleLabel.textContent = "TRIBUTO AUSENTE";
+                pathIf.classList.replace('text-primary', 'text-outline-variant');
+                pathElse.classList.replace('text-outline-variant', 'text-primary');
+                nodeIf.setAttribute('fill', 'none');
+                nodeIf.classList.replace('text-primary', 'text-outline-variant');
+                nodeElse.setAttribute('fill', 'currentColor');
+                nodeElse.classList.replace('text-outline-variant', 'text-primary');
+                codeElse.classList.add('bg-primary/20', 'px-1', 'rounded');
+                orbAnim.setAttribute('values', '200,0; 200,100; 50,250');
+            }
+        });
+
+        window.onload = () => {
+            orbAnim.setAttribute('values', '200,0; 200,100; 50,250');
+            codeElse.classList.add('bg-primary/20', 'px-1', 'rounded');
+        };
+    </script>
+</body>
+
+</html>

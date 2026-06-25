@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>BABEL | 03 _ NÚMEROS ENTEROS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#dde1ff",
+                        "on-background": "#e2e1ef",
+                        "tertiary": "#ffb59b",
+                        "inverse-primary": "#124af0",
+                        "surface-variant": "#33343e",
+                        "surface": "#11131c",
+                        "surface-container-highest": "#33343e",
+                        "surface-container-low": "#191b24",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "inverse-on-surface": "#2e303a",
+                        "surface-bright": "#373943",
+                        "secondary-fixed": "#dfe3e9",
+                        "error-container": "#93000a",
+                        "on-primary-fixed": "#001356",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#ffece6",
+                        "on-surface": "#e2e1ef",
+                        "surface-container-lowest": "#0c0e17",
+                        "outline": "#8e90a2",
+                        "on-primary": "#002388",
+                        "outline-variant": "#434656",
+                        "tertiary-fixed": "#ffdbcf",
+                        "secondary-fixed-dim": "#c3c7cd",
+                        "on-secondary": "#2c3136",
+                        "surface-tint": "#b8c3ff",
+                        "on-surface-variant": "#c4c5d9",
+                        "on-primary-container": "#efefff",
+                        "background": "#11131c",
+                        "surface-container-high": "#282933",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "primary": "#b8c3ff",
+                        "on-tertiary": "#5b1a00",
+                        "on-secondary-fixed": "#171c20",
+                        "surface-container": "#1d1f29",
+                        "inverse-surface": "#e2e1ef",
+                        "secondary": "#c3c7cd",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-secondary-container": "#b4b9bf",
+                        "surface-dim": "#11131c",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#2e5bff",
+                        "on-primary-fixed-variant": "#0035be",
+                        "secondary-container": "#454a4f",
+                        "tertiary-container": "#c24100"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Space Mono"],
+                        "headline-md": ["Bodoni Moda"],
+                        "display-lg": ["Bodoni Moda"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.7", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #11131c;
+            color: #e2e1ef;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .ball-in-basket {
+            animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes dropIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .glow-active {
+            box-shadow: 0 0 20px rgba(184, 195, 255, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #11131c;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #434656;
+        }
+    </style>
+</head>
+
+<body class="font-body-md selection:bg-primary selection:text-on-primary">
+
+    <!-- HEADER adaptado: fijo, centrado, con backdrop-blur -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div class="flex justify-center items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+            <h1 class="font-headline-md text-headline-md text-on-surface">La Enciclopedia de Babel</h1>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas (padding-top ajustado) -->
+    <main class="pt-24 pb-12 px-margin-mobile md:px-0">
+        <div class="max-w-[700px] mx-auto">
+            <!-- Breadcrumb / Progress Indicator -->
+            <div class="flex justify-between items-end mb-12 border-b border-outline-variant/20 pb-4">
+                <div>
+                    <span class="font-label-sm text-label-sm text-primary uppercase tracking-[0.2em]">SISTEMA DE
+                        TIPOS</span>
+                    <h1 class="font-display-lg text-display-lg-mobile text-on-surface mt-2">04 _ NÚMEROS ENTEROS (INT)
+                    </h1>
+                </div>
+                <div class="text-right">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">MÓDULO 01</span>
+                    <div class="font-label-sm text-label-sm text-primary mt-1">04/08</div>
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <section class="space-y-8 mb-20">
+                <div class="prose prose-invert">
+                    <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                        En el núcleo de la lógica computacional, los <span
+                            class="text-primary font-bold italic">integers</span> (enteros) son la unidad fundamental
+                        para cuantificar realidades discretas. Un <span
+                            class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container rounded border border-outline-variant/30 text-on-surface">int</span>
+                        representa un número entero sin fracciones ni decimales.
+                    </p>
+                    <p class="font-body-md text-body-md text-on-surface-variant opacity-80 mt-6">
+                        Se utilizan donde la precisión absoluta es necesaria y la división no es una característica del
+                        objeto contado. En el desarrollo de software, los usamos para:
+                    </p>
+                </div>
+                <!-- Technical Usage Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                    <div class="p-6 bg-surface-container border border-outline-variant/10 rounded-none">
+                        <span class="material-symbols-outlined text-primary mb-4"
+                            style="font-variation-settings: 'FILL' 1;">grid_view</span>
+                        <h3 class="font-label-sm text-label-sm text-on-surface mb-2">PÍXELES</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm">Coordenadas exactas en una
+                            matriz de pantalla.</p>
+                    </div>
+                    <div class="p-6 bg-surface-container border border-outline-variant/10 rounded-none">
+                        <span class="material-symbols-outlined text-primary mb-4"
+                            style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        <h3 class="font-label-sm text-label-sm text-on-surface mb-2">ESTADO</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm">Vidas de un jugador o
+                            niveles completados.</p>
+                    </div>
+                    <div class="p-6 bg-surface-container border border-outline-variant/10 rounded-none">
+                        <span class="material-symbols-outlined text-primary mb-4"
+                            style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+                        <h3 class="font-label-sm text-label-sm text-on-surface mb-2">MÉTRICAS</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm">Puntuaciones y contadores
+                            de inventario.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Game Section -->
+            <section class="mt-24 pt-16 border-t border-outline-variant/20">
+                <div class="text-center mb-12">
+                    <span class="font-label-sm text-label-sm text-tertiary tracking-widest uppercase">INTERACTIVE
+                        NODE</span>
+                    <h2 class="font-headline-md text-headline-md text-on-surface mt-2 uppercase">LABORATORIO DE
+                        CONTADORES</h2>
+                </div>
+                <!-- Game Canvas -->
+                <div
+                    class="bg-surface-container-low border border-outline-variant/20 p-8 md:p-12 relative overflow-hidden">
+                    <!-- Background Grid Pattern -->
+                    <div class="absolute inset-0 opacity-5 pointer-events-none"
+                        style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 24px 24px;">
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center gap-12">
+                        <!-- Header Counter Display -->
+                        <div class="flex flex-col items-center">
+                            <div class="font-label-sm text-label-sm text-on-surface-variant mb-2">VALOR ACTUAL (INT)
+                            </div>
+                            <div class="font-display-lg text-primary tracking-tight transition-all duration-300"
+                                id="main-counter">00</div>
+                            <div class="font-label-sm text-label-sm text-primary tracking-[0.3em] mt-2">CONTADOR</div>
+                        </div>
+                        <!-- Interaction Area -->
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-16 w-full">
+                            <!-- Source: Balls -->
+                            <div class="flex flex-col items-center">
+                                <span
+                                    class="font-label-sm text-label-sm text-on-surface-variant mb-6 uppercase">GENERADOR</span>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button
+                                        class="w-16 h-16 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary/10 transition-all active:scale-90 group"
+                                        onclick="addBall()">
+                                        <span
+                                            class="material-symbols-outlined group-hover:scale-110 transition-transform">add</span>
+                                    </button>
+                                    <button
+                                        class="w-16 h-16 rounded-full border border-outline-variant text-on-surface-variant flex items-center justify-center hover:bg-outline-variant/10 transition-all active:scale-90 group"
+                                        onclick="removeBall()">
+                                        <span
+                                            class="material-symbols-outlined group-hover:scale-110 transition-transform">remove</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Destination: Basket Visual -->
+                            <div class="flex flex-col items-center flex-1 w-full">
+                                <span
+                                    class="font-label-sm text-label-sm text-on-surface-variant mb-6 uppercase">CONTENEDOR
+                                    DE MEMORIA</span>
+                                <div class="w-full max-w-[320px] h-48 border-2 border-dashed border-outline-variant/40 rounded-xl flex flex-wrap content-start p-4 gap-2 transition-colors duration-300 overflow-y-auto custom-scrollbar"
+                                    id="basket">
+                                    <!-- Dynamic balls will appear here -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Reset Action -->
+                        <button
+                            class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2"
+                            onclick="resetLab()">
+                            <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                            REINICIALIZAR MEMORIA
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NOTA: los enlaces de navegación anterior/siguiente se han movido al footer -->
+        </div>
+    </main>
+
+    <!-- FOOTER adaptado: similar al de la página de strings, con navegación anterior/siguiente -->
+    <footer class="bg-surface dark:bg-surface border-t border-outline-variant/10 py-12 mt-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto gap-8">
+            <!-- Retroceso -->
+            <a href="../01-conceptos-basicos/03-interpretado-vs-compilado.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest text-[11px]">Anterior</span>
+                    <span class="font-headline-md text-headline-md italic block">Interpretado</span>
+                </div>
+            </a>
+
+            <!-- Título y copyright -->
+            <div class="flex flex-col items-center gap-2">
+                <span class="font-display-lg text-display-lg-mobile text-on-surface text-[24px]">Babel</span>
+                <p class="font-body-md text-label-sm text-on-surface-variant">© 2026 Babel All rights reserved.</p>
+            </div>
+
+            <!-- Avance -->
+            <a href="05-double.html" class="group flex items-center gap-4 hover:no-underline w-full md:w-auto justify-center">
+                <div class="text-center md:text-right">
+                    <span class="block font-label-caps text-label-caps text-on-surface-variant group-hover:text-primary transition-colors uppercase tracking-widest text-[11px]">Siguiente</span>
+                    <span class="font-headline-md text-headline-md italic block">Double</span>
+                </div>
+                <div class="w-12 h-12 rounded-full border border-outline-variant/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-on-primary transition-all duration-300 shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </div>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        let count = 0;
+        const counterDisplay = document.getElementById('main-counter');
+        const basket = document.getElementById('basket');
+
+        function updateDisplay() {
+            counterDisplay.innerText = count < 10 && count >= 0 ? `0${count}` : count;
+
+            // Visual feedback on the counter
+            counterDisplay.classList.add('scale-110', 'text-white');
+            setTimeout(() => {
+                counterDisplay.classList.remove('scale-110', 'text-white');
+            }, 200);
+
+            // Toggle basket border glow
+            if (count > 0) {
+                basket.classList.add('border-primary', 'bg-primary/5');
+                basket.classList.remove('border-outline-variant/40');
+            } else {
+                basket.classList.remove('border-primary', 'bg-primary/5');
+                basket.classList.add('border-outline-variant/40');
+            }
+        }
+
+        function addBall() {
+            count++;
+            const ball = document.createElement('div');
+            ball.className = 'w-8 h-8 rounded-full bg-primary ball-in-basket flex items-center justify-center text-[10px] text-on-primary font-bold';
+            ball.id = `ball-${count}`;
+            ball.innerText = count;
+            basket.appendChild(ball);
+            updateDisplay();
+        }
+
+        function removeBall() {
+            if (count > 0) {
+                const lastBall = document.getElementById(`ball-${count}`);
+                if (lastBall) {
+                    lastBall.style.transform = 'translateY(20px)';
+                    lastBall.style.opacity = '0';
+                    setTimeout(() => {
+                        lastBall.remove();
+                    }, 200);
+                }
+                count--;
+                updateDisplay();
+            }
+        }
+
+        function resetLab() {
+            count = 0;
+            basket.innerHTML = '';
+            updateDisplay();
+        }
+
+        // Initialize state
+        updateDisplay();
+    </script>
+</body>
+
+</html>

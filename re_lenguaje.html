@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Re · El lenguaje que aprende contigo</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "stark-white": "#FFFFFF",
+            "electric-royal": "#0047AB",
+            "ghost-white": "#F5F5F5",
+          },
+          spacing: {
+            "container-max": "1280px",
+            "margin-desktop": "64px",
+            "gutter": "24px",
+            "margin-mobile": "20px"
+          },
+          fontFamily: {
+            "body-md": ["Hanken Grotesk"],
+            "body-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Bodoni Moda"],
+            "headline-md": ["Bodoni Moda"],
+            "button-text": ["Hanken Grotesk"],
+            "label-caps": ["JetBrains Mono"],
+            "display-lg": ["Bodoni Moda"],
+          },
+          fontSize: {
+            "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+            "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+            "headline-lg": ["40px", { lineHeight: "1.2", fontWeight: "600" }],
+            "headline-md": ["28px", { lineHeight: "1.3", fontWeight: "500" }],
+            "button-text": ["14px", { lineHeight: "1.0", letterSpacing: "0.05em", fontWeight: "600" }],
+            "label-caps": ["11px", { lineHeight: "1.0", letterSpacing: "0.1em", fontWeight: "500" }],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0047AB;
+      color: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0047AB;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* ── GRABADOS DE FONDO ── */
+    .bg-engraving {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-engraving::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: var(--engraving-url);
+      background-size: cover;
+      background-position: center;
+      opacity: 0.07;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-engraving>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .bg-engraving-right::after {
+      content: '';
+      position: absolute;
+      right: -60px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 420px;
+      height: 420px;
+      background-image: var(--engraving-url);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.09;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── REVEAL ── */
+    .reveal-node {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal-node.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-stagger>* {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal-stagger.revealed>*:nth-child(1) {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0s;
+    }
+
+    .reveal-stagger.revealed>*:nth-child(2) {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.08s;
+    }
+
+    .reveal-stagger.revealed>*:nth-child(3) {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.16s;
+    }
+
+    .reveal-stagger.revealed>*:nth-child(4) {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.24s;
+    }
+
+    .reveal-stagger.revealed>*:nth-child(5) {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.32s;
+    }
+
+    .reveal-stagger.revealed>*:nth-child(6) {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.40s;
+    }
+
+    /* ── SYNTAX ── */
+    .syn-kw {
+      color: #0047AB;
+      font-weight: 600;
+    }
+
+    .syn-ty {
+      color: #0047AB;
+      font-weight: 500;
+    }
+
+    .syn-st {
+      color: #1a6bb0;
+    }
+
+    .syn-nm {
+      color: #00337a;
+    }
+
+    .syn-cm {
+      color: rgba(0, 71, 171, 0.4);
+      font-style: italic;
+    }
+
+    .syn-fn {
+      color: #00337a;
+      font-weight: 500;
+    }
+
+    .syn-pt {
+      color: rgba(0, 71, 171, 0.6);
+    }
+
+    .syn-pl {
+      color: #0047AB;
+    }
+
+    .code-block {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.75;
+      white-space: pre;
+    }
+
+    /* ── TABS ── */
+    .ex-tab {
+      transition: all 0.2s;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ex-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .ex-tab.active {
+      background: rgba(255, 255, 255, 0.08);
+      border-left-color: #FFFFFF;
+      color: #FFFFFF;
+    }
+
+    .ex-tab-icon {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+    }
+
+    .ex-tab.active .ex-tab-icon {
+      background: #FFFFFF;
+      color: #0047AB;
+    }
+
+    .ex-panel {
+      display: none;
+    }
+
+    .ex-panel.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── CARDS ── */
+    .babel-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      backdrop-filter: blur(2px);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .babel-card:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .babel-card-white {
+      background: #FFFFFF;
+      border: 1px solid rgba(0, 71, 171, 0.08);
+      border-radius: 12px;
+    }
+
+    .babel-card-white:hover {
+      border-color: rgba(0, 71, 171, 0.3);
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      background: #FFFFFF;
+      color: #0047AB;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      padding: 13px 26px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #FFFFFF;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 13px 26px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* ── HERO ── */
+    .hero-marquee-wrap {
+      overflow: hidden;
+      width: 100%;
+      line-height: 0.88;
+    }
+
+    .hero-marquee-line {
+      font-family: 'Bodoni Moda', serif;
+      font-weight: 900;
+      font-size: clamp(38px, 7.5vw, 116px);
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      white-space: nowrap;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .hero-marquee-line.outline {
+      -webkit-text-stroke: 1.5px #FFFFFF;
+      color: transparent;
+    }
+
+    /* ── OUTPUT BAR ── */
+    .term-output {
+      background: #FFFFFF;
+      border-top: 1px solid rgba(0, 71, 171, 0.1);
+    }
+
+    .out-label {
+      color: rgba(0, 71, 171, 0.45);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .out-line {
+      color: #0047AB;
+    }
+
+    /* ── SECTION SPACING ── */
+    .section-py {
+      padding-top: 80px;
+      padding-bottom: 80px;
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <header class="fixed top-0 w-full z-50 bg-transparent transition-all duration-500">
+    <nav class="flex justify-between items-center px-margin-desktop py-6 max-w-container-max mx-auto">
+      <a href="index.html" class="font-headline-md text-headline-md font-bold text-stark-white tracking-tighter hover:opacity-85 transition-opacity" style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:22px;text-decoration:none;">Proyecto Torre Babel</a>
+      <div class="hidden md:flex items-center gap-10">
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="index.html">Inicio</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="arquitectura.html">Arquitectura</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="comunidad.html">Comunidad</a>
+        <a class="font-body-md text-body-md text-stark-white border-b border-stark-white pb-1 transition-all" href="re_lenguaje.html">RE</a>
+        <a class="font-body-md text-body-md text-stark-white/70 hover:text-stark-white transition-colors" href="logos-editor.html">Logos Editor</a>
+        <a href="#instalacion" style="background:#fff;color:#0047AB;padding:8px 18px;border-radius:6px;font-weight:600;font-size:13px;text-decoration:none;">Empezar</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="min-h-screen flex flex-col justify-end pb-14 pt-24 px-5 md:px-16 bg-engraving relative"
+    style="--engraving-url:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjAwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOCI+CiAgPCEtLSBCYXNlIGRlIGxhIHByZW5zYSAtLT4KICA8cmVjdCB4PSIxNTAiIHk9IjQ4MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIzMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8cmVjdCB4PSIxODAiIHk9IjQzMCIgd2lkdGg9IjQ0MCIgaGVpZ2h0PSI1MiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPCEtLSBQYXRhcyAtLT4KICA8cmVjdCB4PSIxNzAiIHk9IjQ4MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjgwIi8+CiAgPHJlY3QgeD0iNjEwIiB5PSI0ODAiIHdpZHRoPSIyMCIgaGVpZ2h0PSI4MCIvPgogIDxyZWN0IHg9IjMxMCIgeT0iNDgwIiB3aWR0aD0iMTUiIGhlaWdodD0iNzAiLz4KICA8cmVjdCB4PSI0NzUiIHk9IjQ4MCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjcwIi8+CiAgPCEtLSBDdWVycG8gcHJpbmNpcGFsIC0tPgogIDxyZWN0IHg9IjIwMCIgeT0iMjAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIzMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8IS0tIFBsYXRpbmEgc3VwZXJpb3IgLS0+CiAgPHJlY3QgeD0iMTkwIiB5PSIxNzUiIHdpZHRoPSI0MjAiIGhlaWdodD0iMzAiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPCEtLSBIdXNpbGxvIHZlcnRpY2FsIC0tPgogIDxsaW5lIHgxPSI0MDAiIHkxPSI1MCIgeDI9IjQwMCIgeTI9IjE3NSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPCEtLSBSb3NjYXMgZGVsIGh1c2lsbG8gLS0+CiAgPHBhdGggZD0iTTM4NSw2MCBRNDAwLDU1IDQxNSw2MCBRNDAwLDY1IDM4NSw3MCBRNDAwLDY1IDQxNSw3MCBRNDAwLDc1IDM4NSw4MCBRNDAwLDc1IDQxNSw4MCBRNDAwLDg1IDM4NSw5MCBRNDAwLDg1IDQxNSw5MCBRNDAwLDk1IDM4NSwxMDAgUTQwMCw5NSA0MTUsMTAwIFE0MDAsMTA1IDM4NSwxMTAgUTQwMCwxMDUgNDE1LDExMCBRNDAwLDExNSAzODUsMTIwIFE0MDAsMTE1IDQxNSwxMjAgUTQwMCwxMjUgMzg1LDEzMCBRNDAwLDEyNSA0MTUsMTMwIFE0MDAsMTM1IDM4NSwxNDAgUTQwMCwxMzUgNDE1LDE0MCBRNDAwLDE0NSAzODUsMTUwIFE0MDAsMTQ1IDQxNSwxNTAgUTQwMCwxNTUgMzg1LDE2MCBRNDAwLDE1NSA0MTUsMTYwIFE0MDAsMTY1IDM4NSwxNjUiIHN0cm9rZS13aWR0aD0iMC42Ii8+CiAgPCEtLSBQYWxhbmNhIGhvcml6b250YWwgLS0+CiAgPGxpbmUgeDE9IjI4MCIgeTE9IjgwIiB4Mj0iNTIwIiB5Mj0iODAiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPGNpcmNsZSBjeD0iNTIwIiBjeT0iODAiIHI9IjgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iMjgwIiBjeT0iODAiIHI9IjgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPCEtLSBCYXJyYXMgbGF0ZXJhbGVzIC0tPgogIDxsaW5lIHgxPSIyMDAiIHkxPSIyMDAiIHgyPSIyMDAiIHkyPSIxMDAiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGxpbmUgeDE9IjYwMCIgeTE9IjIwMCIgeDI9IjYwMCIgeTI9IjEwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTAwIiB4Mj0iNjAwIiB5Mj0iMTAwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gU3VwZXJmaWNpZSBkZSBpbXByZXNpw7NuIC0tPgogIDxyZWN0IHg9IjIyMCIgeT0iMzUwIiB3aWR0aD0iMzYwIiBoZWlnaHQ9IjcwIiBzdHJva2Utd2lkdGg9IjAuOCIvPgogIDwhLS0gTMOtbmVhcyB0aXBvZ3LDoWZpY2FzIC0tPgogIDxsaW5lIHgxPSIyNDAiIHkxPSIzNjUiIHgyPSI1NjAiIHkyPSIzNjUiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPGxpbmUgeDE9IjI0MCIgeTE9IjM3OCIgeDI9IjQ4MCIgeTI9IjM3OCIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8bGluZSB4MT0iMjQwIiB5MT0iMzkxIiB4Mj0iNTMwIiB5Mj0iMzkxIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogIDxsaW5lIHgxPSIyNDAiIHkxPSI0MDQiIHgyPSI0NjAiIHkyPSI0MDQiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDYWpvbmVzIGRlIHRpcG9zIC0tPgogIDxyZWN0IHg9IjIyMCIgeT0iMjYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjgwIi8+CiAgPHJlY3QgeD0iMjIwIiB5PSIyNjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjI2MCIgeT0iMjYwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIzMDAiIHk9IjI2MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPHJlY3QgeD0iMzQwIiB5PSIyNjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjIyMCIgeT0iMjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIyNjAiIHk9IjI4MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPHJlY3QgeD0iMzAwIiB5PSIyODAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjM0MCIgeT0iMjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIyMjAiIHk9IjMwMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPHJlY3QgeD0iMjYwIiB5PSIzMDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjMwMCIgeT0iMzAwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIzNDAiIHk9IjMwMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPCEtLSBEZWNvcmFjacOzbjogdm9sdXRhIGVuIGVzcXVpbmFzIC0tPgogIDxwYXRoIGQ9Ik0xNTUsMTk1IFExNzAsMTgwIDE4NSwxOTUgUTE3MCwyMTAgMTU1LDE5NSIgc3Ryb2tlLXdpZHRoPSIwLjYiLz4KICA8cGF0aCBkPSJNNjE1LDE5NSBRNjAwLDE4MCA1ODUsMTk1IFE2MDAsMjEwIDYxNSwxOTUiIHN0cm9rZS13aWR0aD0iMC42Ii8+CiAgPCEtLSBFbmdyYW5hamVzIGxhdGVyYWxlcyAtLT4KICA8Y2lyY2xlIGN4PSIxNDAiIGN5PSIzMzAiIHI9IjM1IiBzdHJva2Utd2lkdGg9IjAuOCIvPgogIDxjaXJjbGUgY3g9IjE0MCIgY3k9IjMzMCIgcj0iMjAiIHN0cm9rZS13aWR0aD0iMC44Ii8+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjI5MCIgeDI9IjE0MCIgeTI9IjI5NSIvPgogIDxsaW5lIHgxPSIxNDAiIHkxPSIzNjUiIHgyPSIxNDAiIHkyPSIzNzAiLz4KICA8bGluZSB4MT0iMTAwIiB5MT0iMzMwIiB4Mj0iMTA1IiB5Mj0iMzMwIi8+CiAgPGxpbmUgeDE9IjE3NSIgeTE9IjMzMCIgeDI9IjE4MCIgeTI9IjMzMCIvPgogIDxsaW5lIHgxPSIxMTUiIHkxPSIzMDUiIHgyPSIxMTkiIHkyPSIzMDkiLz4KICA8bGluZSB4MT0iMTYxIiB5MT0iMzUxIiB4Mj0iMTY1IiB5Mj0iMzU1Ii8+CiAgPGxpbmUgeDE9IjE2NSIgeTE9IjMwNSIgeDI9IjE2MSIgeTI9IjMwOSIvPgogIDxsaW5lIHgxPSIxMTkiIHkxPSIzNTEiIHgyPSIxMTUiIHkyPSIzNTUiLz4KICA8IS0tIE1hbml2ZWxhIC0tPgogIDxsaW5lIHgxPSIxNzUiIHkxPSIzMzAiIHgyPSIyMjAiIHkyPSIzMTAiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iMjIwIiBjeT0iMzEwIiByPSI2Ii8+Cjwvc3ZnPg==')">
+    <div class="reveal-node mb-4">
+      <p
+        style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);">
+        Lenguaje educativo · v1.0.0</p>
+    </div>
+    <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.1s">
+      <span class="hero-marquee-line">EL LENGUAJE</span>
+    </div>
+    <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.2s">
+      <span class="hero-marquee-line outline">QUE APRENDE</span>
+    </div>
+    <div class="hero-marquee-wrap reveal-node" style="transition-delay:0.3s">
+      <span class="hero-marquee-line">CONTIGO</span>
+    </div>
+    <div class="mt-8 flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-node"
+      style="transition-delay:0.42s">
+      <p style="font-size:18px;line-height:1.6;color:rgba(255,255,255,0.78);max-width:480px;font-style:italic;">
+        Re combina la estructura de C#, la simplicidad de Python y la mision de que de escribir desde cero sea divertido.
+      </p>
+      <div class="flex gap-3 flex-shrink-0">
+        <a href="https://github.com/zara-te05/RE" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+            <path d="M7.5 1v9M3 7l4.5 4L12 7" stroke="#0047AB" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M2 13h11" stroke="#0047AB" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+          Instalar Re
+        </a>
+        <a href="#ejemplos" class="btn-ghost">Ver ejemplos →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <div class="w-full py-12 border-t border-b border-white/10 flex justify-center bg-engraving"
+    style="--engraving-url:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTAwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOSI+CiAgPCEtLSBMaWJybyBhYmllcnRvIC0tPgogIDwhLS0gUMOhZ2luYSBpenF1aWVyZGEgLS0+CiAgPHBhdGggZD0iTTEwMCw4MCBRMTMwLDc1IDIwMCw3OCBMNDAwLDgwIEw0MDAsNDIwIEwyMDAsNDIyIFExMzAsNDI1IDEwMCw0MjAgWiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8IS0tIFDDoWdpbmEgZGVyZWNoYSAtLT4KICA8cGF0aCBkPSJNNDAwLDgwIEw2MDAsNzggUTY3MCw3NSA3MDAsODAgTDcwMCw0MjAgUTY3MCw0MjUgNjAwLDQyMiBMNDAwLDQyMCBaIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gTG9tbyBkZWwgbGlicm8gLS0+CiAgPHBhdGggZD0iTTQwMCw4MCBRMzk1LDI1MCA0MDAsNDIwIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gU29tYnJhIHDDoWdpbmEgaXpxdWllcmRhIC0tPgogIDxwYXRoIGQ9Ik0zOTAsODUgUTM4NSwyNTAgMzkwLDQxNSIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuNSIvPgogIDwhLS0gTMOtbmVhcyBkZSB0ZXh0byBww6FnaW5hIGl6cXVpZXJkYSAtLT4KICA8bGluZSB4MT0iMTMwIiB5MT0iMTIwIiB4Mj0iMzcwIiB5Mj0iMTIwIiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIxMzgiIHgyPSIzNzAiIHkyPSIxMzgiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjE1NiIgeDI9IjM3MCIgeTI9IjE1NiIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iMTMwIiB5MT0iMTc0IiB4Mj0iMzQwIiB5Mj0iMTc0IiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIxOTIiIHgyPSIzNzAiIHkyPSIxOTIiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjIxMCIgeDI9IjM3MCIgeTI9IjIxMCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iMTMwIiB5MT0iMjI4IiB4Mj0iMzUwIiB5Mj0iMjI4IiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIyNDYiIHgyPSIzNzAiIHkyPSIyNDYiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjI2NCIgeDI9IjM3MCIgeTI9IjI2NCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iMTMwIiB5MT0iMjgyIiB4Mj0iMzMwIiB5Mj0iMjgyIiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIzMDAiIHgyPSIzNzAiIHkyPSIzMDAiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjMxOCIgeDI9IjM3MCIgeTI9IjMxOCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iMTMwIiB5MT0iMzM2IiB4Mj0iMzU1IiB5Mj0iMzM2IiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSIxMzAiIHkxPSIzNTQiIHgyPSIzNzAiIHkyPSIzNTQiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjM3MiIgeDI9IjM3MCIgeTI9IjM3MiIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iMTMwIiB5MT0iMzkwIiB4Mj0iMjkwIiB5Mj0iMzkwIiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDwhLS0gQ2FwaXRhbCBvcm5hbWVudGFkYSAtLT4KICA8cmVjdCB4PSIxMjgiIHk9IjEwMiIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2IiBzdHJva2Utd2lkdGg9IjEiLz4KICA8dGV4dCB4PSIxNDYiIHk9IjEzMCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjI4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9ImJvbGQiIHN0cm9rZT0ibm9uZSI+UDwvdGV4dD4KICA8IS0tIEzDrW5lYXMgZGUgdGV4dG8gcMOhZ2luYSBkZXJlY2hhIC0tPgogIDxsaW5lIHgxPSI0MzAiIHkxPSIxMjAiIHgyPSI2NzAiIHkyPSIxMjAiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjQzMCIgeTE9IjEzOCIgeDI9IjY3MCIgeTI9IjEzOCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iNDMwIiB5MT0iMTU2IiB4Mj0iNjcwIiB5Mj0iMTU2IiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSI0MzAiIHkxPSIxNzQiIHgyPSI2NTAiIHkyPSIxNzQiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPGxpbmUgeDE9IjQzMCIgeTE9IjE5MiIgeDI9IjY3MCIgeTI9IjE5MiIgc3Ryb2tlLXdpZHRoPSIwLjUiLz4KICA8bGluZSB4MT0iNDMwIiB5MT0iMjEwIiB4Mj0iNjcwIiB5Mj0iMjEwIiBzdHJva2Utd2lkdGg9IjAuNSIvPgogIDxsaW5lIHgxPSI0MzAiIHkxPSIyMjgiIHgyPSI2NzAiIHkyPSIyMjgiIHN0cm9rZS13aWR0aD0iMC41Ii8+CiAgPCEtLSBFc3BhY2lvIHBhcmEgZmlndXJhIGVuIHDDoWdpbmEgZGVyZWNoYSAtLT4KICA8cmVjdCB4PSI0NTAiIHk9IjI0NSIgd2lkdGg9IjE5NSIgaGVpZ2h0PSIxMzAiIHN0cm9rZS13aWR0aD0iMC44Ii8+CiAgPCEtLSBGaWd1cmEgZXNxdWVtw6F0aWNhIGRlbnRybyBkZWwgcmVjdWFkcm8gKGRpYWdyYW1hIGRlIGPDs2RpZ28pIC0tPgogIDxsaW5lIHgxPSI0NjUiIHkxPSIyNjUiIHgyPSI2MzAiIHkyPSIyNjUiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPGxpbmUgeDE9IjQ2NSIgeTE9IjI3OCIgeDI9IjYwMCIgeTI9IjI3OCIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8bGluZSB4MT0iNDc1IiB5MT0iMjkxIiB4Mj0iNjMwIiB5Mj0iMjkxIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogIDxsaW5lIHgxPSI0NzUiIHkxPSIzMDQiIHgyPSI1OTAiIHkyPSIzMDQiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPGxpbmUgeDE9IjQ3NSIgeTE9IjMxNyIgeDI9IjYzMCIgeTI9IjMxNyIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8bGluZSB4MT0iNDY1IiB5MT0iMzMwIiB4Mj0iNjE1IiB5Mj0iMzMwIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogIDxsaW5lIHgxPSI0NjUiIHkxPSIzNDMiIHgyPSI1NzAiIHkyPSIzNDMiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPHRleHQgeD0iNDYyIiB5PSIzNzAiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSI5IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJub25lIj5GaWcuIElJSSDigJQgRXN0cnVjdHVyYSBkZWwgcHJvZ3JhbWEgUmU8L3RleHQ+CiAgPCEtLSBQaWUgZGUgcMOhZ2luYSBudW1lcmFjacOzbiAtLT4KICA8dGV4dCB4PSIyNTAiIHk9IjQwOCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj7igJQgNDIg4oCUPC90ZXh0PgogIDx0ZXh0IHg9IjU1MCIgeT0iNDA4IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPuKAlCA0MyDigJQ8L3RleHQ+CgogIDwhLS0gUGx1bWEgZGUgZXNjcmliaXIgLS0+CiAgPHBhdGggZD0iTTY1MCw1MCBRNzAwLDMwIDcyMCw2MCBRNzAwLDkwIDY1MCwyMDAgTDY0MCwxOTUgUTY5MCw5MCA2NzAsNjUgUTY5NSw0MCA2NTAsNTAiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPCEtLSBDYcOxw7NuIGRlIGxhIHBsdW1hIC0tPgogIDxsaW5lIHgxPSI2NTAiIHkxPSIxOTUiIHgyPSI2MjAiIHkyPSIyNDAiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPCEtLSBQdW50YSAtLT4KICA8cGF0aCBkPSJNNjIwLDI0MCBMNjEyLDI2MCBMNjI4LDI1NSBaIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8IS0tIEZpbmFzIGJhcmJhcyBkZSBsYSBwbHVtYSAtLT4KICA8cGF0aCBkPSJNNjcwLDY1IFE2ODAsODAgNjYwLDk1IFE2NzUsOTUgNjY1LDExMCBRNjgwLDEwNSA2NzAsMTIwIFE2ODUsMTE1IDY3NSwxMzAgUTY4OCwxMjUgNjgwLDE0MCBRNjkwLDEzNSA2ODUsMTUwIFE2OTUsMTQ1IDY5MCwxNjAgUTY5OCwxNTUgNjk1LDE2OCIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8cGF0aCBkPSJNNjUwLDcwIFE2MzgsODUgNjU1LDEwMCBRNjQwLDEwMiA2NTUsMTE4IFE2MzgsMTIwIDY1NCwxMzUgUTYzOCwxNDAgNjUzLDE1NSBRNjM2LDE1OCA2NTIsMTcwIFE2MzUsMTc2IDY1MCwxOTAiIHN0cm9rZS13aWR0aD0iMC40Ii8+Cjwvc3ZnPg==')">
+    <div class="max-w-2xl text-center px-5">
+      <p
+        style="font-family:'Bodoni Moda',serif;font-size:clamp(20px,3vw,28px);font-style:italic;color:rgba(255,255,255,0.9);line-height:1.45;">
+        "La seguridad de <strong style="color:#fff;font-weight:700;">Java</strong>, la simplicidad de <strong
+          style="color:#fff;font-weight:700;">Python</strong>,<br />y la emoción de escribir desde cero."
+      </p>
+      <span
+        style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:rgba(255,255,255,0.35);margin-top:14px;display:block;text-transform:uppercase;">—
+        Manifiesto del Proyecto Re</span>
+    </div>
+  </div>
+
+  <!-- CARACTERÍSTICAS -->
+  <section class="section-py bg-engraving" id="caracteristicas"
+    style="--engraving-url:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTAwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOSI+CiAgPCEtLSBFbmdyYW5hamUgZ3JhbmRlIGl6cXVpZXJkYSAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyNTAiIHI9IjEyMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjUwIiByPSI5MCIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjI1MCIgcj0iMjAiLz4KICA8IS0tIERpZW50ZXMgZW5ncmFuYWplIGdyYW5kZSAtLT4KICA8cmVjdCB4PSIxODgiIHk9IjEyMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjIyIiByeD0iMyIvPgogIDxyZWN0IHg9IjE4OCIgeT0iMzU2IiB3aWR0aD0iMjQiIGhlaWdodD0iMjIiIHJ4PSIzIi8+CiAgPHJlY3QgeD0iNzIiIHk9IjIzOCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjI0IiByeD0iMyIvPgogIDxyZWN0IHg9IjMwNiIgeT0iMjM4IiB3aWR0aD0iMjIiIGhlaWdodD0iMjQiIHJ4PSIzIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxNDgiIHdpZHRoPSIyMiIgaGVpZ2h0PSIxOCIgcng9IjMiIHRyYW5zZm9ybT0icm90YXRlKC00NSAxMjEgMTU3KSIvPgogIDxyZWN0IHg9IjI1OCIgeT0iMzMwIiB3aWR0aD0iMjIiIGhlaWdodD0iMTgiIHJ4PSIzIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgMjY5IDMzOSkiLz4KICA8cmVjdCB4PSIyNTgiIHk9IjE0OCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgMjY5IDE1NykiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjMzMCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgMTIxIDMzOSkiLz4KICA8IS0tIFJhZGlvcyBkZWwgZW5ncmFuYWplIGdyYW5kZSAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTYwIiB4Mj0iMjAwIiB5Mj0iMjMwIi8+CiAgPGxpbmUgeDE9IjIwMCIgeTE9IjI3MCIgeDI9IjIwMCIgeTI9IjM0MCIvPgogIDxsaW5lIHgxPSIxMTUiIHkxPSIyNTAiIHgyPSIxODUiIHkyPSIyNTAiLz4KICA8bGluZSB4MT0iMjE1IiB5MT0iMjUwIiB4Mj0iMjg1IiB5Mj0iMjUwIi8+CiAgPGxpbmUgeDE9IjE0NSIgeTE9IjE5NSIgeDI9IjE5MCIgeTI9IjI0MCIvPgogIDxsaW5lIHgxPSIyNTUiIHkxPSIzMDUiIHgyPSIyMTAiIHkyPSIyNjAiLz4KICA8bGluZSB4MT0iMTQ1IiB5MT0iMzA1IiB4Mj0iMTkwIiB5Mj0iMjYwIi8+CiAgPGxpbmUgeDE9IjI1NSIgeTE9IjE5NSIgeDI9IjIxMCIgeTI9IjI0MCIvPgoKICA8IS0tIEVuZ3JhbmFqZSBtZWRpYW5vIGRlcmVjaGEgLS0+CiAgPGNpcmNsZSBjeD0iNDkwIiBjeT0iMjAwIiByPSI5MCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI0OTAiIGN5PSIyMDAiIHI9IjY1Ii8+CiAgPGNpcmNsZSBjeD0iNDkwIiBjeT0iMjAwIiByPSIxNSIvPgogIDwhLS0gRGllbnRlcyBlbmdyYW5hamUgbWVkaWFubyAtLT4KICA8cmVjdCB4PSI0NzkiIHk9IjEwMyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE4IiByeD0iMiIvPgogIDxyZWN0IHg9IjQ3OSIgeT0iMjc5IiB3aWR0aD0iMjAiIGhlaWdodD0iMTgiIHJ4PSIyIi8+CiAgPHJlY3QgeD0iMzkzIiB5PSIxODkiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyMCIgcng9IjIiLz4KICA8cmVjdCB4PSI1NjkiIHk9IjE4OSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjIwIiByeD0iMiIvPgogIDxyZWN0IHg9IjQyMyIgeT0iMTI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMTYiIHJ4PSIyIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNDMyIDEzNikiLz4KICA8cmVjdCB4PSI1NDciIHk9IjI1MiIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE2IiByeD0iMiIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDU1NiAyNjApIi8+CiAgPHJlY3QgeD0iNTQ3IiB5PSIxMjgiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNiIgcng9IjIiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDU1NiAxMzYpIi8+CiAgPHJlY3QgeD0iNDIzIiB5PSIyNTIiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNiIgcng9IjIiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQzMiAyNjApIi8+CiAgPCEtLSBSYWRpb3MgZW5ncmFuYWplIG1lZGlhbm8gLS0+CiAgPGxpbmUgeDE9IjQ5MCIgeTE9IjEzNSIgeDI9IjQ5MCIgeTI9IjE4OCIvPgogIDxsaW5lIHgxPSI0OTAiIHkxPSIyMTIiIHgyPSI0OTAiIHkyPSIyNjUiLz4KICA8bGluZSB4MT0iNDI1IiB5MT0iMjAwIiB4Mj0iNDc4IiB5Mj0iMjAwIi8+CiAgPGxpbmUgeDE9IjUwMiIgeTE9IjIwMCIgeDI9IjU1NSIgeTI9IjIwMCIvPgogIDxsaW5lIHgxPSI0NDQiIHkxPSIxNTQiIHgyPSI0ODIiIHkyPSIxOTIiLz4KICA8bGluZSB4MT0iNDk4IiB5MT0iMjA4IiB4Mj0iNTM2IiB5Mj0iMjQ2Ii8+CgogIDwhLS0gRW5ncmFuYWplIHBlcXVlw7FvIGluZmVyaW9yIGRlcmVjaGEgLS0+CiAgPGNpcmNsZSBjeD0iNTkwIiBjeT0iMzgwIiByPSI2MCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8Y2lyY2xlIGN4PSI1OTAiIGN5PSIzODAiIHI9IjQwIi8+CiAgPGNpcmNsZSBjeD0iNTkwIiBjeT0iMzgwIiByPSIxMCIvPgogIDwhLS0gRGllbnRlcyBwZXF1ZcOxbyAtLT4KICA8cmVjdCB4PSI1ODEiIHk9IjMxMyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE0IiByeD0iMiIvPgogIDxyZWN0IHg9IjU4MSIgeT0iNDMzIiB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHJ4PSIyIi8+CiAgPHJlY3QgeD0iNTIzIiB5PSIzNzEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNiIgcng9IjIiLz4KICA8cmVjdCB4PSI2NDMiIHk9IjM3MSIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE2IiByeD0iMiIvPgogIDwhLS0gUmFkaW9zIHBlcXVlw7FvIC0tPgogIDxsaW5lIHgxPSI1OTAiIHkxPSIzNDAiIHgyPSI1OTAiIHkyPSIzNzMiLz4KICA8bGluZSB4MT0iNTkwIiB5MT0iMzg3IiB4Mj0iNTkwIiB5Mj0iNDIwIi8+CiAgPGxpbmUgeDE9IjU1MCIgeTE9IjM4MCIgeDI9IjU4MyIgeTI9IjM4MCIvPgogIDxsaW5lIHgxPSI1OTciIHkxPSIzODAiIHgyPSI2MzAiIHkyPSIzODAiLz4KCiAgPCEtLSBFamUgZGUgY29uZXhpw7NuIGVudHJlIGVuZ3JhbmFqZXMgLS0+CiAgPGxpbmUgeDE9IjMyMCIgeTE9IjI1MCIgeDI9IjQwMCIgeTI9IjIwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1kYXNoYXJyYXk9IjQsMyIvPgogIDxsaW5lIHgxPSI1NTUiIHkxPSIyNzAiIHgyPSI1NjAiIHkyPSIzMjAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtZGFzaGFycmF5PSI0LDMiLz4KCiAgPCEtLSBUb3JuaWxsb3MgZGVjb3JhdGl2b3MgLS0+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTMwIiByPSI1Ii8+CiAgPGxpbmUgeDE9IjE5NyIgeTE9IjEzMCIgeDI9IjIwMyIgeTI9IjEzMCIvPgogIDxsaW5lIHgxPSIyMDAiIHkxPSIxMjciIHgyPSIyMDAiIHkyPSIxMzMiLz4KICA8Y2lyY2xlIGN4PSIyNzAiIGN5PSIxODAiIHI9IjUiLz4KICA8bGluZSB4MT0iMjY3IiB5MT0iMTgwIiB4Mj0iMjczIiB5Mj0iMTgwIi8+CiAgPGxpbmUgeDE9IjI3MCIgeTE9IjE3NyIgeDI9IjI3MCIgeTI9IjE4MyIvPgo8L3N2Zz4=')">
+    <div class="max-w-[1280px] mx-auto px-5 md:px-16">
+      <div class="reveal-node section-header">
+        <p
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+          Características</p>
+        <h2
+          style="font-family:'Bodoni Moda',serif;font-size:clamp(38px,5vw,68px);font-weight:900;letter-spacing:-0.02em;color:#fff;margin:0 0 14px;">
+          Diseñado para aprender de verdad.</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(255,255,255,0.68);max-width:520px;">Re combina lo mejor de
+          dos mundos: la accesibilidad de los lenguajes modernos con la disciplina de los sistemas de tipos estrictos.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger">
+        <div class="babel-card p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
+            TIPOS FUERTES</div>
+          <div style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin:10px 0 8px;">
+            Sistema de tipos estático</div>
+          <p style="font-size:15px;color:rgba(255,255,255,0.68);line-height:1.6;">Re detecta errores antes de ejecutar
+            gracias a su TypeChecker. Suma un <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">int</code> con
+            un <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">string</code>
+            y el compilador te avisa, no el usuario.</p>
+          <span
+            style="display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">Análisis
+            estático</span>
+        </div>
+        <div class="babel-card p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
+            COLECCIONES</div>
+          <div style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin:10px 0 8px;">
+            Estructuras de datos genéricas</div>
+          <p style="font-size:15px;color:rgba(255,255,255,0.68);line-height:1.6;">Listas, arreglos, pilas y colas
+            fuertemente tipadas con métodos nativos. Aprende estructuras de datos escribiendo código real, no
+            pseudocódigo.</p>
+          <span
+            style="display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">list
+            · array · queue · stack</span>
+        </div>
+        <div class="babel-card p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
+            FOR-IN</div>
+          <div style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin:10px 0 8px;">
+            Iterador con inferencia</div>
+          <p style="font-size:15px;color:rgba(255,255,255,0.68);line-height:1.6;">El bucle <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">for x in coleccion</code>
+            infiere el tipo de la variable automáticamente. Tan cómodo como Python, tan seguro como C#.</p>
+          <span
+            style="display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">Inferencia
+            estática</span>
+        </div>
+        <div class="babel-card p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
+            CONVERSIÓN</div>
+          <div style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin:10px 0 8px;">
+            Conversión explícita de tipos</div>
+          <p style="font-size:15px;color:rgba(255,255,255,0.68);line-height:1.6;">Funciones integradas <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">to_int()</code>,
+            <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">to_str()</code>,
+            <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">to_double()</code>.
+            Sin magia oculta, sin sorpresas en producción.</p>
+          <span
+            style="display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">Sin
+            conversión implícita</span>
+        </div>
+        <div class="babel-card p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
+            FUNCIONES</div>
+          <div style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin:10px 0 8px;">
+            Funciones con tipos explícitos</div>
+          <p style="font-size:15px;color:rgba(255,255,255,0.68);line-height:1.6;">Declara parámetros y tipos de retorno.
+            Aprende a pensar en contratos de código desde el primer día, como lo hacen los profesionales.</p>
+          <span
+            style="display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">Scopes
+            aislados</span>
+        </div>
+        <div class="babel-card p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
+            STRINGS</div>
+          <div style="font-family:'Bodoni Moda',serif;font-size:20px;font-weight:600;color:#fff;margin:10px 0 8px;">
+            Strings como objetos</div>
+          <p style="font-size:15px;color:rgba(255,255,255,0.68);line-height:1.6;">Los strings en Re son ciudadanos de
+            primera clase con métodos útiles: <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">.upper()</code>,
+            <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">.lower()</code>,
+            <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);font-size:13px;">.contains()</code>
+            y más.</p>
+          <span
+            style="display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.5);font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.upper
+            · .lower · .contains</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EJEMPLOS -->
+  <section class="section-py border-t border-white/10" id="ejemplos">
+    <div class="max-w-[1280px] mx-auto px-5 md:px-16">
+      <div class="reveal-node section-header">
+        <p
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+          Ejemplos</p>
+        <h2
+          style="font-family:'Bodoni Moda',serif;font-size:clamp(38px,5vw,68px);font-weight:900;letter-spacing:-0.02em;color:#fff;margin:0 0 14px;">
+          Re en acción.</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(255,255,255,0.68);max-width:520px;">Desde el clásico "Hola
+          Mundo" hasta estructuras de datos. Cada ejemplo es código real que puedes ejecutar hoy.</p>
+      </div>
+
+      <div class="bg-white/5 border border-white/15 rounded-xl overflow-hidden reveal-node">
+        <div class="flex flex-wrap border-b border-white/10">
+          <div
+            class="ex-tab active px-5 py-3.5 border-l-2 border-transparent flex items-center gap-2.5 text-sm text-white/65"
+            data-panel="ex0">
+            <span class="ex-tab-icon w-6 h-6 flex items-center justify-center rounded text-xs font-mono">01</span>Hola
+            Mundo
+          </div>
+          <div class="ex-tab px-5 py-3.5 border-l-2 border-transparent flex items-center gap-2.5 text-sm text-white/65"
+            data-panel="ex1">
+            <span class="ex-tab-icon w-6 h-6 flex items-center justify-center rounded text-xs font-mono">02</span>Tipos
+            seguros
+          </div>
+          <div class="ex-tab px-5 py-3.5 border-l-2 border-transparent flex items-center gap-2.5 text-sm text-white/65"
+            data-panel="ex2">
+            <span
+              class="ex-tab-icon w-6 h-6 flex items-center justify-center rounded text-xs font-mono">03</span>Funciones
+          </div>
+          <div class="ex-tab px-5 py-3.5 border-l-2 border-transparent flex items-center gap-2.5 text-sm text-white/65"
+            data-panel="ex3">
+            <span
+              class="ex-tab-icon w-6 h-6 flex items-center justify-center rounded text-xs font-mono">04</span>Colecciones
+          </div>
+          <div class="ex-tab px-5 py-3.5 border-l-2 border-transparent flex items-center gap-2.5 text-sm text-white/65"
+            data-panel="ex4">
+            <span
+              class="ex-tab-icon w-6 h-6 flex items-center justify-center rounded text-xs font-mono">05</span>Control de
+            flujo
+          </div>
+        </div>
+
+        <div class="ex-panel active" id="ex0">
+          <div class="p-5 bg-white/5">
+            <div style="font-family:'Bodoni Moda',serif;font-size:19px;font-weight:600;color:#fff;">Hola Mundo e Entrada
+              de Datos</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;">La sintaxis es natural. Todo
+              programa vive dentro de un bloque <span
+                style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8);font-size:13px;">program</span>.
+            </div>
+          </div>
+          <div class="code-block p-5 bg-white text-electric-royal">
+            <span class="syn-kw">program</span> <span class="syn-pl">HolaMundo</span> <span class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-ty">string</span> <span class="syn-pl">nombre</span> <span
+              class="syn-pt">=</span> <span class="syn-fn">input</span><span class="syn-pt">(</span><span
+              class="syn-st">"¿Cuál es tu nombre? "</span><span class="syn-pt">);</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-st">"¡Hola, "</span> <span class="syn-pt">+</span> <span class="syn-pl">nombre</span> <span
+              class="syn-pt">+</span> <span class="syn-st">"!"</span><span class="syn-pt">);</span>
+            <span class="syn-pt">}</span>
+          </div>
+          <div class="term-output p-4 flex items-center gap-4">
+            <span class="out-label">salida →</span>
+            <span class="out-line font-mono text-sm">¡Hola, Sofía!</span>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex1">
+          <div class="p-5 bg-white/5">
+            <div style="font-family:'Bodoni Moda',serif;font-size:19px;font-weight:600;color:#fff;">Tipos seguros y
+              conversión explícita</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;">A diferencia de Python, Re no
+              mezcla tipos sin conversión. El TypeChecker te protege antes de ejecutar.</div>
+          </div>
+          <div class="code-block p-5 bg-white text-electric-royal">
+            <span class="syn-kw">program</span> <span class="syn-pl">TiposSeguros</span> <span class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-ty">int</span> <span class="syn-pl">edad</span> <span
+              class="syn-pt">=</span> <span class="syn-nm">20</span><span class="syn-pt">;</span>
+            <span class="syn-pl"> </span><span class="syn-ty">double</span> <span class="syn-pl">altura</span> <span
+              class="syn-pt">=</span> <span class="syn-nm">1.75</span><span class="syn-pt">;</span>
+            <span class="syn-pl"> </span><span class="syn-ty">bool</span> <span class="syn-pl">activo</span> <span
+              class="syn-pt">=</span> <span class="syn-kw">true</span><span class="syn-pt">;</span>
+            <span class="syn-pl"> </span><span class="syn-ty">string</span> <span class="syn-pl">mensaje</span> <span
+              class="syn-pt">=</span> <span class="syn-st">"Tengo "</span> <span class="syn-pt">+</span> <span
+              class="syn-fn">to_str</span><span class="syn-pt">(</span><span class="syn-pl">edad</span><span
+              class="syn-pt">)</span> <span class="syn-pt">+</span> <span class="syn-st">" años."</span><span
+              class="syn-pt">;</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-pl">mensaje</span><span class="syn-pt">);</span>
+            <span class="syn-pt">}</span>
+          </div>
+          <div class="term-output p-4 flex items-center gap-4">
+            <span class="out-label">salida →</span>
+            <span class="out-line font-mono text-sm">Tengo 20 años.</span>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex2">
+          <div class="p-5 bg-white/5">
+            <div style="font-family:'Bodoni Moda',serif;font-size:19px;font-weight:600;color:#fff;">Funciones con tipos
+              explícitos</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;">Los parámetros y el tipo de retorno
+              se declaran. Aprende contratos de código desde el primer día.</div>
+          </div>
+          <div class="code-block p-5 bg-white text-electric-royal">
+            <span class="syn-ty">int</span> <span class="syn-fn">calcularArea</span><span class="syn-pt">(</span><span
+              class="syn-ty">int</span> <span class="syn-pl">base</span><span class="syn-pt">,</span> <span
+              class="syn-ty">int</span> <span class="syn-pl">altura</span><span class="syn-pt">) {</span>
+            <span class="syn-pl"> </span><span class="syn-kw">return</span> <span class="syn-pt">(</span><span
+              class="syn-pl">base</span> <span class="syn-pt">*</span> <span class="syn-pl">altura</span><span
+              class="syn-pt">)</span> <span class="syn-pt">/</span> <span class="syn-nm">2</span><span
+              class="syn-pt">;</span>
+            <span class="syn-pt">}</span>
+            <span class="syn-ty">string</span> <span class="syn-fn">saludar</span><span class="syn-pt">(</span><span
+              class="syn-ty">string</span> <span class="syn-pl">nombre</span><span class="syn-pt">) {</span>
+            <span class="syn-pl"> </span><span class="syn-kw">return</span> <span class="syn-st">"Hola, "</span> <span
+              class="syn-pt">+</span> <span class="syn-pl">nombre</span><span class="syn-pt">.</span><span
+              class="syn-fn">upper</span><span class="syn-pt">();</span>
+            <span class="syn-pt">}</span>
+            <span class="syn-kw">program</span> <span class="syn-pl">Funciones</span> <span class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-ty">int</span> <span class="syn-pl">area</span> <span
+              class="syn-pt">=</span> <span class="syn-fn">calcularArea</span><span class="syn-pt">(</span><span
+              class="syn-nm">10</span><span class="syn-pt">,</span> <span class="syn-nm">5</span><span
+              class="syn-pt">);</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-st">"Área: "</span> <span class="syn-pt">+</span> <span class="syn-fn">to_str</span><span
+              class="syn-pt">(</span><span class="syn-pl">area</span><span class="syn-pt">));</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-fn">saludar</span><span class="syn-pt">(</span><span class="syn-st">"mundo"</span><span
+              class="syn-pt">));</span>
+            <span class="syn-pt">}</span>
+          </div>
+          <div class="term-output p-4 flex items-center gap-4">
+            <span class="out-label">salida →</span>
+            <span class="out-line font-mono text-sm">Área: 25 &nbsp;·&nbsp; Hola, MUNDO</span>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex3">
+          <div class="p-5 bg-white/5">
+            <div style="font-family:'Bodoni Moda',serif;font-size:19px;font-weight:600;color:#fff;">Colecciones y bucle
+              for-in</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;">El bucle <span
+                style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8);font-size:13px;">for-in</span>
+              infiere el tipo de la variable iteradora automáticamente.</div>
+          </div>
+          <div class="code-block p-5 bg-white text-electric-royal">
+            <span class="syn-kw">program</span> <span class="syn-pl">EjemploColecciones</span> <span
+              class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-cm">// Cola tipada (FIFO)</span>
+            <span class="syn-pl"> </span><span class="syn-ty">queue</span><span class="syn-pt">&lt;</span><span
+              class="syn-ty">int</span><span class="syn-pt">&gt;</span> <span class="syn-pl">turnos</span> <span
+              class="syn-pt">= [</span><span class="syn-nm">10</span><span class="syn-pt">,</span> <span
+              class="syn-nm">20</span><span class="syn-pt">,</span> <span class="syn-nm">30</span><span
+              class="syn-pt">];</span>
+            <span class="syn-pl"> </span><span class="syn-pl">turnos</span><span class="syn-pt">.</span><span
+              class="syn-fn">enqueue</span><span class="syn-pt">(</span><span class="syn-nm">40</span><span
+              class="syn-pt">);</span>
+            <span class="syn-pl"> </span><span class="syn-kw">for</span> <span class="syn-pl">t</span> <span
+              class="syn-kw">in</span> <span class="syn-pl">turnos</span> <span class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-st">"Procesando: "</span> <span class="syn-pt">+</span> <span class="syn-fn">to_str</span><span
+              class="syn-pt">(</span><span class="syn-pl">t</span> <span class="syn-pt">*</span> <span
+              class="syn-nm">2</span><span class="syn-pt">));</span>
+            <span class="syn-pl"> </span><span class="syn-pt">}</span>
+            <span class="syn-pt">}</span>
+          </div>
+          <div class="term-output p-4 flex items-center gap-4">
+            <span class="out-label">salida →</span>
+            <span class="out-line font-mono text-sm">Procesando: 20, 40, 60, 80</span>
+          </div>
+        </div>
+
+        <div class="ex-panel" id="ex4">
+          <div class="p-5 bg-white/5">
+            <div style="font-family:'Bodoni Moda',serif;font-size:19px;font-weight:600;color:#fff;">Estructuras de
+              control clásicas</div>
+            <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;">While, do-while, if-else e
+              intervalos con rangos <span
+                style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8);font-size:13px;">1..10</span>.
+              Control total, sin sorpresas.</div>
+          </div>
+          <div class="code-block p-5 bg-white text-electric-royal">
+            <span class="syn-kw">program</span> <span class="syn-pl">Logica</span> <span class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-ty">int</span> <span class="syn-pl">contador</span> <span
+              class="syn-pt">=</span> <span class="syn-nm">5</span><span class="syn-pt">;</span>
+            <span class="syn-pl"> </span><span class="syn-kw">while</span> <span class="syn-pt">(</span><span
+              class="syn-pl">contador</span> <span class="syn-pt">&gt;</span> <span class="syn-nm">0</span><span
+              class="syn-pt">) {</span>
+            <span class="syn-pl"> </span><span class="syn-kw">if</span> <span class="syn-pt">(</span><span
+              class="syn-pl">contador</span> <span class="syn-pt">%</span> <span class="syn-nm">2</span> <span
+              class="syn-pt">==</span> <span class="syn-nm">0</span><span class="syn-pt">) {</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-fn">to_str</span><span class="syn-pt">(</span><span class="syn-pl">contador</span><span
+              class="syn-pt">)</span> <span class="syn-pt">+</span> <span class="syn-st">" es par"</span><span
+              class="syn-pt">);</span>
+            <span class="syn-pl"> </span><span class="syn-pt">}</span> <span class="syn-kw">else</span> <span
+              class="syn-pt">{</span>
+            <span class="syn-pl"> </span><span class="syn-fn">print</span><span class="syn-pt">(</span><span
+              class="syn-fn">to_str</span><span class="syn-pt">(</span><span class="syn-pl">contador</span><span
+              class="syn-pt">)</span> <span class="syn-pt">+</span> <span class="syn-st">" es impar"</span><span
+              class="syn-pt">);</span>
+            <span class="syn-pl"> </span><span class="syn-pt">}</span>
+            <span class="syn-pl"> </span><span class="syn-pl">contador</span> <span class="syn-pt">-=</span> <span
+              class="syn-nm">1</span><span class="syn-pt">;</span>
+            <span class="syn-pl"> </span><span class="syn-pt">}</span>
+            <span class="syn-pt">}</span>
+          </div>
+          <div class="term-output p-4 flex items-center gap-4">
+            <span class="out-label">salida →</span>
+            <span class="out-line font-mono text-sm">5 es impar, 4 es par, 3 es impar, 2 es par, 1 es impar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPOS -->
+  <section class="section-py border-t border-white/10 bg-engraving" id="tipos"
+    style="--engraving-url:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNDAwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOCI+CiAgPCEtLSBNYXJjbyBkZWwgY2Fqw7NuIGRlIHRpcG9zIC0tPgogIDxyZWN0IHg9IjUwIiB5PSIzMCIgd2lkdGg9IjcwMCIgaGVpZ2h0PSIzNDAiIHN0cm9rZS13aWR0aD0iMiIvPgogIDwhLS0gRGl2aXNpb25lcyBkZWwgY2Fqw7NuIC0tPgogIDwhLS0gRmlsYSBzdXBlcmlvciAtIGxldHJhcyBtYXnDunNjdWxhcyBncmFuZGVzIC0tPgogIDxyZWN0IHg9IjYwIiB5PSI0MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iODciIHk9Ijc4IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPkE8L3RleHQ+CiAgPHJlY3QgeD0iMTE1IiB5PSI0MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iMTQyIiB5PSI3OCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5CPC90ZXh0PgogIDxyZWN0IHg9IjE3MCIgeT0iNDAiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjE5NyIgeT0iNzgiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+QzwvdGV4dD4KICA8cmVjdCB4PSIyMjUiIHk9IjQwIiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSIyNTIiIHk9Ijc4IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPkQ8L3RleHQ+CiAgPHJlY3QgeD0iMjgwIiB5PSI0MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iMzA3IiB5PSI3OCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5FPC90ZXh0PgogIDxyZWN0IHg9IjMzNSIgeT0iNDAiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjM2MiIgeT0iNzgiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+RjwvdGV4dD4KICA8cmVjdCB4PSIzOTAiIHk9IjQwIiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSI0MTciIHk9Ijc4IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPkc8L3RleHQ+CiAgPHJlY3QgeD0iNDQ1IiB5PSI0MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iNDcyIiB5PSI3OCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5IPC90ZXh0PgogIDxyZWN0IHg9IjUwMCIgeT0iNDAiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjUyNyIgeT0iNzgiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+STwvdGV4dD4KICA8cmVjdCB4PSI1NTUiIHk9IjQwIiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSI1ODIiIHk9Ijc4IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPko8L3RleHQ+CiAgPHJlY3QgeD0iNjEwIiB5PSI0MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iNjM3IiB5PSI3OCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5LPC90ZXh0PgogIDxyZWN0IHg9IjY2NSIgeT0iNDAiIHdpZHRoPSI3NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjcwMiIgeT0iNzgiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+TDwvdGV4dD4KICA8IS0tIFNlZ3VuZGEgZmlsYSAtLT4KICA8cmVjdCB4PSI2MCIgeT0iOTUiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9Ijg3IiB5PSIxMzMiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+TTwvdGV4dD4KICA8cmVjdCB4PSIxMTUiIHk9Ijk1IiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSIxNDIiIHk9IjEzMyIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5OPC90ZXh0PgogIDxyZWN0IHg9IjE3MCIgeT0iOTUiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjE5NyIgeT0iMTMzIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPk88L3RleHQ+CiAgPHJlY3QgeD0iMjI1IiB5PSI5NSIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iMjUyIiB5PSIxMzMiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+UDwvdGV4dD4KICA8cmVjdCB4PSIyODAiIHk9Ijk1IiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSIzMDciIHk9IjEzMyIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5RPC90ZXh0PgogIDxyZWN0IHg9IjMzNSIgeT0iOTUiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjM2MiIgeT0iMTMzIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPlI8L3RleHQ+CiAgPHJlY3QgeD0iMzkwIiB5PSI5NSIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iNDE3IiB5PSIxMzMiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+UzwvdGV4dD4KICA8cmVjdCB4PSI0NDUiIHk9Ijk1IiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSI0NzIiIHk9IjEzMyIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5UPC90ZXh0PgogIDxyZWN0IHg9IjUwMCIgeT0iOTUiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjUyNyIgeT0iMTMzIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPlU8L3RleHQ+CiAgPHJlY3QgeD0iNTU1IiB5PSI5NSIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1Ii8+CiAgPHRleHQgeD0iNTgyIiB5PSIxMzMiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIzMiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+VjwvdGV4dD4KICA8cmVjdCB4PSI2MTAiIHk9Ijk1IiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiLz4KICA8dGV4dCB4PSI2MzciIHk9IjEzMyIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjMyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5XPC90ZXh0PgogIDxyZWN0IHg9IjY2NSIgeT0iOTUiIHdpZHRoPSI3NSIgaGVpZ2h0PSI1NSIvPgogIDx0ZXh0IHg9IjcwMiIgeT0iMTMzIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPlg8L3RleHQ+CiAgPCEtLSBUZXJjZXJhIGZpbGEgLSBtaW7DunNjdWxhcyAtLT4KICA8cmVjdCB4PSI2MCIgeT0iMTUwIiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSI3NyIgeT0iMTc0IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPmE8L3RleHQ+CiAgPHJlY3QgeD0iOTUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMTEyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+YjwvdGV4dD4KICA8cmVjdCB4PSIxMzAiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMTQ3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+YzwvdGV4dD4KICA8cmVjdCB4PSIxNjUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMTgyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+ZDwvdGV4dD4KICA8cmVjdCB4PSIyMDAiIHk9IjE1MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMjI3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+ZTwvdGV4dD4KICA8cmVjdCB4PSIyNTUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMjcyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+ZjwvdGV4dD4KICA8cmVjdCB4PSIyOTAiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMzA3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+ZzwvdGV4dD4KICA8cmVjdCB4PSIzMjUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMzQyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+aDwvdGV4dD4KICA8cmVjdCB4PSIzNjAiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iMzc3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+aTwvdGV4dD4KICA8cmVjdCB4PSIzOTUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNDEyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+ajwvdGV4dD4KICA8cmVjdCB4PSI0MzAiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNDQ3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+azwvdGV4dD4KICA8cmVjdCB4PSI0NjUiIHk9IjE1MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNDkyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+bDwvdGV4dD4KICA8cmVjdCB4PSI1MjAiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNTM3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+bTwvdGV4dD4KICA8cmVjdCB4PSI1NTUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNTcyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+bjwvdGV4dD4KICA8cmVjdCB4PSI1OTAiIHk9IjE1MCIgd2lkdGg9IjU1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNjE3IiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+bzwvdGV4dD4KICA8cmVjdCB4PSI2NDUiIHk9IjE1MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNjYyIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+cDwvdGV4dD4KICA8cmVjdCB4PSI2ODAiIHk9IjE1MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjM1Ii8+CiAgPHRleHQgeD0iNzEwIiB5PSIxNzQiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+cTwvdGV4dD4KICA8IS0tIEN1YXJ0YSBmaWxhIC0tPgogIDxyZWN0IHg9IjYwIiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9Ijc3IiB5PSIyMDkiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+cjwvdGV4dD4KICA8cmVjdCB4PSI5NSIgeT0iMTg1IiB3aWR0aD0iNTUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIxMjIiIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj5zPC90ZXh0PgogIDxyZWN0IHg9IjE1MCIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIxNjciIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj50PC90ZXh0PgogIDxyZWN0IHg9IjE4NSIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIyMDIiIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj51PC90ZXh0PgogIDxyZWN0IHg9IjIyMCIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIyMzciIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj52PC90ZXh0PgogIDxyZWN0IHg9IjI1NSIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIyNzIiIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj53PC90ZXh0PgogIDxyZWN0IHg9IjI5MCIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIzMDciIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj54PC90ZXh0PgogIDxyZWN0IHg9IjMyNSIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIzNDIiIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj55PC90ZXh0PgogIDxyZWN0IHg9IjM2MCIgeT0iMTg1IiB3aWR0aD0iMzUiIGhlaWdodD0iMzUiLz4KICA8dGV4dCB4PSIzNzciIHk9IjIwOSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3Ryb2tlPSJub25lIj56PC90ZXh0PgogIDwhLS0gTsO6bWVyb3MgLS0+CiAgPHJlY3QgeD0iNDIwIiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjQzNyIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjE8L3RleHQ+CiAgPHJlY3QgeD0iNDU1IiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjQ3MiIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjI8L3RleHQ+CiAgPHJlY3QgeD0iNDkwIiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjUwNyIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjM8L3RleHQ+CiAgPHJlY3QgeD0iNTI1IiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjU0MiIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjQ8L3RleHQ+CiAgPHJlY3QgeD0iNTYwIiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjU3NyIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjU8L3RleHQ+CiAgPHJlY3QgeD0iNTk1IiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjYxMiIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjY8L3RleHQ+CiAgPHJlY3QgeD0iNjMwIiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjY0NyIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjc8L3RleHQ+CiAgPHJlY3QgeD0iNjY1IiB5PSIxODUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjY4MiIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjg8L3RleHQ+CiAgPHJlY3QgeD0iNzAwIiB5PSIxODUiIHdpZHRoPSI0MCIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjcyMCIgeT0iMjA5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjk8L3RleHQ+CiAgPCEtLSBFc3BhY2lvIHkgcHVudHVhY2nDs24gLS0+CiAgPHJlY3QgeD0iNjAiIHk9IjIzNSIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjE1MCIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPmVzcGFjaW88L3RleHQ+CiAgPHJlY3QgeD0iMjQwIiB5PSIyMzUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjI1NyIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPi48L3RleHQ+CiAgPHJlY3QgeD0iMjc1IiB5PSIyMzUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjI5MiIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPiw8L3RleHQ+CiAgPHJlY3QgeD0iMzEwIiB5PSIyMzUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjMyNyIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjs8L3RleHQ+CiAgPHJlY3QgeD0iMzQ1IiB5PSIyMzUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjM2MiIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPjo8L3RleHQ+CiAgPHJlY3QgeD0iMzgwIiB5PSIyMzUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjM5NyIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPiE8L3RleHQ+CiAgPHJlY3QgeD0iNDE1IiB5PSIyMzUiIHdpZHRoPSIzNSIgaGVpZ2h0PSIzNSIvPgogIDx0ZXh0IHg9IjQzMiIgeT0iMjU5IiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHJva2U9Im5vbmUiPj88L3RleHQ+CiAgPCEtLSBFdGlxdWV0YSBpbmZlcmlvciAtLT4KICA8cmVjdCB4PSI2MCIgeT0iMzEwIiB3aWR0aD0iNjgwIiBoZWlnaHQ9IjUwIi8+CiAgPHRleHQgeD0iNDAwIiB5PSIzNDEiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0cm9rZT0ibm9uZSI+Q0FKQSBUSVBPR1LDgUZJQ0Eg4oCUIFRJUE9TIE3Dk1ZJTEVTIERFIFBMT01PIMK3IElNUFJFTlRBIFMuIFhJWDwvdGV4dD4KPC9zdmc+')">
+    <div class="max-w-[1280px] mx-auto px-5 md:px-16">
+      <div class="reveal-node section-header">
+        <p
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+          Sistema de tipos</p>
+        <h2
+          style="font-family:'Bodoni Moda',serif;font-size:clamp(38px,5vw,68px);font-weight:900;letter-spacing:-0.02em;color:#fff;margin:0 0 14px;">
+          Tipos y colecciones.</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(255,255,255,0.68);max-width:520px;">Re te da primitivos
+          claros y colecciones genéricas listas para usar. Sin importar librerías, sin configuración extra.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 reveal-stagger">
+        <div class="babel-card-white p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,71,171,0.45);">
+            Primitivos</div>
+          <div class="flex gap-4 flex-wrap mt-2">
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;">int</span>
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;">double</span>
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;">string</span>
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;">bool</span>
+          </div>
+          <p style="font-size:15px;color:rgba(0,71,171,0.68);line-height:1.6;margin-top:10px;">Cuatro tipos base. Sin
+            ambigüedad, sin conversión implícita. El compilador valida cada asignación antes de ejecutar.</p>
+          <div class="code-block mt-4 p-4 bg-[#F5F5F5] rounded text-electric-royal text-sm">
+            <span class="syn-ty">int</span> <span class="syn-pl">edad</span> <span class="syn-pt">=</span> <span
+              class="syn-nm">21</span><span class="syn-pt">;</span>
+            <span class="syn-ty">double</span> <span class="syn-pl">pi</span> <span class="syn-pt">=</span> <span
+              class="syn-nm">3.14</span><span class="syn-pt">;</span>
+            <span class="syn-ty">string</span> <span class="syn-pl">nombre</span> <span class="syn-pt">=</span> <span
+              class="syn-st">"Re"</span><span class="syn-pt">;</span>
+            <span class="syn-ty">bool</span> <span class="syn-pl">activo</span> <span class="syn-pt">=</span> <span
+              class="syn-kw">true</span><span class="syn-pt">;</span>
+            <span class="syn-kw">var</span> <span class="syn-pl">x</span> <span class="syn-pt">=</span> <span
+              class="syn-nm">42</span><span class="syn-pt">;</span> <span class="syn-cm">// tipado dinámico</span>
+          </div>
+        </div>
+
+        <div class="babel-card-white p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,71,171,0.45);">
+            Colección</div>
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;margin-top:8px;">
+            list&lt;T&gt;</div>
+          <p style="font-size:15px;color:rgba(0,71,171,0.68);line-height:1.6;margin-top:10px;">Listas de tamaño dinámico
+            con métodos nativos. El tipo genérico garantiza que no mezcles elementos incompatibles.</p>
+          <div class="code-block mt-4 p-4 bg-[#F5F5F5] rounded text-electric-royal text-sm">
+            <span class="syn-ty">list</span><span class="syn-pt">&lt;</span><span class="syn-ty">string</span><span
+              class="syn-pt">&gt;</span> <span class="syn-pl">nombres</span> <span class="syn-pt">= [</span><span
+              class="syn-st">"Ana"</span><span class="syn-pt">,</span> <span class="syn-st">"Luis"</span><span
+              class="syn-pt">];</span>
+            <span class="syn-pl">nombres</span><span class="syn-pt">.</span><span class="syn-fn">add</span><span
+              class="syn-pt">(</span><span class="syn-st">"Sofía"</span><span class="syn-pt">);</span>
+            <span class="syn-pl">nombres</span><span class="syn-pt">.</span><span class="syn-fn">remove</span><span
+              class="syn-pt">(</span><span class="syn-nm">0</span><span class="syn-pt">);</span>
+            <span class="syn-ty">string</span> <span class="syn-pl">s</span> <span class="syn-pt">=</span> <span
+              class="syn-pl">nombres</span><span class="syn-pt">.</span><span class="syn-fn">get</span><span
+              class="syn-pt">(</span><span class="syn-nm">0</span><span class="syn-pt">);</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.add()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.remove()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.get()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.size()</span>
+          </div>
+        </div>
+
+        <div class="babel-card-white p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,71,171,0.45);">
+            Colección</div>
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;margin-top:8px;">
+            queue&lt;T&gt;</div>
+          <p style="font-size:15px;color:rgba(0,71,171,0.68);line-height:1.6;margin-top:10px;">Cola con disciplina FIFO.
+            Aprende el patrón de colas que se usa en schedulers, sistemas de mensajería y servidores.</p>
+          <div class="code-block mt-4 p-4 bg-[#F5F5F5] rounded text-electric-royal text-sm">
+            <span class="syn-ty">queue</span><span class="syn-pt">&lt;</span><span class="syn-ty">int</span><span
+              class="syn-pt">&gt;</span> <span class="syn-pl">fila</span> <span class="syn-pt">= [</span><span
+              class="syn-nm">1</span><span class="syn-pt">,</span> <span class="syn-nm">2</span><span
+              class="syn-pt">,</span> <span class="syn-nm">3</span><span class="syn-pt">];</span>
+            <span class="syn-pl">fila</span><span class="syn-pt">.</span><span class="syn-fn">enqueue</span><span
+              class="syn-pt">(</span><span class="syn-nm">4</span><span class="syn-pt">);</span>
+            <span class="syn-ty">int</span> <span class="syn-pl">primero</span> <span class="syn-pt">=</span> <span
+              class="syn-pl">fila</span><span class="syn-pt">.</span><span class="syn-fn">dequeue</span><span
+              class="syn-pt">(); </span><span class="syn-cm">// → 1</span>
+            <span class="syn-fn">print</span><span class="syn-pt">(</span><span class="syn-fn">to_str</span><span
+              class="syn-pt">(</span><span class="syn-pl">fila</span><span class="syn-pt">.</span><span
+              class="syn-fn">size</span><span class="syn-pt">()));</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.enqueue()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.dequeue()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.size()</span>
+          </div>
+        </div>
+
+        <div class="babel-card-white p-7">
+          <div
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(0,71,171,0.45);">
+            Colección</div>
+          <div class="flex gap-4 flex-wrap mt-2">
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#0047AB;">stack&lt;T&gt;</span>
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;color:rgba(0,71,171,0.55);">array&lt;T&gt;</span>
+          </div>
+          <p style="font-size:15px;color:rgba(0,71,171,0.68);line-height:1.6;margin-top:10px;">Pila LIFO para recursión
+            y parsing. Arreglo de tamaño fijo para memoria predecible.</p>
+          <div class="code-block mt-4 p-4 bg-[#F5F5F5] rounded text-electric-royal text-sm">
+            <span class="syn-ty">stack</span><span class="syn-pt">&lt;</span><span class="syn-ty">string</span><span
+              class="syn-pt">&gt;</span> <span class="syn-pl">historial</span> <span class="syn-pt">= [];</span>
+            <span class="syn-pl">historial</span><span class="syn-pt">.</span><span class="syn-fn">push</span><span
+              class="syn-pt">(</span><span class="syn-st">"inicio"</span><span class="syn-pt">);</span>
+            <span class="syn-pl">historial</span><span class="syn-pt">.</span><span class="syn-fn">push</span><span
+              class="syn-pt">(</span><span class="syn-st">"página1"</span><span class="syn-pt">);</span>
+            <span class="syn-ty">string</span> <span class="syn-pl">ult</span> <span class="syn-pt">=</span> <span
+              class="syn-pl">historial</span><span class="syn-pt">.</span><span class="syn-fn">pop</span><span
+              class="syn-pt">(); </span><span class="syn-cm">// → "página1"</span>
+            <span class="syn-ty">array</span><span class="syn-pt">&lt;</span><span class="syn-ty">int</span><span
+              class="syn-pt">&gt;</span> <span class="syn-pl">nums</span> <span class="syn-pt">= [</span><span
+              class="syn-nm">1</span><span class="syn-pt">,</span><span class="syn-nm">2</span><span
+              class="syn-pt">,</span><span class="syn-nm">3</span><span class="syn-pt">]; </span><span class="syn-cm">//
+              tamaño fijo</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.push()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.pop()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.size()</span>
+            <span
+              style="padding:4px 10px;background:#F5F5F5;color:#0047AB;font-size:11px;font-family:'JetBrains Mono',monospace;border-radius:4px;">.get()</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALACIÓN -->
+  <section class="section-py border-t border-white/10" id="instalacion">
+    <div class="max-w-[1280px] mx-auto px-5 md:px-16">
+      <div class="reveal-node section-header">
+        <p
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+          Instalación</p>
+        <h2
+          style="font-family:'Bodoni Moda',serif;font-size:clamp(38px,5vw,68px);font-weight:900;letter-spacing:-0.02em;color:#fff;margin:0 0 14px;">
+          Listo en dos comandos.</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(255,255,255,0.68);max-width:520px;">Requiere Node.js 18 o
+          superior. El instalador compila el proyecto y registra los comandos <code
+            style="font-family:'JetBrains Mono',monospace;font-size:14px;color:rgba(255,255,255,0.85);">re</code> y
+          <code
+            style="font-family:'JetBrains Mono',monospace;font-size:14px;color:rgba(255,255,255,0.85);">re-lsp</code>
+          globalmente.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 reveal-stagger">
+        <div class="babel-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              style="width:32px;height:32px;background:rgba(255,255,255,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+              </svg>
+            </div>
+            <span style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;">Linux</span>
+          </div>
+          <div class="bg-white/5 p-4 rounded relative"
+            style="font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,0.88);">
+            <button
+              class="absolute top-2 right-2 text-xs text-white/35 hover:text-white border border-white/10 px-2 py-0.5 rounded transition-colors"
+              onclick="copyCode(this)">copiar</button>
+            <div><span style="color:rgba(255,255,255,0.45);">$ </span>chmod +x install.sh</div>
+            <div><span style="color:rgba(255,255,255,0.45);">$ </span>./install.sh</div>
+          </div>
+          <p
+            style="font-size:12px;color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;margin-top:10px;">
+            Crea enlaces simbólicos en <span style="color:rgba(255,255,255,0.75);">/usr/local/bin/re</span></p>
+        </div>
+        <div class="babel-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              style="width:32px;height:32px;background:rgba(255,255,255,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <span style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;">macOS</span>
+          </div>
+          <div class="bg-white/5 p-4 rounded relative"
+            style="font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,0.88);">
+            <button
+              class="absolute top-2 right-2 text-xs text-white/35 hover:text-white border border-white/10 px-2 py-0.5 rounded transition-colors"
+              onclick="copyCode(this)">copiar</button>
+            <div><span style="color:rgba(255,255,255,0.45);">$ </span>chmod +x install.sh</div>
+            <div><span style="color:rgba(255,255,255,0.45);">$ </span>./install.sh</div>
+          </div>
+          <p
+            style="font-size:12px;color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;margin-top:10px;">
+            Requiere <span style="color:rgba(255,255,255,0.75);">Node.js ≥ 18</span></p>
+        </div>
+        <div class="babel-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              style="width:32px;height:32px;background:rgba(255,255,255,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M8 21h8M12 17v4" />
+              </svg>
+            </div>
+            <span style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;">Windows</span>
+          </div>
+          <div class="bg-white/5 p-4 rounded relative"
+            style="font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,0.88);">
+            <button
+              class="absolute top-2 right-2 text-xs text-white/35 hover:text-white border border-white/10 px-2 py-0.5 rounded transition-colors"
+              onclick="copyCode(this)">copiar</button>
+            <div><span style="color:rgba(255,255,255,0.45);">PS&gt; </span>Set-ExecutionPolicy Bypass</div>
+            <div><span style="color:rgba(255,255,255,0.45);">PS&gt; </span>.\install.ps1</div>
+          </div>
+          <p
+            style="font-size:12px;color:rgba(255,255,255,0.45);font-family:'JetBrains Mono',monospace;margin-top:10px;">
+            Ejecutar PowerShell como <span style="color:rgba(255,255,255,0.75);">Administrador</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDITORES -->
+  <section class="section-py border-t border-white/10 bg-engraving" id="editores"
+    style="--engraving-url:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjAwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOCI+CiAgPCEtLSBCYXNlIGRlIGxhIHByZW5zYSAtLT4KICA8cmVjdCB4PSIxNTAiIHk9IjQ4MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIzMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8cmVjdCB4PSIxODAiIHk9IjQzMCIgd2lkdGg9IjQ0MCIgaGVpZ2h0PSI1MiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPCEtLSBQYXRhcyAtLT4KICA8cmVjdCB4PSIxNzAiIHk9IjQ4MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjgwIi8+CiAgPHJlY3QgeD0iNjEwIiB5PSI0ODAiIHdpZHRoPSIyMCIgaGVpZ2h0PSI4MCIvPgogIDxyZWN0IHg9IjMxMCIgeT0iNDgwIiB3aWR0aD0iMTUiIGhlaWdodD0iNzAiLz4KICA8cmVjdCB4PSI0NzUiIHk9IjQ4MCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjcwIi8+CiAgPCEtLSBDdWVycG8gcHJpbmNpcGFsIC0tPgogIDxyZWN0IHg9IjIwMCIgeT0iMjAwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIzMCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8IS0tIFBsYXRpbmEgc3VwZXJpb3IgLS0+CiAgPHJlY3QgeD0iMTkwIiB5PSIxNzUiIHdpZHRoPSI0MjAiIGhlaWdodD0iMzAiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPCEtLSBIdXNpbGxvIHZlcnRpY2FsIC0tPgogIDxsaW5lIHgxPSI0MDAiIHkxPSI1MCIgeDI9IjQwMCIgeTI9IjE3NSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPCEtLSBSb3NjYXMgZGVsIGh1c2lsbG8gLS0+CiAgPHBhdGggZD0iTTM4NSw2MCBRNDAwLDU1IDQxNSw2MCBRNDAwLDY1IDM4NSw3MCBRNDAwLDY1IDQxNSw3MCBRNDAwLDc1IDM4NSw4MCBRNDAwLDc1IDQxNSw4MCBRNDAwLDg1IDM4NSw5MCBRNDAwLDg1IDQxNSw5MCBRNDAwLDk1IDM4NSwxMDAgUTQwMCw5NSA0MTUsMTAwIFE0MDAsMTA1IDM4NSwxMTAgUTQwMCwxMDUgNDE1LDExMCBRNDAwLDExNSAzODUsMTIwIFE0MDAsMTE1IDQxNSwxMjAgUTQwMCwxMjUgMzg1LDEzMCBRNDAwLDEyNSA0MTUsMTMwIFE0MDAsMTM1IDM4NSwxNDAgUTQwMCwxMzUgNDE1LDE0MCBRNDAwLDE0NSAzODUsMTUwIFE0MDAsMTQ1IDQxNSwxNTAgUTQwMCwxNTUgMzg1LDE2MCBRNDAwLDE1NSA0MTUsMTYwIFE0MDAsMTY1IDM4NSwxNjUiIHN0cm9rZS13aWR0aD0iMC42Ii8+CiAgPCEtLSBQYWxhbmNhIGhvcml6b250YWwgLS0+CiAgPGxpbmUgeDE9IjI4MCIgeTE9IjgwIiB4Mj0iNTIwIiB5Mj0iODAiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPGNpcmNsZSBjeD0iNTIwIiBjeT0iODAiIHI9IjgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iMjgwIiBjeT0iODAiIHI9IjgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPCEtLSBCYXJyYXMgbGF0ZXJhbGVzIC0tPgogIDxsaW5lIHgxPSIyMDAiIHkxPSIyMDAiIHgyPSIyMDAiIHkyPSIxMDAiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGxpbmUgeDE9IjYwMCIgeTE9IjIwMCIgeDI9IjYwMCIgeTI9IjEwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTAwIiB4Mj0iNjAwIiB5Mj0iMTAwIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gU3VwZXJmaWNpZSBkZSBpbXByZXNpw7NuIC0tPgogIDxyZWN0IHg9IjIyMCIgeT0iMzUwIiB3aWR0aD0iMzYwIiBoZWlnaHQ9IjcwIiBzdHJva2Utd2lkdGg9IjAuOCIvPgogIDwhLS0gTMOtbmVhcyB0aXBvZ3LDoWZpY2FzIC0tPgogIDxsaW5lIHgxPSIyNDAiIHkxPSIzNjUiIHgyPSI1NjAiIHkyPSIzNjUiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPGxpbmUgeDE9IjI0MCIgeTE9IjM3OCIgeDI9IjQ4MCIgeTI9IjM3OCIgc3Ryb2tlLXdpZHRoPSIwLjQiLz4KICA8bGluZSB4MT0iMjQwIiB5MT0iMzkxIiB4Mj0iNTMwIiB5Mj0iMzkxIiBzdHJva2Utd2lkdGg9IjAuNCIvPgogIDxsaW5lIHgxPSIyNDAiIHkxPSI0MDQiIHgyPSI0NjAiIHkyPSI0MDQiIHN0cm9rZS13aWR0aD0iMC40Ii8+CiAgPCEtLSBDYWpvbmVzIGRlIHRpcG9zIC0tPgogIDxyZWN0IHg9IjIyMCIgeT0iMjYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjgwIi8+CiAgPHJlY3QgeD0iMjIwIiB5PSIyNjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjI2MCIgeT0iMjYwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIzMDAiIHk9IjI2MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPHJlY3QgeD0iMzQwIiB5PSIyNjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjIyMCIgeT0iMjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIyNjAiIHk9IjI4MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPHJlY3QgeD0iMzAwIiB5PSIyODAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjM0MCIgeT0iMjgwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIyMjAiIHk9IjMwMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPHJlY3QgeD0iMjYwIiB5PSIzMDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyMCIvPgogIDxyZWN0IHg9IjMwMCIgeT0iMzAwIiB3aWR0aD0iNDAiIGhlaWdodD0iMjAiLz4KICA8cmVjdCB4PSIzNDAiIHk9IjMwMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIwIi8+CiAgPCEtLSBEZWNvcmFjacOzbjogdm9sdXRhIGVuIGVzcXVpbmFzIC0tPgogIDxwYXRoIGQ9Ik0xNTUsMTk1IFExNzAsMTgwIDE4NSwxOTUgUTE3MCwyMTAgMTU1LDE5NSIgc3Ryb2tlLXdpZHRoPSIwLjYiLz4KICA8cGF0aCBkPSJNNjE1LDE5NSBRNjAwLDE4MCA1ODUsMTk1IFE2MDAsMjEwIDYxNSwxOTUiIHN0cm9rZS13aWR0aD0iMC42Ii8+CiAgPCEtLSBFbmdyYW5hamVzIGxhdGVyYWxlcyAtLT4KICA8Y2lyY2xlIGN4PSIxNDAiIGN5PSIzMzAiIHI9IjM1IiBzdHJva2Utd2lkdGg9IjAuOCIvPgogIDxjaXJjbGUgY3g9IjE0MCIgY3k9IjMzMCIgcj0iMjAiIHN0cm9rZS13aWR0aD0iMC44Ii8+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjI5MCIgeDI9IjE0MCIgeTI9IjI5NSIvPgogIDxsaW5lIHgxPSIxNDAiIHkxPSIzNjUiIHgyPSIxNDAiIHkyPSIzNzAiLz4KICA8bGluZSB4MT0iMTAwIiB5MT0iMzMwIiB4Mj0iMTA1IiB5Mj0iMzMwIi8+CiAgPGxpbmUgeDE9IjE3NSIgeTE9IjMzMCIgeDI9IjE4MCIgeTI9IjMzMCIvPgogIDxsaW5lIHgxPSIxMTUiIHkxPSIzMDUiIHgyPSIxMTkiIHkyPSIzMDkiLz4KICA8bGluZSB4MT0iMTYxIiB5MT0iMzUxIiB4Mj0iMTY1IiB5Mj0iMzU1Ii8+CiAgPGxpbmUgeDE9IjE2NSIgeTE9IjMwNSIgeDI9IjE2MSIgeTI9IjMwOSIvPgogIDxsaW5lIHgxPSIxMTkiIHkxPSIzNTEiIHgyPSIxMTUiIHkyPSIzNTUiLz4KICA8IS0tIE1hbml2ZWxhIC0tPgogIDxsaW5lIHgxPSIxNzUiIHkxPSIzMzAiIHgyPSIyMjAiIHkyPSIzMTAiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGNpcmNsZSBjeD0iMjIwIiBjeT0iMzEwIiByPSI2Ii8+Cjwvc3ZnPg==')">
+    <div class="max-w-[1280px] mx-auto px-5 md:px-16">
+      <div class="reveal-node section-header">
+        <p
+          style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+          LSP + Editores</p>
+        <h2
+          style="font-family:'Bodoni Moda',serif;font-size:clamp(38px,5vw,68px);font-weight:900;letter-spacing:-0.02em;color:#fff;margin:0 0 14px;">
+          Tu editor, con superpoderes Re.</h2>
+        <p style="font-size:17px;line-height:1.6;color:rgba(255,255,255,0.68);max-width:520px;">El instalador expone
+          <code
+            style="font-family:'JetBrains Mono',monospace;font-size:14px;color:rgba(255,255,255,0.85);">re-lsp</code>,
+          un servidor de lenguaje completo. Cualquier editor compatible con LSP obtiene autocompletado y validación en
+          tiempo real.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger">
+        <div class="babel-card p-6 text-center">
+          <div style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:4px;">VS
+            Code</div>
+          <div
+            style="font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+            Extensión nativa</div>
+          <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">Extensión integrada con coloreado de
+            sintaxis y cliente LSP. Ubicada en <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8);font-size:12px;">editors/vscode</code>.
+          </p>
+        </div>
+        <div class="babel-card p-6 text-center">
+          <div style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:4px;">
+            Neovim</div>
+          <div
+            style="font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+            nvim-lspconfig</div>
+          <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">Configuración lista para usar con
+            <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8);font-size:12px;">nvim-lspconfig</code>.
+            Soporte completo de diagnósticos.</p>
+        </div>
+        <div class="babel-card p-6 text-center">
+          <div style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:4px;">
+            Sublime Text</div>
+          <div
+            style="font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+            Plugin LSP</div>
+          <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">Integración mediante el plugin LSP
+            oficial de Sublime. Configuración en un solo archivo.</p>
+        </div>
+        <div class="babel-card p-6 text-center">
+          <div style="font-family:'Bodoni Moda',serif;font-size:18px;font-weight:600;color:#fff;margin-bottom:4px;">
+            Helix</div>
+          <div
+            style="font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.5);margin-bottom:10px;">
+            Nativo</div>
+          <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.55;">Soporte nativo en <code
+              style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8);font-size:12px;">languages.toml</code>.
+            Sin plugins extra requeridos.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 reveal-node">
+        <div class="babel-card p-5 flex gap-4 items-start">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
+            style="flex-shrink:0;margin-top:2px;">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;">Autocompletado</div>
+            <p style="font-size:13px;color:rgba(255,255,255,0.55);">Sugerencias de métodos, variables y funciones
+              mientras escribes.</p>
+          </div>
+        </div>
+        <div class="babel-card p-5 flex gap-4 items-start">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
+            style="flex-shrink:0;margin-top:2px;">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;">Errores en tiempo real</div>
+            <p style="font-size:13px;color:rgba(255,255,255,0.55);">El TypeChecker corre en segundo plano y subraya
+              errores al vuelo.</p>
+          </div>
+        </div>
+        <div class="babel-card p-5 flex gap-4 items-start">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
+            style="flex-shrink:0;margin-top:2px;">
+            <polyline points="16 18 22 12 16 6" />
+            <polyline points="8 6 2 12 8 18" />
+          </svg>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;">Coloreado de sintaxis</div>
+            <p style="font-size:13px;color:rgba(255,255,255,0.55);">Gramática .tmLanguage para resaltado fiel a la
+              sintaxis de Re.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div class="py-16 border-t border-white/10 bg-engraving"
+    style="--engraving-url:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTAwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOSI+CiAgPCEtLSBFbmdyYW5hamUgZ3JhbmRlIGl6cXVpZXJkYSAtLT4KICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyNTAiIHI9IjEyMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjUwIiByPSI5MCIvPgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjI1MCIgcj0iMjAiLz4KICA8IS0tIERpZW50ZXMgZW5ncmFuYWplIGdyYW5kZSAtLT4KICA8cmVjdCB4PSIxODgiIHk9IjEyMiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjIyIiByeD0iMyIvPgogIDxyZWN0IHg9IjE4OCIgeT0iMzU2IiB3aWR0aD0iMjQiIGhlaWdodD0iMjIiIHJ4PSIzIi8+CiAgPHJlY3QgeD0iNzIiIHk9IjIzOCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjI0IiByeD0iMyIvPgogIDxyZWN0IHg9IjMwNiIgeT0iMjM4IiB3aWR0aD0iMjIiIGhlaWdodD0iMjQiIHJ4PSIzIi8+CiAgPHJlY3QgeD0iMTEwIiB5PSIxNDgiIHdpZHRoPSIyMiIgaGVpZ2h0PSIxOCIgcng9IjMiIHRyYW5zZm9ybT0icm90YXRlKC00NSAxMjEgMTU3KSIvPgogIDxyZWN0IHg9IjI1OCIgeT0iMzMwIiB3aWR0aD0iMjIiIGhlaWdodD0iMTgiIHJ4PSIzIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgMjY5IDMzOSkiLz4KICA8cmVjdCB4PSIyNTgiIHk9IjE0OCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgMjY5IDE1NykiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjMzMCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE4IiByeD0iMyIgdHJhbnNmb3JtPSJyb3RhdGUoNDUgMTIxIDMzOSkiLz4KICA8IS0tIFJhZGlvcyBkZWwgZW5ncmFuYWplIGdyYW5kZSAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTYwIiB4Mj0iMjAwIiB5Mj0iMjMwIi8+CiAgPGxpbmUgeDE9IjIwMCIgeTE9IjI3MCIgeDI9IjIwMCIgeTI9IjM0MCIvPgogIDxsaW5lIHgxPSIxMTUiIHkxPSIyNTAiIHgyPSIxODUiIHkyPSIyNTAiLz4KICA8bGluZSB4MT0iMjE1IiB5MT0iMjUwIiB4Mj0iMjg1IiB5Mj0iMjUwIi8+CiAgPGxpbmUgeDE9IjE0NSIgeTE9IjE5NSIgeDI9IjE5MCIgeTI9IjI0MCIvPgogIDxsaW5lIHgxPSIyNTUiIHkxPSIzMDUiIHgyPSIyMTAiIHkyPSIyNjAiLz4KICA8bGluZSB4MT0iMTQ1IiB5MT0iMzA1IiB4Mj0iMTkwIiB5Mj0iMjYwIi8+CiAgPGxpbmUgeDE9IjI1NSIgeTE9IjE5NSIgeDI9IjIxMCIgeTI9IjI0MCIvPgoKICA8IS0tIEVuZ3JhbmFqZSBtZWRpYW5vIGRlcmVjaGEgLS0+CiAgPGNpcmNsZSBjeD0iNDkwIiBjeT0iMjAwIiByPSI5MCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8Y2lyY2xlIGN4PSI0OTAiIGN5PSIyMDAiIHI9IjY1Ii8+CiAgPGNpcmNsZSBjeD0iNDkwIiBjeT0iMjAwIiByPSIxNSIvPgogIDwhLS0gRGllbnRlcyBlbmdyYW5hamUgbWVkaWFubyAtLT4KICA8cmVjdCB4PSI0NzkiIHk9IjEwMyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE4IiByeD0iMiIvPgogIDxyZWN0IHg9IjQ3OSIgeT0iMjc5IiB3aWR0aD0iMjAiIGhlaWdodD0iMTgiIHJ4PSIyIi8+CiAgPHJlY3QgeD0iMzkzIiB5PSIxODkiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyMCIgcng9IjIiLz4KICA8cmVjdCB4PSI1NjkiIHk9IjE4OSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjIwIiByeD0iMiIvPgogIDxyZWN0IHg9IjQyMyIgeT0iMTI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMTYiIHJ4PSIyIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNDMyIDEzNikiLz4KICA8cmVjdCB4PSI1NDciIHk9IjI1MiIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE2IiByeD0iMiIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDU1NiAyNjApIi8+CiAgPHJlY3QgeD0iNTQ3IiB5PSIxMjgiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNiIgcng9IjIiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDU1NiAxMzYpIi8+CiAgPHJlY3QgeD0iNDIzIiB5PSIyNTIiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNiIgcng9IjIiIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQzMiAyNjApIi8+CiAgPCEtLSBSYWRpb3MgZW5ncmFuYWplIG1lZGlhbm8gLS0+CiAgPGxpbmUgeDE9IjQ5MCIgeTE9IjEzNSIgeDI9IjQ5MCIgeTI9IjE4OCIvPgogIDxsaW5lIHgxPSI0OTAiIHkxPSIyMTIiIHgyPSI0OTAiIHkyPSIyNjUiLz4KICA8bGluZSB4MT0iNDI1IiB5MT0iMjAwIiB4Mj0iNDc4IiB5Mj0iMjAwIi8+CiAgPGxpbmUgeDE9IjUwMiIgeTE9IjIwMCIgeDI9IjU1NSIgeTI9IjIwMCIvPgogIDxsaW5lIHgxPSI0NDQiIHkxPSIxNTQiIHgyPSI0ODIiIHkyPSIxOTIiLz4KICA8bGluZSB4MT0iNDk4IiB5MT0iMjA4IiB4Mj0iNTM2IiB5Mj0iMjQ2Ii8+CgogIDwhLS0gRW5ncmFuYWplIHBlcXVlw7FvIGluZmVyaW9yIGRlcmVjaGEgLS0+CiAgPGNpcmNsZSBjeD0iNTkwIiBjeT0iMzgwIiByPSI2MCIgc3Ryb2tlLXdpZHRoPSIxLjIiLz4KICA8Y2lyY2xlIGN4PSI1OTAiIGN5PSIzODAiIHI9IjQwIi8+CiAgPGNpcmNsZSBjeD0iNTkwIiBjeT0iMzgwIiByPSIxMCIvPgogIDwhLS0gRGllbnRlcyBwZXF1ZcOxbyAtLT4KICA8cmVjdCB4PSI1ODEiIHk9IjMxMyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE0IiByeD0iMiIvPgogIDxyZWN0IHg9IjU4MSIgeT0iNDMzIiB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHJ4PSIyIi8+CiAgPHJlY3QgeD0iNTIzIiB5PSIzNzEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNiIgcng9IjIiLz4KICA8cmVjdCB4PSI2NDMiIHk9IjM3MSIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE2IiByeD0iMiIvPgogIDwhLS0gUmFkaW9zIHBlcXVlw7FvIC0tPgogIDxsaW5lIHgxPSI1OTAiIHkxPSIzNDAiIHgyPSI1OTAiIHkyPSIzNzMiLz4KICA8bGluZSB4MT0iNTkwIiB5MT0iMzg3IiB4Mj0iNTkwIiB5Mj0iNDIwIi8+CiAgPGxpbmUgeDE9IjU1MCIgeTE9IjM4MCIgeDI9IjU4MyIgeTI9IjM4MCIvPgogIDxsaW5lIHgxPSI1OTciIHkxPSIzODAiIHgyPSI2MzAiIHkyPSIzODAiLz4KCiAgPCEtLSBFamUgZGUgY29uZXhpw7NuIGVudHJlIGVuZ3JhbmFqZXMgLS0+CiAgPGxpbmUgeDE9IjMyMCIgeTE9IjI1MCIgeDI9IjQwMCIgeTI9IjIwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1kYXNoYXJyYXk9IjQsMyIvPgogIDxsaW5lIHgxPSI1NTUiIHkxPSIyNzAiIHgyPSI1NjAiIHkyPSIzMjAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtZGFzaGFycmF5PSI0LDMiLz4KCiAgPCEtLSBUb3JuaWxsb3MgZGVjb3JhdGl2b3MgLS0+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTMwIiByPSI1Ii8+CiAgPGxpbmUgeDE9IjE5NyIgeTE9IjEzMCIgeDI9IjIwMyIgeTI9IjEzMCIvPgogIDxsaW5lIHgxPSIyMDAiIHkxPSIxMjciIHgyPSIyMDAiIHkyPSIxMzMiLz4KICA8Y2lyY2xlIGN4PSIyNzAiIGN5PSIxODAiIHI9IjUiLz4KICA8bGluZSB4MT0iMjY3IiB5MT0iMTgwIiB4Mj0iMjczIiB5Mj0iMTgwIi8+CiAgPGxpbmUgeDE9IjI3MCIgeTE9IjE3NyIgeDI9IjI3MCIgeTI9IjE4MyIvPgo8L3N2Zz4=')">
+    <div class="max-w-2xl mx-auto text-center px-5">
+      <h2
+        style="font-family:'Bodoni Moda',serif;font-size:clamp(38px,6vw,72px);font-weight:900;letter-spacing:-0.02em;color:#fff;margin-bottom:14px;">
+        Tu primer programa <span style="color:rgba(255,255,255,0.85);">Re</span> te espera.</h2>
+      <p style="font-size:17px;line-height:1.6;color:rgba(255,255,255,0.68);">Instala Re en dos comandos. Escribe tu
+        primer <code style="font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.85);">program</code>.
+        Entiende los tipos de verdad.</p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a href="#instalacion" class="btn-primary">Instalar ahora</a>
+        <a href="#ejemplos" class="btn-ghost">Ver ejemplos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="w-full py-10 border-t border-white/10" style="background:rgba(0,40,100,0.4);">
+    <div class="flex flex-col md:flex-row justify-between items-center px-5 md:px-16 gap-6 max-w-[1280px] mx-auto">
+      <div style="font-family:'Bodoni Moda',serif;font-weight:700;font-size:22px;color:#fff;">Re</div>
+      <div class="flex flex-wrap gap-7 justify-center">
+        <a style="font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s;" href="#"
+          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">Documentación</a>
+        <a style="font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s;" href="#"
+          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">GitHub</a>
+        <a style="font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s;" href="#"
+          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">TUTORIAL.md</a>
+        <a style="font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s;" href="#"
+          onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">Proyecto Torre
+          Babel</a>
+      </div>
+      <div
+        style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:rgba(255,255,255,0.25);text-transform:uppercase;">
+        Licencia MIT · Node.js + ANTLR4 · v1.0</div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.style.background = 'rgba(0,55,140,0.92)';
+        nav.style.backdropFilter = 'blur(12px)';
+        nav.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+      } else {
+        nav.style.background = 'transparent';
+        nav.style.backdropFilter = 'none';
+        nav.style.borderBottom = 'none';
+      }
+    }, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal-node, .reveal-stagger').forEach(el => observer.observe(el));
+
+    document.querySelectorAll('.ex-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.ex-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.ex-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.panel).classList.add('active');
+      });
+    });
+
+    function copyCode(btn) {
+      const block = btn.closest('.babel-card, .bg-white\\/5') || btn.parentElement;
+      const lines = [...block.querySelectorAll('div')].map(d => d.textContent.replace(/^[\$>PS>\s]+/, '')).join('\n').trim();
+      navigator.clipboard.writeText(lines).then(() => {
+        btn.textContent = 'copiado';
+        setTimeout(() => btn.textContent = 'copiar', 2000);
+      });
+    }
+    window.copyCode = copyCode;
+  </script>
+</body>
+
+</html>
